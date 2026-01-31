@@ -1,0 +1,71 @@
+# Poison Currencies - Access to exclusive poison affixes
+
+[[currencies]]
+id = "venom_essence"
+name = "Venom Essence"
+description = "Imbues a normal item with poison, making it magic with a toxic affix"
+category = "Poison"
+
+[currencies.requires]
+rarities = ["normal"]
+
+[currencies.effects]
+set_rarity = "magic"
+add_affixes = { min = 1, max = 1 }
+affix_pools = ["poison"]
+
+[[currencies]]
+id = "toxic_shard"
+name = "Toxic Shard"
+description = "Adds a random poison affix to an item"
+category = "Poison"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_affixes = { min = 1, max = 1 }
+affix_pools = ["poison"]
+
+[[currencies]]
+id = "plague_orb"
+name = "Plague Orb"
+description = "Rerolls a magic item with only poison affixes"
+category = "Poison"
+
+[currencies.requires]
+rarities = ["magic"]
+
+[currencies.effects]
+clear_affixes = true
+add_affixes = { min = 1, max = 2 }
+affix_pools = ["poison"]
+
+[[currencies]]
+id = "virulent_alchemy"
+name = "Virulent Alchemy Orb"
+description = "Transforms a normal item into a rare with poison affixes"
+category = "Poison"
+
+[currencies.requires]
+rarities = ["normal"]
+
+[currencies.effects]
+set_rarity = "rare"
+add_affixes = { min = 4, max = 6 }
+affix_pools = ["poison"]
+
+[[currencies]]
+id = "corrupted_blessing"
+name = "Corrupted Blessing"
+description = "Adds a poison affix to a rare item, bypassing normal crafting"
+category = "Poison"
+
+[currencies.requires]
+rarities = ["rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_affixes = { min = 1, max = 1 }
+affix_pools = ["poison"]

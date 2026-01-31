@@ -1,0 +1,14 @@
+# Unique Transformation Currencies
+
+[[currencies]]
+id = "transform_unique"
+name = "Destiny Orb"
+description = "Attempts to transform an item into a unique based on its affixes"
+category = "Unique"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix = true
+
+[currencies.effects]
+try_unique = true

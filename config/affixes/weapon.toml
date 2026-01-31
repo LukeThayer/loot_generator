@@ -1,0 +1,229 @@
+# Weapon Affixes
+
+# ============================================================================
+# WEAPON PREFIXES
+# ============================================================================
+
+[[affixes]]
+id = "phys_damage_flat"
+name = "Heavy"
+type = "prefix"
+stat = "added_physical_damage"
+tags = ["physical", "damage", "attack"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "one_hand_mace", "two_hand_mace", "bow", "dagger", "claw"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 25
+max = 35
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 24
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 10
+max = 17
+
+[[affixes.tiers]]
+tier = 4
+weight = 1000
+min = 4
+max = 9
+
+[[affixes]]
+id = "phys_damage_percent"
+name = "Cruel"
+type = "prefix"
+stat = "increased_physical_damage"
+tags = ["physical", "damage", "attack"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "one_hand_mace", "two_hand_mace", "bow", "dagger", "claw"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 150
+max = 179
+
+[[affixes.tiers]]
+tier = 2
+weight = 250
+min = 120
+max = 149
+
+[[affixes.tiers]]
+tier = 3
+weight = 500
+min = 90
+max = 119
+
+[[affixes.tiers]]
+tier = 4
+weight = 1000
+min = 60
+max = 89
+
+[[affixes]]
+id = "fire_damage_flat"
+name = "Flaming"
+type = "prefix"
+stat = "added_fire_damage"
+tags = ["elemental", "fire", "damage"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "bow", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 45
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+
+[[affixes]]
+id = "cold_damage_flat"
+name = "Frozen"
+type = "prefix"
+stat = "added_cold_damage"
+tags = ["elemental", "cold", "damage"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "bow", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 45
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+
+[[affixes]]
+id = "lightning_damage_flat"
+name = "Shocking"
+type = "prefix"
+stat = "added_lightning_damage"
+tags = ["elemental", "lightning", "damage"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "bow", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 5
+max = 60
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 3
+max = 40
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 1
+max = 25
+
+# ============================================================================
+# WEAPON SUFFIXES
+# ============================================================================
+
+[[affixes]]
+id = "attack_speed"
+name = "of Speed"
+type = "suffix"
+stat = "increased_attack_speed"
+tags = ["attack", "speed"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "one_hand_mace", "two_hand_mace", "bow", "dagger", "claw"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 20
+max = 25
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 14
+max = 19
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 13
+
+[[affixes]]
+id = "crit_chance"
+name = "of Destruction"
+type = "suffix"
+stat = "increased_critical_chance"
+tags = ["critical", "attack"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "bow", "dagger", "claw", "wand"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 38
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 20
+max = 29
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 10
+max = 19
+
+[[affixes]]
+id = "accuracy"
+name = "of Precision"
+type = "suffix"
+stat = "added_accuracy"
+tags = ["attack", "accuracy"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "bow", "dagger", "claw"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 200
+min = 150
+max = 200
+
+[[affixes.tiers]]
+tier = 2
+weight = 500
+min = 80
+max = 149
+
+[[affixes.tiers]]
+tier = 3
+weight = 1000
+min = 30
+max = 79

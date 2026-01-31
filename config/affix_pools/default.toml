@@ -1,0 +1,115 @@
+# Default Affix Pools
+
+# The "common" pool contains all standard affixes
+# Currencies with no affix_pools specified will use all affixes by default
+[[pools]]
+id = "common"
+name = "Common Affixes"
+description = "All standard affixes available in the game"
+affixes = [
+    # Weapon prefixes
+    "phys_damage_flat",
+    "phys_damage_percent",
+    "fire_damage_flat",
+    "cold_damage_flat",
+    "lightning_damage_flat",
+    # Weapon suffixes
+    "attack_speed",
+    "crit_chance",
+    "accuracy",
+    # Armour prefixes
+    "life_flat",
+    "armour_percent",
+    "evasion_percent",
+    "es_percent",
+    # Armour suffixes
+    "strength",
+    "dexterity",
+    "intelligence",
+    "fire_resist",
+    "cold_resist",
+    "lightning_resist",
+    "movement_speed",
+    "life_regen",
+]
+
+# Physical damage affixes only
+[[pools]]
+id = "physical"
+name = "Physical Affixes"
+description = "Affixes related to physical damage"
+affixes = [
+    "phys_damage_flat",
+    "phys_damage_percent",
+    "attack_speed",
+    "crit_chance",
+    "accuracy",
+]
+
+# Elemental damage affixes only
+[[pools]]
+id = "elemental"
+name = "Elemental Affixes"
+description = "Affixes related to elemental damage"
+affixes = [
+    "fire_damage_flat",
+    "cold_damage_flat",
+    "lightning_damage_flat",
+]
+
+# Fire-specific affixes
+[[pools]]
+id = "fire"
+name = "Fire Affixes"
+description = "Affixes related to fire damage and resistance"
+affixes = [
+    "fire_damage_flat",
+    "fire_resist",
+]
+
+# Cold-specific affixes
+[[pools]]
+id = "cold"
+name = "Cold Affixes"
+description = "Affixes related to cold damage and resistance"
+affixes = [
+    "cold_damage_flat",
+    "cold_resist",
+]
+
+# Lightning-specific affixes
+[[pools]]
+id = "lightning"
+name = "Lightning Affixes"
+description = "Affixes related to lightning damage and resistance"
+affixes = [
+    "lightning_damage_flat",
+    "lightning_resist",
+]
+
+# Defensive affixes
+[[pools]]
+id = "defense"
+name = "Defensive Affixes"
+description = "Affixes focused on survivability"
+affixes = [
+    "life_flat",
+    "armour_percent",
+    "evasion_percent",
+    "es_percent",
+    "fire_resist",
+    "cold_resist",
+    "lightning_resist",
+    "life_regen",
+]
+
+# Attribute affixes
+[[pools]]
+id = "attributes"
+name = "Attribute Affixes"
+description = "Strength, Dexterity, Intelligence"
+affixes = [
+    "strength",
+    "dexterity",
+    "intelligence",
+]

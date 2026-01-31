@@ -1,0 +1,165 @@
+# Poison Affixes - Only obtainable through special currencies
+
+# ============================================================================
+# POISON PREFIXES
+# ============================================================================
+
+[[affixes]]
+id = "poison_damage_flat"
+name = "Venomous"
+type = "prefix"
+stat = "added_chaos_damage"
+tags = ["chaos", "poison", "damage"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "dagger", "claw", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 35
+max = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 22
+max = 34
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 10
+max = 21
+
+[[affixes]]
+id = "poison_damage_percent"
+name = "Noxious"
+type = "prefix"
+stat = "increased_chaos_damage"
+tags = ["chaos", "poison", "damage"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "dagger", "claw", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 60
+max = 80
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 40
+max = 59
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 20
+max = 39
+
+[[affixes]]
+id = "poison_damage_over_time"
+name = "Festering"
+type = "prefix"
+stat = "poison_damage_over_time"
+tags = ["chaos", "poison", "damage", "ailment"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "dagger", "claw", "bow", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 40
+max = 55
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 25
+max = 39
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 12
+max = 24
+
+# ============================================================================
+# POISON SUFFIXES
+# ============================================================================
+
+[[affixes]]
+id = "chance_to_poison"
+name = "of Venom"
+type = "suffix"
+stat = "chance_to_poison"
+tags = ["chaos", "poison", "ailment"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "dagger", "claw", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 40
+max = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 25
+max = 39
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 10
+max = 24
+
+[[affixes]]
+id = "poison_duration"
+name = "of Lingering"
+type = "suffix"
+stat = "increased_poison_duration"
+tags = ["chaos", "poison", "ailment", "duration"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "dagger", "claw", "bow", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 40
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+
+[[affixes]]
+id = "chaos_resist"
+name = "of the Plague"
+type = "suffix"
+stat = "chaos_resistance"
+tags = ["chaos", "resistance", "defense"]
+allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 26
+max = 35
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 16
+max = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 15

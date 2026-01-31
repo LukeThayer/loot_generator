@@ -1,0 +1,58 @@
+# Rarity-changing Currencies
+
+[[currencies]]
+id = "upgrade_to_magic"
+name = "Magic Essence"
+description = "Upgrades a normal item to magic quality with one affix"
+category = "Rarity"
+
+[currencies.requires]
+rarities = ["normal"]
+
+[currencies.effects]
+set_rarity = "magic"
+clear_affixes = true
+add_affixes = { min = 1, max = 1 }
+affix_pools = ["common"]
+
+[[currencies]]
+id = "upgrade_to_rare"
+name = "Rare Essence"
+description = "Upgrades a magic item to rare quality, keeping existing affixes"
+category = "Rarity"
+
+[currencies.requires]
+rarities = ["magic"]
+
+[currencies.effects]
+set_rarity = "rare"
+add_affixes = { min = 1, max = 1 }
+affix_pools = ["common"]
+
+[[currencies]]
+id = "enchant_rare"
+name = "Enchantment Orb"
+description = "Transforms a normal item into a rare item with multiple affixes"
+category = "Rarity"
+
+[currencies.requires]
+rarities = ["normal"]
+
+[currencies.effects]
+set_rarity = "rare"
+clear_affixes = true
+add_affixes = { min = 4, max = 6 }
+affix_pools = ["common"]
+
+[[currencies]]
+id = "cleanse"
+name = "Cleansing Orb"
+description = "Removes all affixes, returning item to normal quality"
+category = "Rarity"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+
+[currencies.effects]
+set_rarity = "normal"
+clear_affixes = true

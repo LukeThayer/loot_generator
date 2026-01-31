@@ -1,0 +1,59 @@
+# Titan's Grip - Unique Iron Gauntlets
+
+[unique]
+id = "titans_grip"
+name = "Titan's Grip"
+base_type = "iron_gauntlets"
+flavor = "The strength of giants flows through these ancient plates."
+
+[[unique.mods]]
+stat = "added_strength"
+min = 50
+max = 70
+
+[[unique.mods]]
+stat = "increased_physical_damage"
+min = 20
+max = 30
+
+[[unique.mods]]
+stat = "added_life"
+min = 40
+max = 60
+
+# Recipe: Requires strength and life affixes
+[recipe]
+weight = 100
+
+[[recipe.required_affixes]]
+stat = "added_strength"
+affix_type = "suffix"
+min_tier = 1
+max_tier = 2  # Need T1 or T2 strength
+
+[[recipe.required_affixes]]
+stat = "added_life"
+affix_type = "prefix"
+min_tier = 1
+max_tier = 3
+
+# Map original affixes to unique mods
+# Strength uses direct mode - transfers the actual value
+[[recipe.mappings]]
+from_stat = "added_strength"
+to_mod_index = 0
+mode = "direct"      # Transfer value directly (clamped to 50-70)
+influence = 1.0
+
+# Physical damage has no source - uses random mode explicitly
+[[recipe.mappings]]
+from_stat = "added_strength"  # Source doesn't matter for random
+to_mod_index = 1
+mode = "random"      # Always random, ignores original
+
+# Life uses percentage mode
+[[recipe.mappings]]
+from_stat = "added_life"
+to_mod_index = 2
+mode = "percentage"
+influence = 0.8      # 80% from original quality, 20% random

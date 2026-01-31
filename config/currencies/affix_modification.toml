@@ -1,0 +1,71 @@
+# Affix Modification Currencies
+
+[[currencies]]
+id = "add_affix"
+name = "Affix Shard"
+description = "Adds an affix to a magic item"
+category = "Crafting"
+
+[currencies.requires]
+rarities = ["magic"]
+has_affix_slot = true
+
+[currencies.effects]
+set_rarity = "magic"
+add_affixes = { min = 1, max = 1 }
+affix_pools = ["common"]
+
+[[currencies]]
+id = "add_rare_affix"
+name = "Exalted Shard"
+description = "Adds an affix to a rare item"
+category = "Crafting"
+
+[currencies.requires]
+rarities = ["rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_affixes = { min = 1, max = 1 }
+affix_pools = ["common"]
+
+[[currencies]]
+id = "remove_affix"
+name = "Nullification Orb"
+description = "Removes a random affix from an item"
+category = "Crafting"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix = true
+
+[currencies.effects]
+remove_affixes = 1
+
+[[currencies]]
+id = "reroll_magic"
+name = "Chaos Dust"
+description = "Rerolls all affixes on a magic item"
+category = "Crafting"
+
+[currencies.requires]
+rarities = ["magic"]
+
+[currencies.effects]
+clear_affixes = true
+add_affixes = { min = 1, max = 2 }
+affix_pools = ["common"]
+
+[[currencies]]
+id = "reroll_affix"
+name = "Mutation Shard"
+description = "Rerolls a single random affix on a rare item"
+category = "Crafting"
+
+[currencies.requires]
+rarities = ["rare"]
+has_affix = true
+
+[currencies.effects]
+reroll_affixes = 1
+affix_pools = ["common"]

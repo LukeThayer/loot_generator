@@ -1,0 +1,90 @@
+# Armour Base Types
+
+# Helmets
+[[base_types]]
+id = "iron_helmet"
+name = "Iron Helmet"
+class = "helmet"
+tags = ["armour", "strength"]
+requirements = { level = 5, strength = 15 }
+
+[base_types.defenses]
+armour = { min = 30, max = 40 }
+
+[[base_types]]
+id = "leather_cap"
+name = "Leather Cap"
+class = "helmet"
+tags = ["evasion", "dexterity"]
+requirements = { level = 3, dexterity = 12 }
+
+[base_types.defenses]
+evasion = { min = 25, max = 35 }
+
+[[base_types]]
+id = "silk_hood"
+name = "Silk Hood"
+class = "helmet"
+tags = ["energy_shield", "intelligence", "caster"]
+requirements = { level = 8, intelligence = 20 }
+
+[base_types.defenses]
+energy_shield = { min = 15, max = 25 }
+
+# Body Armour
+[[base_types]]
+id = "plate_vest"
+name = "Plate Vest"
+class = "body_armour"
+tags = ["armour", "strength"]
+requirements = { level = 10, strength = 30 }
+
+[base_types.defenses]
+armour = { min = 80, max = 100 }
+
+[[base_types]]
+id = "leather_vest"
+name = "Leather Vest"
+class = "body_armour"
+tags = ["evasion", "dexterity"]
+requirements = { level = 8, dexterity = 25 }
+
+[base_types.defenses]
+evasion = { min = 60, max = 80 }
+
+[[base_types]]
+id = "silk_robe"
+name = "Silk Robe"
+class = "body_armour"
+tags = ["energy_shield", "intelligence", "caster"]
+requirements = { level = 12, intelligence = 35 }
+
+[base_types.defenses]
+energy_shield = { min = 40, max = 55 }
+
+# Gloves
+[[base_types]]
+id = "iron_gauntlets"
+name = "Iron Gauntlets"
+class = "gloves"
+tags = ["armour", "strength", "attack"]
+requirements = { level = 5, strength = 15 }
+
+[base_types.defenses]
+armour = { min = 15, max = 25 }
+
+# Boots
+[[base_types]]
+id = "iron_greaves"
+name = "Iron Greaves"
+class = "boots"
+tags = ["armour", "strength"]
+requirements = { level = 5, strength = 15 }
+
+[base_types.defenses]
+armour = { min = 20, max = 30 }
+
+[base_types.implicit]
+stat = "increased_movement_speed"
+min = 10
+max = 15

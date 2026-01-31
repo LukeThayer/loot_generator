@@ -1,0 +1,136 @@
+# Currencies that add specific affixes
+
+# Single specific affix - Elemental
+[[currencies]]
+id = "fire_enchant"
+name = "Ember Crystal"
+description = "Adds fire damage to a weapon"
+category = "Elemental"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [{ id = "fire_damage_flat" }]
+
+[[currencies]]
+id = "cold_enchant"
+name = "Frost Crystal"
+description = "Adds cold damage to a weapon"
+category = "Elemental"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [{ id = "cold_damage_flat" }]
+
+[[currencies]]
+id = "lightning_enchant"
+name = "Storm Crystal"
+description = "Adds lightning damage to a weapon"
+category = "Elemental"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [{ id = "lightning_damage_flat" }]
+
+[[currencies]]
+id = "elemental_enchant"
+name = "Prismatic Crystal"
+description = "Adds random elemental damage to a weapon"
+category = "Elemental"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [
+    { id = "fire_damage_flat" },
+    { id = "cold_damage_flat" },
+    { id = "lightning_damage_flat" },
+]
+
+[[currencies]]
+id = "mostly_fire_enchant"
+name = "Volcanic Crystal"
+description = "Adds elemental damage (usually fire)"
+category = "Elemental"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [
+    { id = "fire_damage_flat", weight = 300 },
+    { id = "cold_damage_flat", weight = 50 },
+    { id = "lightning_damage_flat", weight = 50 },
+]
+
+# Defense currencies
+[[currencies]]
+id = "life_blessing"
+name = "Vitality Blessing"
+description = "Adds maximum life to armour (guaranteed T1)"
+category = "Defense"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [{ id = "life_flat", tier = 1 }]
+
+[[currencies]]
+id = "speed_enchant"
+name = "Quicksilver Rune"
+description = "Adds movement speed to boots"
+category = "Defense"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [{ id = "movement_speed" }]
+
+[[currencies]]
+id = "attribute_blessing"
+name = "Attribute Blessing"
+description = "Adds a random attribute to armour"
+category = "Defense"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [
+    { id = "strength" },
+    { id = "dexterity" },
+    { id = "intelligence" },
+]
+
+[[currencies]]
+id = "elemental_ward"
+name = "Warding Rune"
+description = "Adds a random elemental resistance"
+category = "Defense"
+
+[currencies.requires]
+rarities = ["magic", "rare"]
+has_affix_slot = true
+
+[currencies.effects]
+add_specific_affix = [
+    { id = "fire_resist" },
+    { id = "cold_resist" },
+    { id = "lightning_resist" },
+]
