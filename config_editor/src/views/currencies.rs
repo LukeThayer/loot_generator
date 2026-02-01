@@ -261,7 +261,9 @@ pub fn render_edit_form(curr: &CurrencyConfig, app: &App) -> Vec<Line<'static>> 
                 Span::styled("     Add: ", Style::default().fg(Color::Gray)),
                 Span::styled(
                     input_display,
-                    Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
                 ),
             ]));
 
@@ -301,12 +303,18 @@ pub fn render_edit_form(curr: &CurrencyConfig, app: &App) -> Vec<Line<'static>> 
             lines.push(Line::from(vec![
                 Span::styled("     ", Style::default()),
                 Span::styled("Has Affix: ", Style::default().fg(Color::Yellow)),
-                Span::styled(reqs.has_affix.to_string(), Style::default().fg(Color::DarkGray)),
+                Span::styled(
+                    reqs.has_affix.to_string(),
+                    Style::default().fg(Color::DarkGray),
+                ),
             ]));
             lines.push(Line::from(vec![
                 Span::styled("     ", Style::default()),
                 Span::styled("Has Affix Slot: ", Style::default().fg(Color::Yellow)),
-                Span::styled(reqs.has_affix_slot.to_string(), Style::default().fg(Color::DarkGray)),
+                Span::styled(
+                    reqs.has_affix_slot.to_string(),
+                    Style::default().fg(Color::DarkGray),
+                ),
             ]));
         } else {
             // Normal requirements field selection mode
@@ -316,7 +324,9 @@ pub fn render_edit_form(curr: &CurrencyConfig, app: &App) -> Vec<Line<'static>> 
                     Span::styled("     Edit: ", Style::default().fg(Color::Gray)),
                     Span::styled(
                         input_display,
-                        Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                        Style::default()
+                            .fg(Color::Cyan)
+                            .add_modifier(Modifier::BOLD),
                     ),
                 ]));
             }
@@ -389,21 +399,58 @@ pub fn render_edit_form(curr: &CurrencyConfig, app: &App) -> Vec<Line<'static>> 
                 Span::styled("     Edit: ", Style::default().fg(Color::Gray)),
                 Span::styled(
                     input_display,
-                    Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
                 ),
             ]));
         }
 
         // Effects sub-fields
         let effect_items: Vec<(&str, String)> = vec![
-            ("Set Rarity", effects.set_rarity.map(|r| format!("{:?}", r)).unwrap_or_else(|| "none".to_string())),
+            (
+                "Set Rarity",
+                effects
+                    .set_rarity
+                    .map(|r| format!("{:?}", r))
+                    .unwrap_or_else(|| "none".to_string()),
+            ),
             ("Clear Affixes", effects.clear_affixes.to_string()),
-            ("Add Affixes", effects.add_affixes.as_ref().map(|c| format!("{}-{}", c.min, c.max)).unwrap_or_else(|| "none".to_string())),
-            ("Add Specific", format!("{} affix(es)", effects.add_specific_affix.len())),
-            ("Remove Affixes", effects.remove_affixes.map(|n| n.to_string()).unwrap_or_else(|| "none".to_string())),
-            ("Reroll Affixes", effects.reroll_affixes.map(|n| n.to_string()).unwrap_or_else(|| "none".to_string())),
+            (
+                "Add Affixes",
+                effects
+                    .add_affixes
+                    .as_ref()
+                    .map(|c| format!("{}-{}", c.min, c.max))
+                    .unwrap_or_else(|| "none".to_string()),
+            ),
+            (
+                "Add Specific",
+                format!("{} affix(es)", effects.add_specific_affix.len()),
+            ),
+            (
+                "Remove Affixes",
+                effects
+                    .remove_affixes
+                    .map(|n| n.to_string())
+                    .unwrap_or_else(|| "none".to_string()),
+            ),
+            (
+                "Reroll Affixes",
+                effects
+                    .reroll_affixes
+                    .map(|n| n.to_string())
+                    .unwrap_or_else(|| "none".to_string()),
+            ),
             ("Try Unique", effects.try_unique.to_string()),
-            ("Affix Pools", if effects.affix_pools.is_empty() { "none".to_string() } else { effects.affix_pools.join(", ") }),
+            (
+                "Affix Pools",
+                if effects.affix_pools.is_empty() {
+                    "none".to_string()
+                } else {
+                    effects.affix_pools.join(", ")
+                },
+            ),
         ];
 
         for (i, (name, value)) in effect_items.iter().enumerate() {
@@ -431,13 +478,19 @@ pub fn render_edit_form(curr: &CurrencyConfig, app: &App) -> Vec<Line<'static>> 
             // Show input field when editing (depth 3)
             if state.nested_depth >= 3 {
                 let is_adding_new = app.nested_sub_field_index == usize::MAX;
-                let label = if is_adding_new { "     Add: " } else { "     Edit: " };
+                let label = if is_adding_new {
+                    "     Add: "
+                } else {
+                    "     Edit: "
+                };
                 let input_display = format!("{}|", app.text_input.value());
                 lines.push(Line::from(vec![
                     Span::styled(label, Style::default().fg(Color::Gray)),
                     Span::styled(
                         input_display,
-                        Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                        Style::default()
+                            .fg(Color::Cyan)
+                            .add_modifier(Modifier::BOLD),
                     ),
                 ]));
                 lines.push(Line::from(Span::styled(
@@ -467,7 +520,10 @@ pub fn render_edit_form(curr: &CurrencyConfig, app: &App) -> Vec<Line<'static>> 
                     } else {
                         0.0
                     };
-                    let tier_str = specific.tier.map(|t| format!(" T{}", t)).unwrap_or_default();
+                    let tier_str = specific
+                        .tier
+                        .map(|t| format!(" T{}", t))
+                        .unwrap_or_default();
 
                     lines.push(Line::from(vec![
                         Span::styled(marker.to_string(), Style::default().fg(Color::Green)),

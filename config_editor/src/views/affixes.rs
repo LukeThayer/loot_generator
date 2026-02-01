@@ -62,7 +62,10 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
     lines.push(render_section_header("Tiers"));
     for tier in &affix.tiers {
         let range_str = if let Some(ref max_val) = tier.max_value {
-            format!("({}-{} to {}-{}) ", tier.min, tier.max, max_val.min, max_val.max)
+            format!(
+                "({}-{} to {}-{}) ",
+                tier.min, tier.max, max_val.min, max_val.max
+            )
         } else {
             format!("({}-{}) ", tier.min, tier.max)
         };
@@ -71,10 +74,7 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
                 format!("  T{} ", tier.tier),
                 Style::default().fg(Color::Yellow),
             ),
-            Span::styled(
-                range_str,
-                Style::default().fg(Color::White),
-            ),
+            Span::styled(range_str, Style::default().fg(Color::White)),
             Span::styled(
                 format!("ilvl:{} ", tier.min_ilvl),
                 Style::default().fg(Color::Magenta),
@@ -409,7 +409,10 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
             };
 
             let range_str = if let Some(ref max_val) = tier.max_value {
-                format!("{}-{} to {}-{} ", tier.min, tier.max, max_val.min, max_val.max)
+                format!(
+                    "{}-{} to {}-{} ",
+                    tier.min, tier.max, max_val.min, max_val.max
+                )
             } else {
                 format!("{}-{} ", tier.min, tier.max)
             };
@@ -420,10 +423,7 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
                     format!("T{}: ", tier.tier),
                     Style::default().fg(Color::Yellow),
                 ),
-                Span::styled(
-                    range_str,
-                    style,
-                ),
+                Span::styled(range_str, style),
                 Span::styled(
                     format!("ilvl:{} ", tier.min_ilvl),
                     Style::default().fg(Color::Magenta),

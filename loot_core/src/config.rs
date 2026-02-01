@@ -259,14 +259,20 @@ impl ConfigError {
 
 impl From<std::io::Error> for ConfigError {
     fn from(e: std::io::Error) -> Self {
-        ConfigError::Io { error: e, path: None }
+        ConfigError::Io {
+            error: e,
+            path: None,
+        }
     }
 }
 
 impl std::fmt::Display for ConfigError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ConfigError::Io { error, path: Some(p) } => {
+            ConfigError::Io {
+                error,
+                path: Some(p),
+            } => {
                 write!(f, "IO error in '{}': {}", p.display(), error)
             }
             ConfigError::Io { error, path: None } => {

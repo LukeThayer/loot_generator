@@ -72,8 +72,14 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
             };
             lines.push(Line::from(vec![
                 Span::styled("  ", Style::default()),
-                Span::styled(format!("{:?}: ", entry.damage_type), Style::default().fg(color)),
-                Span::styled(format!("{}-{}", entry.min, entry.max), Style::default().fg(Color::White)),
+                Span::styled(
+                    format!("{:?}: ", entry.damage_type),
+                    Style::default().fg(color),
+                ),
+                Span::styled(
+                    format!("{}-{}", entry.min, entry.max),
+                    Style::default().fg(Color::White),
+                ),
             ]));
         }
         if dmg.attack_speed > 0.0 {
@@ -206,7 +212,9 @@ pub fn render_edit_form(bt: &BaseTypeConfig, app: &App) -> Vec<Line<'static>> {
             if d.damages.is_empty() {
                 "No damage".to_string()
             } else {
-                let parts: Vec<String> = d.damages.iter()
+                let parts: Vec<String> = d
+                    .damages
+                    .iter()
                     .map(|e| format!("{:?}:{}-{}", e.damage_type, e.min, e.max))
                     .collect();
                 parts.join(", ")
@@ -445,9 +453,18 @@ pub fn render_edit_form(bt: &BaseTypeConfig, app: &App) -> Vec<Line<'static>> {
 
         // Show defense sub-items with selection marker
         let defense_items = [
-            ("Armour", bt.defenses.as_ref().and_then(|d| d.armour.as_ref())),
-            ("Evasion", bt.defenses.as_ref().and_then(|d| d.evasion.as_ref())),
-            ("Energy Shield", bt.defenses.as_ref().and_then(|d| d.energy_shield.as_ref())),
+            (
+                "Armour",
+                bt.defenses.as_ref().and_then(|d| d.armour.as_ref()),
+            ),
+            (
+                "Evasion",
+                bt.defenses.as_ref().and_then(|d| d.evasion.as_ref()),
+            ),
+            (
+                "Energy Shield",
+                bt.defenses.as_ref().and_then(|d| d.energy_shield.as_ref()),
+            ),
         ];
 
         for (i, (name, value)) in defense_items.iter().enumerate() {
@@ -521,9 +538,21 @@ pub fn render_edit_form(bt: &BaseTypeConfig, app: &App) -> Vec<Line<'static>> {
         // Show the sub-items: attack_speed, crit_chance, spell_efficiency, then damage entries
         let dmg = bt.damage.as_ref();
         let items = [
-            ("Attack Speed", dmg.map(|d| format!("{:.2}", d.attack_speed)).unwrap_or_else(|| "0".to_string())),
-            ("Crit Chance", dmg.map(|d| format!("{:.1}%", d.critical_chance)).unwrap_or_else(|| "0%".to_string())),
-            ("Spell Efficiency", dmg.map(|d| format!("{:.0}%", d.spell_efficiency)).unwrap_or_else(|| "0%".to_string())),
+            (
+                "Attack Speed",
+                dmg.map(|d| format!("{:.2}", d.attack_speed))
+                    .unwrap_or_else(|| "0".to_string()),
+            ),
+            (
+                "Crit Chance",
+                dmg.map(|d| format!("{:.1}%", d.critical_chance))
+                    .unwrap_or_else(|| "0%".to_string()),
+            ),
+            (
+                "Spell Efficiency",
+                dmg.map(|d| format!("{:.0}%", d.spell_efficiency))
+                    .unwrap_or_else(|| "0%".to_string()),
+            ),
         ];
 
         for (i, (name, value)) in items.iter().enumerate() {
@@ -545,7 +574,10 @@ pub fn render_edit_form(bt: &BaseTypeConfig, app: &App) -> Vec<Line<'static>> {
         let damages_selected = state.nested_index == 3 && state.nested_depth < 2;
         let damages_marker = if damages_selected { "  >> " } else { "     " };
         lines.push(Line::from(vec![
-            Span::styled(damages_marker.to_string(), Style::default().fg(Color::Green)),
+            Span::styled(
+                damages_marker.to_string(),
+                Style::default().fg(Color::Green),
+            ),
             Span::styled("Damage Types:", Style::default().fg(Color::Yellow)),
         ]));
 
@@ -563,13 +595,18 @@ pub fn render_edit_form(bt: &BaseTypeConfig, app: &App) -> Vec<Line<'static>> {
                     loot_core::types::DamageType::Chaos => Color::Magenta,
                 };
                 let style = if is_selected {
-                    Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD)
                 } else {
                     Style::default()
                 };
                 lines.push(Line::from(vec![
                     Span::styled(marker.to_string(), Style::default().fg(Color::Green)),
-                    Span::styled(format!("{:?}: ", entry.damage_type), Style::default().fg(color)),
+                    Span::styled(
+                        format!("{:?}: ", entry.damage_type),
+                        Style::default().fg(color),
+                    ),
                     Span::styled(format!("{}-{}", entry.min, entry.max), style),
                 ]));
             }
@@ -620,7 +657,10 @@ pub fn render_edit_form(bt: &BaseTypeConfig, app: &App) -> Vec<Line<'static>> {
             lines.push(Line::from(vec![
                 Span::styled("  >> ", Style::default().fg(Color::Green)),
                 Span::styled(
-                    format!("Lv{} Str{} Dex{} Int{}", req.level, req.strength, req.dexterity, req.intelligence),
+                    format!(
+                        "Lv{} Str{} Dex{} Int{}",
+                        req.level, req.strength, req.dexterity, req.intelligence
+                    ),
                     Style::default().fg(Color::Cyan),
                 ),
             ]));

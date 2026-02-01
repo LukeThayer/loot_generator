@@ -1953,12 +1953,14 @@ impl App {
             }
             Some(EditingEntry::BaseType(bt)) if field_idx == 6 => {
                 // Add a new damage entry
-                let damage = bt.damage.get_or_insert_with(|| loot_core::config::DamageConfig {
-                    damages: Vec::new(),
-                    attack_speed: 1.0,
-                    critical_chance: 5.0,
-                    spell_efficiency: 0.0,
-                });
+                let damage = bt
+                    .damage
+                    .get_or_insert_with(|| loot_core::config::DamageConfig {
+                        damages: Vec::new(),
+                        attack_speed: 1.0,
+                        critical_chance: 5.0,
+                        spell_efficiency: 0.0,
+                    });
                 damage.damages.push(loot_core::config::DamageEntry {
                     damage_type: loot_core::types::DamageType::Physical,
                     min: 1,
@@ -2008,7 +2010,8 @@ impl App {
                 // Add recipe required_affix - validate input first
                 let value = self.text_input.value().trim().to_string();
                 if value.is_empty() {
-                    self.message = Some("Enter: StatType [Prefix|Suffix] [min_tier] [max_tier]".to_string());
+                    self.message =
+                        Some("Enter: StatType [Prefix|Suffix] [min_tier] [max_tier]".to_string());
                     return;
                 }
                 let parts: Vec<&str> = value.split_whitespace().collect();
@@ -2022,13 +2025,15 @@ impl App {
                         let min_tier = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(1);
                         let max_tier = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(99);
 
-                        let recipe = self.editing_recipe.get_or_insert_with(|| UniqueRecipeConfig {
-                            unique_id: String::new(),
-                            base_type: String::new(),
-                            weight: 100,
-                            required_affixes: Vec::new(),
-                            mappings: Vec::new(),
-                        });
+                        let recipe =
+                            self.editing_recipe
+                                .get_or_insert_with(|| UniqueRecipeConfig {
+                                    unique_id: String::new(),
+                                    base_type: String::new(),
+                                    weight: 100,
+                                    required_affixes: Vec::new(),
+                                    mappings: Vec::new(),
+                                });
                         recipe.required_affixes.push(RecipeAffixRequirement {
                             stat,
                             affix_type,
@@ -2048,7 +2053,10 @@ impl App {
                 // Add recipe mapping - validate input first
                 let value = self.text_input.value().trim().to_string();
                 if value.is_empty() {
-                    self.message = Some("Enter: StatType mod_index [percentage|direct|random] [influence]".to_string());
+                    self.message = Some(
+                        "Enter: StatType mod_index [percentage|direct|random] [influence]"
+                            .to_string(),
+                    );
                     return;
                 }
                 let parts: Vec<&str> = value.split_whitespace().collect();
@@ -2061,14 +2069,19 @@ impl App {
                         let to_mod_index = match parts[1].parse::<usize>() {
                             Ok(idx) => idx,
                             Err(_) => {
-                                self.message = Some("Invalid mod_index (must be a number)".to_string());
+                                self.message =
+                                    Some("Invalid mod_index (must be a number)".to_string());
                                 return;
                             }
                         };
 
                         // Check for duplicate mod_index - only first mapping to each mod is used
                         if let Some(ref recipe) = self.editing_recipe {
-                            if recipe.mappings.iter().any(|m| m.to_mod_index == to_mod_index) {
+                            if recipe
+                                .mappings
+                                .iter()
+                                .any(|m| m.to_mod_index == to_mod_index)
+                            {
                                 self.message = Some(format!(
                                     "Mod index {} already has a mapping. Remove it first to replace.",
                                     to_mod_index
@@ -2077,20 +2090,25 @@ impl App {
                             }
                         }
 
-                        let mode = parts.get(2).map(|s| match *s {
-                            "direct" => MappingMode::Direct,
-                            "random" => MappingMode::Random,
-                            _ => MappingMode::Percentage,
-                        }).unwrap_or(MappingMode::Percentage);
+                        let mode = parts
+                            .get(2)
+                            .map(|s| match *s {
+                                "direct" => MappingMode::Direct,
+                                "random" => MappingMode::Random,
+                                _ => MappingMode::Percentage,
+                            })
+                            .unwrap_or(MappingMode::Percentage);
                         let influence = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(1.0);
 
-                        let recipe = self.editing_recipe.get_or_insert_with(|| UniqueRecipeConfig {
-                            unique_id: String::new(),
-                            base_type: String::new(),
-                            weight: 100,
-                            required_affixes: Vec::new(),
-                            mappings: Vec::new(),
-                        });
+                        let recipe =
+                            self.editing_recipe
+                                .get_or_insert_with(|| UniqueRecipeConfig {
+                                    unique_id: String::new(),
+                                    base_type: String::new(),
+                                    weight: 100,
+                                    required_affixes: Vec::new(),
+                                    mappings: Vec::new(),
+                                });
                         recipe.mappings.push(RecipeMapping {
                             from_stat,
                             to_mod_index,
@@ -2098,7 +2116,10 @@ impl App {
                             influence,
                         });
                         self.nested_sub_field_index = recipe.mappings.len() - 1;
-                        self.message = Some(format!("Added mapping: {:?} -> mod {}", from_stat, to_mod_index));
+                        self.message = Some(format!(
+                            "Added mapping: {:?} -> mod {}",
+                            from_stat, to_mod_index
+                        ));
                         self.text_input = TextInputState::new(String::new());
                     }
                     Err(_) => {
@@ -2143,7 +2164,10 @@ impl App {
         }
 
         // For Unique recipe required_affixes
-        if matches!(&self.editing, Some(EditingEntry::Unique(_))) && field_idx == 5 && nested_idx == 1 {
+        if matches!(&self.editing, Some(EditingEntry::Unique(_)))
+            && field_idx == 5
+            && nested_idx == 1
+        {
             if let Some(ref mut recipe) = self.editing_recipe {
                 let sub_idx = self.nested_sub_field_index;
                 if sub_idx < recipe.required_affixes.len() {
@@ -2159,7 +2183,10 @@ impl App {
         }
 
         // For Unique recipe mappings
-        if matches!(&self.editing, Some(EditingEntry::Unique(_))) && field_idx == 5 && nested_idx == 2 {
+        if matches!(&self.editing, Some(EditingEntry::Unique(_)))
+            && field_idx == 5
+            && nested_idx == 2
+        {
             if let Some(ref mut recipe) = self.editing_recipe {
                 let sub_idx = self.nested_sub_field_index;
                 if sub_idx < recipe.mappings.len() {
@@ -2247,7 +2274,13 @@ impl App {
                         let text = if let Some(ref max_val) = tier.max_value {
                             format!(
                                 "{} {} {} {} {} {} {}",
-                                tier.tier, tier.weight, tier.min, tier.max, max_val.min, max_val.max, tier.min_ilvl
+                                tier.tier,
+                                tier.weight,
+                                tier.min,
+                                tier.max,
+                                max_val.min,
+                                max_val.max,
+                                tier.min_ilvl
                             )
                         } else {
                             format!(
@@ -2319,13 +2352,26 @@ impl App {
                         return;
                     }
                     let text = match nested_idx {
-                        0 => bt.damage.as_ref().map(|d| format!("{}", d.attack_speed)).unwrap_or_else(|| "1.0".to_string()),
-                        1 => bt.damage.as_ref().map(|d| format!("{}", d.critical_chance)).unwrap_or_else(|| "5.0".to_string()),
-                        2 => bt.damage.as_ref().map(|d| format!("{}", d.spell_efficiency)).unwrap_or_else(|| "0".to_string()),
+                        0 => bt
+                            .damage
+                            .as_ref()
+                            .map(|d| format!("{}", d.attack_speed))
+                            .unwrap_or_else(|| "1.0".to_string()),
+                        1 => bt
+                            .damage
+                            .as_ref()
+                            .map(|d| format!("{}", d.critical_chance))
+                            .unwrap_or_else(|| "5.0".to_string()),
+                        2 => bt
+                            .damage
+                            .as_ref()
+                            .map(|d| format!("{}", d.spell_efficiency))
+                            .unwrap_or_else(|| "0".to_string()),
                         _ => {
                             // Damage entry (index 4+)
                             let entry_idx = nested_idx - 4;
-                            bt.damage.as_ref()
+                            bt.damage
+                                .as_ref()
                                 .and_then(|d| d.damages.get(entry_idx))
                                 .map(|e| format!("{:?} {} {}", e.damage_type, e.min, e.max))
                                 .unwrap_or_else(|| "Physical 1 10".to_string())
@@ -2342,7 +2388,10 @@ impl App {
                 // Requirements: "level str dex int"
                 if nested_depth == 1 {
                     let r = &bt.requirements;
-                    let text = format!("{} {} {} {}", r.level, r.strength, r.dexterity, r.intelligence);
+                    let text = format!(
+                        "{} {} {} {}",
+                        r.level, r.strength, r.dexterity, r.intelligence
+                    );
                     self.text_input = TextInputState::new(text);
                     self.current_view_state_mut().nested_depth = 2;
                 } else if nested_depth >= 2 {
@@ -2391,7 +2440,11 @@ impl App {
                         self.current_view_state_mut().nested_depth = 2;
                     } else if nested_depth == 2 {
                         // In list mode - Enter edits selected item
-                        if let Some(specific) = curr.effects.add_specific_affix.get(self.nested_sub_field_index) {
+                        if let Some(specific) = curr
+                            .effects
+                            .add_specific_affix
+                            .get(self.nested_sub_field_index)
+                        {
                             let tier_str = specific.tier.map(|t| t.to_string()).unwrap_or_default();
                             let text = format!("{} {} {}", specific.id, tier_str, specific.weight);
                             self.text_input = TextInputState::new(text.trim().to_string());
@@ -2406,17 +2459,26 @@ impl App {
                     // Other effect fields - direct edit
                     if nested_depth == 1 {
                         let text = match nested_idx {
-                            0 => curr.effects.set_rarity
+                            0 => curr
+                                .effects
+                                .set_rarity
                                 .map(|r| format!("{:?}", r))
                                 .unwrap_or_else(|| "none".to_string()),
                             1 => curr.effects.clear_affixes.to_string(),
-                            2 => curr.effects.add_affixes.as_ref()
+                            2 => curr
+                                .effects
+                                .add_affixes
+                                .as_ref()
                                 .map(|c| format!("{} {}", c.min, c.max))
                                 .unwrap_or_else(|| "none".to_string()),
-                            4 => curr.effects.remove_affixes
+                            4 => curr
+                                .effects
+                                .remove_affixes
                                 .map(|n| n.to_string())
                                 .unwrap_or_else(|| "none".to_string()),
-                            5 => curr.effects.reroll_affixes
+                            5 => curr
+                                .effects
+                                .reroll_affixes
                                 .map(|n| n.to_string())
                                 .unwrap_or_else(|| "none".to_string()),
                             6 => curr.effects.try_unique.to_string(),
@@ -2443,7 +2505,9 @@ impl App {
                     0 => {
                         // Weight - direct edit
                         if nested_depth == 1 {
-                            let text = self.editing_recipe.as_ref()
+                            let text = self
+                                .editing_recipe
+                                .as_ref()
                                 .map(|r| r.weight.to_string())
                                 .unwrap_or_else(|| "100".to_string());
                             self.text_input = TextInputState::new(text);
@@ -2451,13 +2515,15 @@ impl App {
                         } else if nested_depth >= 2 {
                             // Save weight
                             if let Ok(weight) = self.text_input.value().trim().parse::<u32>() {
-                                let recipe = self.editing_recipe.get_or_insert_with(|| UniqueRecipeConfig {
-                                    unique_id: String::new(),
-                                    base_type: String::new(),
-                                    weight: 100,
-                                    required_affixes: Vec::new(),
-                                    mappings: Vec::new(),
-                                });
+                                let recipe =
+                                    self.editing_recipe
+                                        .get_or_insert_with(|| UniqueRecipeConfig {
+                                            unique_id: String::new(),
+                                            base_type: String::new(),
+                                            weight: 100,
+                                            required_affixes: Vec::new(),
+                                            mappings: Vec::new(),
+                                        });
                                 recipe.weight = weight;
                                 self.message = Some(format!("Weight set to {}", weight));
                             }
@@ -2567,8 +2633,11 @@ impl App {
                     let parts: Vec<&str> = value.split_whitespace().collect();
                     if parts.len() >= 3 {
                         if let Ok(stat) = Self::parse_stat_type(parts[0]) {
-                            if let (Ok(min), Ok(max)) = (parts[1].parse::<i32>(), parts[2].parse::<i32>()) {
-                                bt.implicit = Some(loot_core::config::ImplicitConfig { stat, min, max });
+                            if let (Ok(min), Ok(max)) =
+                                (parts[1].parse::<i32>(), parts[2].parse::<i32>())
+                            {
+                                bt.implicit =
+                                    Some(loot_core::config::ImplicitConfig { stat, min, max });
                             }
                         }
                     }
@@ -2594,7 +2663,9 @@ impl App {
                     } else {
                         let parts: Vec<&str> = value.split_whitespace().collect();
                         if parts.len() >= 2 {
-                            if let (Ok(min), Ok(max)) = (parts[0].parse::<i32>(), parts[1].parse::<i32>()) {
+                            if let (Ok(min), Ok(max)) =
+                                (parts[0].parse::<i32>(), parts[1].parse::<i32>())
+                            {
                                 let range = loot_core::config::RollRange { min, max };
                                 match nested_idx {
                                     0 => defenses.armour = Some(range),
@@ -2614,12 +2685,14 @@ impl App {
                     self.message = Some("Damage cleared".to_string());
                 } else {
                     // Ensure damage config exists
-                    let damage = bt.damage.get_or_insert_with(|| loot_core::config::DamageConfig {
-                        damages: Vec::new(),
-                        attack_speed: 1.0,
-                        critical_chance: 5.0,
-                        spell_efficiency: 0.0,
-                    });
+                    let damage = bt
+                        .damage
+                        .get_or_insert_with(|| loot_core::config::DamageConfig {
+                            damages: Vec::new(),
+                            attack_speed: 1.0,
+                            critical_chance: 5.0,
+                            spell_efficiency: 0.0,
+                        });
 
                     match nested_idx {
                         0 => {
@@ -2649,7 +2722,9 @@ impl App {
                             let parts: Vec<&str> = value.split_whitespace().collect();
                             if parts.len() >= 3 {
                                 if let Ok(damage_type) = Self::parse_damage_type(parts[0]) {
-                                    if let (Ok(min), Ok(max)) = (parts[1].parse::<i32>(), parts[2].parse::<i32>()) {
+                                    if let (Ok(min), Ok(max)) =
+                                        (parts[1].parse::<i32>(), parts[2].parse::<i32>())
+                                    {
                                         if let Some(entry) = damage.damages.get_mut(entry_idx) {
                                             entry.damage_type = damage_type;
                                             entry.min = min;
@@ -2716,12 +2791,16 @@ impl App {
                         } else {
                             let parts: Vec<&str> = value.split_whitespace().collect();
                             if parts.len() >= 2 {
-                                if let (Ok(min), Ok(max)) = (parts[0].parse::<u32>(), parts[1].parse::<u32>()) {
-                                    curr.effects.add_affixes = Some(loot_core::config::AffixCount { min, max });
+                                if let (Ok(min), Ok(max)) =
+                                    (parts[0].parse::<u32>(), parts[1].parse::<u32>())
+                                {
+                                    curr.effects.add_affixes =
+                                        Some(loot_core::config::AffixCount { min, max });
                                 }
                             } else if let Ok(n) = value.trim().parse::<u32>() {
                                 // Single number means min=max
-                                curr.effects.add_affixes = Some(loot_core::config::AffixCount { min: n, max: n });
+                                curr.effects.add_affixes =
+                                    Some(loot_core::config::AffixCount { min: n, max: n });
                             }
                         }
                     }
@@ -2737,19 +2816,23 @@ impl App {
                                 return;
                             }
                             let tier = parts.get(1).and_then(|s| s.parse::<u32>().ok());
-                            let weight = parts.get(2).and_then(|s| s.parse::<u32>().ok()).unwrap_or(100);
+                            let weight = parts
+                                .get(2)
+                                .and_then(|s| s.parse::<u32>().ok())
+                                .unwrap_or(100);
                             let sub_idx = self.nested_sub_field_index;
 
                             if sub_idx == usize::MAX {
                                 // Adding new entry
-                                curr.effects.add_specific_affix.push(loot_core::config::SpecificAffix {
-                                    id,
-                                    tier,
-                                    weight,
-                                });
-                                self.nested_sub_field_index = curr.effects.add_specific_affix.len() - 1;
+                                curr.effects
+                                    .add_specific_affix
+                                    .push(loot_core::config::SpecificAffix { id, tier, weight });
+                                self.nested_sub_field_index =
+                                    curr.effects.add_specific_affix.len() - 1;
                                 self.message = Some("Affix added".to_string());
-                            } else if let Some(specific) = curr.effects.add_specific_affix.get_mut(sub_idx) {
+                            } else if let Some(specific) =
+                                curr.effects.add_specific_affix.get_mut(sub_idx)
+                            {
                                 // Editing existing entry
                                 specific.id = id;
                                 specific.tier = tier;

@@ -61,7 +61,11 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
     }
 
     // Check for recipe and show details
-    if let Some(recipe) = config.unique_recipes.iter().find(|r| r.unique_id == uniq.id) {
+    if let Some(recipe) = config
+        .unique_recipes
+        .iter()
+        .find(|r| r.unique_id == uniq.id)
+    {
         lines.push(Line::from(""));
         lines.push(render_section_header("Crafting Recipe"));
         lines.push(preview_line("Weight", &recipe.weight.to_string()));
@@ -72,7 +76,8 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
                 Style::default().fg(Color::Yellow),
             )));
             for req in &recipe.required_affixes {
-                let affix_type_str = req.affix_type
+                let affix_type_str = req
+                    .affix_type
                     .map(|t| format!(" ({:?})", t))
                     .unwrap_or_default();
                 let tier_str = if req.min_tier == 1 && req.max_tier == 99 {
@@ -96,7 +101,10 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
                 lines.push(Line::from(Span::styled(
                     format!(
                         "    {:?} -> mod[{}] ({:?}, {:.0}%)",
-                        mapping.from_stat, mapping.to_mod_index, mapping.mode, mapping.influence * 100.0
+                        mapping.from_stat,
+                        mapping.to_mod_index,
+                        mapping.mode,
+                        mapping.influence * 100.0
                     ),
                     Style::default().fg(Color::White),
                 )));
@@ -221,7 +229,14 @@ pub fn render_edit_form_with_recipe(
 
     // Recipe section
     let recipe_summary = recipe
-        .map(|r| format!("w:{}, {} affixes, {} mappings", r.weight, r.required_affixes.len(), r.mappings.len()))
+        .map(|r| {
+            format!(
+                "w:{}, {} affixes, {} mappings",
+                r.weight,
+                r.required_affixes.len(),
+                r.mappings.len()
+            )
+        })
         .unwrap_or_else(|| "None (press Enter to create)".to_string());
     lines.push(render_nested_field("Recipe", &recipe_summary, 5, app));
 
@@ -231,9 +246,24 @@ pub fn render_edit_form_with_recipe(
 
         // Recipe sub-fields
         let recipe_items: Vec<(&str, String)> = vec![
-            ("Weight", recipe.map(|r| r.weight.to_string()).unwrap_or_else(|| "100".to_string())),
-            ("Required Affixes", recipe.map(|r| format!("{} item(s)", r.required_affixes.len())).unwrap_or_else(|| "0 item(s)".to_string())),
-            ("Mappings", recipe.map(|r| format!("{} item(s)", r.mappings.len())).unwrap_or_else(|| "0 item(s)".to_string())),
+            (
+                "Weight",
+                recipe
+                    .map(|r| r.weight.to_string())
+                    .unwrap_or_else(|| "100".to_string()),
+            ),
+            (
+                "Required Affixes",
+                recipe
+                    .map(|r| format!("{} item(s)", r.required_affixes.len()))
+                    .unwrap_or_else(|| "0 item(s)".to_string()),
+            ),
+            (
+                "Mappings",
+                recipe
+                    .map(|r| format!("{} item(s)", r.mappings.len()))
+                    .unwrap_or_else(|| "0 item(s)".to_string()),
+            ),
         ];
 
         // Show input field when editing weight or in list mode
@@ -249,7 +279,9 @@ pub fn render_edit_form_with_recipe(
                 Span::styled(label, Style::default().fg(Color::Gray)),
                 Span::styled(
                     input_display,
-                    Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
                 ),
             ]));
 
@@ -302,13 +334,17 @@ pub fn render_edit_form_with_recipe(
                         } else {
                             Style::default().fg(Color::White)
                         };
-                        let affix_type_str = req.affix_type
+                        let affix_type_str = req
+                            .affix_type
                             .map(|t| format!(" {:?}", t))
                             .unwrap_or_default();
                         lines.push(Line::from(vec![
                             Span::styled(marker.to_string(), Style::default().fg(Color::Green)),
                             Span::styled(
-                                format!("{:?}{} T{}-{}", req.stat, affix_type_str, req.min_tier, req.max_tier),
+                                format!(
+                                    "{:?}{} T{}-{}",
+                                    req.stat, affix_type_str, req.min_tier, req.max_tier
+                                ),
                                 style,
                             ),
                         ]));
@@ -355,7 +391,10 @@ pub fn render_edit_form_with_recipe(
                             Span::styled(
                                 format!(
                                     "{:?} -> [{}] {:?} {:.0}%",
-                                    mapping.from_stat, mapping.to_mod_index, mapping.mode, mapping.influence * 100.0
+                                    mapping.from_stat,
+                                    mapping.to_mod_index,
+                                    mapping.mode,
+                                    mapping.influence * 100.0
                                 ),
                                 style,
                             ),
@@ -391,7 +430,10 @@ pub fn render_edit_form_with_recipe(
                 )));
                 for (i, mod_cfg) in uniq.mods.iter().enumerate() {
                     lines.push(Line::from(Span::styled(
-                        format!("       [{}] {:?} ({}-{})", i, mod_cfg.stat, mod_cfg.min, mod_cfg.max),
+                        format!(
+                            "       [{}] {:?} ({}-{})",
+                            i, mod_cfg.stat, mod_cfg.min, mod_cfg.max
+                        ),
                         Style::default().fg(Color::DarkGray),
                     )));
                 }

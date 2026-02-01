@@ -1,4 +1,6 @@
-use crate::config::{CurrencyConfig, MappingMode, RecipeAffixRequirement, SpecificAffix, UniqueRecipeConfig};
+use crate::config::{
+    CurrencyConfig, MappingMode, RecipeAffixRequirement, SpecificAffix, UniqueRecipeConfig,
+};
 use crate::generator::Generator;
 use crate::item::{Item, Modifier};
 use crate::types::*;
@@ -79,7 +81,11 @@ pub fn apply_currency(
 }
 
 /// Check if currency requirements are met
-fn check_requirements(generator: &Generator, item: &Item, currency: &CurrencyConfig) -> Result<(), CurrencyError> {
+fn check_requirements(
+    generator: &Generator,
+    item: &Item,
+    currency: &CurrencyConfig,
+) -> Result<(), CurrencyError> {
     let reqs = &currency.requires;
     let effects = &currency.effects;
 
@@ -100,8 +106,16 @@ fn check_requirements(generator: &Generator, item: &Item, currency: &CurrencyCon
     // If the currency will change rarity, check against target rarity's limits
     if reqs.has_affix_slot {
         let target_rarity = effects.set_rarity.unwrap_or(item.rarity);
-        let prefix_count = if effects.clear_affixes { 0 } else { item.prefixes.len() };
-        let suffix_count = if effects.clear_affixes { 0 } else { item.suffixes.len() };
+        let prefix_count = if effects.clear_affixes {
+            0
+        } else {
+            item.prefixes.len()
+        };
+        let suffix_count = if effects.clear_affixes {
+            0
+        } else {
+            item.suffixes.len()
+        };
 
         let can_add_prefix = prefix_count < target_rarity.max_prefixes();
         let can_add_suffix = suffix_count < target_rarity.max_suffixes();
@@ -115,7 +129,13 @@ fn check_requirements(generator: &Generator, item: &Item, currency: &CurrencyCon
     // This prevents imbue currencies from upgrading rarity when the affix can't be added
     if !effects.add_specific_affix.is_empty() {
         let target_rarity = effects.set_rarity.unwrap_or(item.rarity);
-        if !can_add_any_specific_affix(generator, item, &effects.add_specific_affix, target_rarity, effects.clear_affixes) {
+        if !can_add_any_specific_affix(
+            generator,
+            item,
+            &effects.add_specific_affix,
+            target_rarity,
+            effects.clear_affixes,
+        ) {
             return Err(CurrencyError::NoValidAffixes);
         }
     }
@@ -150,8 +170,16 @@ fn can_add_any_specific_affix(
     };
 
     // Calculate available slots based on target rarity
-    let prefix_count = if will_clear_affixes { 0 } else { item.prefixes.len() };
-    let suffix_count = if will_clear_affixes { 0 } else { item.suffixes.len() };
+    let prefix_count = if will_clear_affixes {
+        0
+    } else {
+        item.prefixes.len()
+    };
+    let suffix_count = if will_clear_affixes {
+        0
+    } else {
+        item.suffixes.len()
+    };
     let can_add_prefix = prefix_count < target_rarity.max_prefixes();
     let can_add_suffix = suffix_count < target_rarity.max_suffixes();
 
@@ -206,7 +234,9 @@ impl std::fmt::Display for CurrencyError {
             CurrencyError::NoMatchingRecipe => write!(f, "No matching unique recipe"),
             CurrencyError::AffixNotFound(id) => write!(f, "Affix not found: {}", id),
             CurrencyError::AffixAlreadyPresent(id) => write!(f, "Affix already on item: {}", id),
-            CurrencyError::AffixNotAllowed(id) => write!(f, "Affix not allowed on this item: {}", id),
+            CurrencyError::AffixNotAllowed(id) => {
+                write!(f, "Affix not allowed on this item: {}", id)
+            }
             CurrencyError::TierNotFound { affix_id, tier } => {
                 write!(f, "Tier {} not found for affix {}", tier, affix_id)
             }
@@ -221,7 +251,12 @@ impl std::error::Error for CurrencyError {}
 
 /// Add a random affix to the item, returns false if no valid affix/slot available
 /// If pools is non-empty, only affixes from those pools will be considered
-fn add_random_affix(generator: &Generator, item: &mut Item, pools: &[String], rng: &mut ChaCha8Rng) -> bool {
+fn add_random_affix(
+    generator: &Generator,
+    item: &mut Item,
+    pools: &[String],
+    rng: &mut ChaCha8Rng,
+) -> bool {
     let existing: Vec<String> = item
         .prefixes
         .iter()
@@ -251,8 +286,9 @@ fn add_random_affix(generator: &Generator, item: &mut Item, pools: &[String], rn
     };
 
     let item_level = item.requirements.level as u32;
-    if let Some(modifier) = generator.roll_affix_from_pools(item.class, &item.tags, affix_type, &existing, pools, item_level, rng)
-    {
+    if let Some(modifier) = generator.roll_affix_from_pools(
+        item.class, &item.tags, affix_type, &existing, pools, item_level, rng,
+    ) {
         match affix_type {
             AffixType::Prefix => item.prefixes.push(modifier),
             AffixType::Suffix => item.suffixes.push(modifier),
@@ -271,9 +307,9 @@ fn add_random_affix(generator: &Generator, item: &mut Item, pools: &[String], rn
         };
 
         if can_other {
-            if let Some(modifier) =
-                generator.roll_affix_from_pools(item.class, &item.tags, other_type, &existing, pools, item_level, rng)
-            {
+            if let Some(modifier) = generator.roll_affix_from_pools(
+                item.class, &item.tags, other_type, &existing, pools, item_level, rng,
+            ) {
                 match other_type {
                     AffixType::Prefix => item.prefixes.push(modifier),
                     AffixType::Suffix => item.suffixes.push(modifier),
@@ -384,7 +420,9 @@ fn add_affix_by_id(
         tier_cfg
     } else {
         // Roll tier based on weights, filtered by item level
-        let eligible_tiers: Vec<_> = affix.tiers.iter()
+        let eligible_tiers: Vec<_> = affix
+            .tiers
+            .iter()
             .filter(|t| t.min_ilvl <= item_level)
             .collect();
 
@@ -488,9 +526,15 @@ fn reroll_random_affix(
             .map(|m| m.affix_id.clone())
             .collect();
 
-        if let Some(modifier) =
-            generator.roll_affix_from_pools(item.class, &item.tags, AffixType::Prefix, &existing_ids, pools, item_level, rng)
-        {
+        if let Some(modifier) = generator.roll_affix_from_pools(
+            item.class,
+            &item.tags,
+            AffixType::Prefix,
+            &existing_ids,
+            pools,
+            item_level,
+            rng,
+        ) {
             item.prefixes.push(modifier);
         }
     } else {
@@ -504,9 +548,15 @@ fn reroll_random_affix(
             .map(|m| m.affix_id.clone())
             .collect();
 
-        if let Some(modifier) =
-            generator.roll_affix_from_pools(item.class, &item.tags, AffixType::Suffix, &existing_ids, pools, item_level, rng)
-        {
+        if let Some(modifier) = generator.roll_affix_from_pools(
+            item.class,
+            &item.tags,
+            AffixType::Suffix,
+            &existing_ids,
+            pools,
+            item_level,
+            rng,
+        ) {
             item.suffixes.push(modifier);
         }
     }

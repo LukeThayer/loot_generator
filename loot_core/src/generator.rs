@@ -1,4 +1,5 @@
 use crate::config::{AffixConfig, BaseTypeConfig, Config, UniqueConfig};
+use crate::currency::{apply_currency, CurrencyError};
 use crate::item::{Item, Modifier};
 use crate::types::*;
 use rand::prelude::*;
@@ -130,7 +131,15 @@ impl Generator {
         item_level: u32,
         rng: &mut ChaCha8Rng,
     ) -> Option<Modifier> {
-        self.roll_affix_from_pools(class, item_tags, affix_type, existing_affix_ids, &[], item_level, rng)
+        self.roll_affix_from_pools(
+            class,
+            item_tags,
+            affix_type,
+            existing_affix_ids,
+            &[],
+            item_level,
+            rng,
+        )
     }
 
     /// Check if an affix has at least one tag matching the item's tags
@@ -194,7 +203,9 @@ impl Generator {
 
         // Select tier (weighted by tier weight, filtered by item level)
         // Only include tiers where min_ilvl <= item_level
-        let eligible_tiers: Vec<_> = affix.tiers.iter()
+        let eligible_tiers: Vec<_> = affix
+            .tiers
+            .iter()
             .filter(|t| t.min_ilvl <= item_level)
             .collect();
 
@@ -265,9 +276,9 @@ impl Generator {
             };
 
             let item_level = item.requirements.level as u32;
-            if let Some(modifier) =
-                self.roll_affix(item.class, &item.tags, affix_type, &existing, item_level, rng)
-            {
+            if let Some(modifier) = self.roll_affix(
+                item.class, &item.tags, affix_type, &existing, item_level, rng,
+            ) {
                 match affix_type {
                     AffixType::Prefix => item.prefixes.push(modifier),
                     AffixType::Suffix => item.suffixes.push(modifier),
@@ -313,9 +324,9 @@ impl Generator {
             };
 
             let item_level = item.requirements.level as u32;
-            if let Some(modifier) =
-                self.roll_affix(item.class, &item.tags, affix_type, &existing, item_level, rng)
-            {
+            if let Some(modifier) = self.roll_affix(
+                item.class, &item.tags, affix_type, &existing, item_level, rng,
+            ) {
                 match affix_type {
                     AffixType::Prefix => item.prefixes.push(modifier),
                     AffixType::Suffix => item.suffixes.push(modifier),
@@ -420,5 +431,45 @@ impl Generator {
         }
 
         Some(item)
+    }
+
+    /// Apply a currency to an item by currency ID
+    ///
+    /// Returns `None` if the currency ID doesn't exist, or `Some(Result)` with
+    /// the result of applying the currency.
+    pub fn apply_currency(
+        &self,
+        item: &mut Item,
+        currency_id: &str,
+        rng: &mut ChaCha8Rng,
+    ) -> Option<Result<(), CurrencyError>> {
+        let currency = self.config.currencies.get(currency_id)?;
+        Some(apply_currency(self, item, currency, rng))
+    }
+
+    /// Check if a currency can be applied to an item
+    pub fn can_apply_currency(&self, item: &Item, currency_id: &str) -> bool {
+        let Some(currency) = self.config.currencies.get(currency_id) else {
+            return false;
+        };
+
+        let reqs = &currency.requires;
+
+        // Check rarity requirement
+        if !reqs.rarities.is_empty() && !reqs.rarities.contains(&item.rarity) {
+            return false;
+        }
+
+        // Check has_affix requirement
+        if reqs.has_affix && item.prefixes.is_empty() && item.suffixes.is_empty() {
+            return false;
+        }
+
+        // Check has_affix_slot requirement
+        if reqs.has_affix_slot && !item.can_add_prefix() && !item.can_add_suffix() {
+            return false;
+        }
+
+        true
     }
 }

@@ -138,12 +138,7 @@ impl ItemClass {
     }
 
     pub fn is_accessory(&self) -> bool {
-        matches!(
-            self,
-            ItemClass::Ring
-                | ItemClass::Amulet
-                | ItemClass::Belt
-        )
+        matches!(self, ItemClass::Ring | ItemClass::Amulet | ItemClass::Belt)
     }
 }
 

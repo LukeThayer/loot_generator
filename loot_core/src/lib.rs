@@ -6,9 +6,10 @@ pub mod storage;
 pub mod types;
 
 pub use config::Config;
+pub use currency::CurrencyError;
 pub use generator::Generator;
 pub use item::Item;
-pub use storage::StoredItem;
+pub use storage::{BinaryDecode, BinaryEncode, DecodeError, ItemCollection, Operation, StoredItem};
 pub use types::*;
 
 #[cfg(test)]

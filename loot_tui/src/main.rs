@@ -1,5 +1,7 @@
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind, KeyModifiers},
+    event::{
+        self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind, KeyModifiers,
+    },
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -217,7 +219,9 @@ impl App {
     }
 
     fn generator(&self) -> &Generator {
-        self.generator.as_ref().expect("Generator not available - config error")
+        self.generator
+            .as_ref()
+            .expect("Generator not available - config error")
     }
 
     fn selected_item(&self) -> Option<&(Item, StoredItem)> {
@@ -268,7 +272,13 @@ impl App {
         };
 
         // Clone currency config before getting mutable reference to inventory
-        let currency = self.generator().config().currencies.get(currency_id).unwrap().clone();
+        let currency = self
+            .generator()
+            .config()
+            .currencies
+            .get(currency_id)
+            .unwrap()
+            .clone();
 
         let Some((item, stored)) = self.inventory.get_mut(idx) else {
             self.message = Some("No item selected".to_string());
@@ -276,10 +286,16 @@ impl App {
         };
 
         // Save affix state before applying
-        let before_prefix_ids: Vec<String> =
-            item.prefixes.iter().map(|m| format!("{}:{}", m.affix_id, m.value)).collect();
-        let before_suffix_ids: Vec<String> =
-            item.suffixes.iter().map(|m| format!("{}:{}", m.affix_id, m.value)).collect();
+        let before_prefix_ids: Vec<String> = item
+            .prefixes
+            .iter()
+            .map(|m| format!("{}:{}", m.affix_id, m.value))
+            .collect();
+        let before_suffix_ids: Vec<String> = item
+            .suffixes
+            .iter()
+            .map(|m| format!("{}:{}", m.affix_id, m.value))
+            .collect();
 
         let op_seed: u64 = rand::random();
         let mut rng = Generator::make_rng(op_seed);
@@ -444,7 +460,9 @@ impl App {
             use rand::Rng;
             let mut rng = rand::thread_rng();
             let v = rng.gen_range(tier.min..=tier.max);
-            let v_max = tier.max_value.map(|range| rng.gen_range(range.min..=range.max));
+            let v_max = tier
+                .max_value
+                .map(|range| rng.gen_range(range.min..=range.max));
             (v, v_max)
         };
 
@@ -490,7 +508,11 @@ impl App {
             // Generate a rare name if upgrading to rare
             let seed: u64 = rand::random();
             let mut rng = Generator::make_rng(seed);
-            item.name = self.generator.as_ref().unwrap().generate_rare_name(&mut rng);
+            item.name = self
+                .generator
+                .as_ref()
+                .unwrap()
+                .generate_rare_name(&mut rng);
         } else if total_affixes >= 1 && item.rarity == loot_core::Rarity::Normal {
             item.rarity = loot_core::Rarity::Magic;
         }
@@ -512,17 +534,24 @@ impl App {
     }
 
     fn update_currency_list(&mut self) {
-        let category = self.currency_popup_state.categories
+        let category = self
+            .currency_popup_state
+            .categories
             .get(self.currency_popup_state.selected_category)
             .cloned()
             .unwrap_or_default();
 
-        let mut currencies: Vec<(String, String, String)> = self.generator()
+        let mut currencies: Vec<(String, String, String)> = self
+            .generator()
             .config()
             .currencies
             .values()
             .filter(|c| {
-                let c_cat = if c.category.is_empty() { "Other" } else { &c.category };
+                let c_cat = if c.category.is_empty() {
+                    "Other"
+                } else {
+                    &c.category
+                };
                 c_cat == category
             })
             .map(|c| (c.id.clone(), c.name.clone(), c.description.clone()))
@@ -541,7 +570,8 @@ impl App {
     fn next_currency_category(&mut self) {
         if !self.currency_popup_state.categories.is_empty() {
             self.currency_popup_state.selected_category =
-                (self.currency_popup_state.selected_category + 1) % self.currency_popup_state.categories.len();
+                (self.currency_popup_state.selected_category + 1)
+                    % self.currency_popup_state.categories.len();
             self.update_currency_list();
         }
     }
@@ -549,7 +579,8 @@ impl App {
     fn prev_currency_category(&mut self) {
         if !self.currency_popup_state.categories.is_empty() {
             if self.currency_popup_state.selected_category == 0 {
-                self.currency_popup_state.selected_category = self.currency_popup_state.categories.len() - 1;
+                self.currency_popup_state.selected_category =
+                    self.currency_popup_state.categories.len() - 1;
             } else {
                 self.currency_popup_state.selected_category -= 1;
             }
@@ -558,7 +589,10 @@ impl App {
     }
 
     fn apply_selected_currency(&mut self) {
-        let currency_id = self.currency_popup_state.list_state.selected()
+        let currency_id = self
+            .currency_popup_state
+            .list_state
+            .selected()
             .and_then(|i| self.currency_popup_state.currencies.get(i))
             .map(|(id, _, _)| id.clone());
 
@@ -569,7 +603,9 @@ impl App {
     }
 
     fn get_selected_currency_id(&self) -> Option<&str> {
-        self.currency_popup_state.list_state.selected()
+        self.currency_popup_state
+            .list_state
+            .selected()
             .and_then(|i| self.currency_popup_state.currencies.get(i))
             .map(|(id, _, _)| id.as_str())
     }
@@ -751,14 +787,18 @@ fn handle_currency_keys(app: &mut App, code: KeyCode) {
         KeyCode::Up | KeyCode::Char('k') => {
             if let Some(selected) = app.currency_popup_state.list_state.selected() {
                 if selected > 0 {
-                    app.currency_popup_state.list_state.select(Some(selected - 1));
+                    app.currency_popup_state
+                        .list_state
+                        .select(Some(selected - 1));
                 }
             }
         }
         KeyCode::Down | KeyCode::Char('j') => {
             if let Some(selected) = app.currency_popup_state.list_state.selected() {
                 if selected < app.currency_popup_state.currencies.len().saturating_sub(1) {
-                    app.currency_popup_state.list_state.select(Some(selected + 1));
+                    app.currency_popup_state
+                        .list_state
+                        .select(Some(selected + 1));
                 }
             } else if !app.currency_popup_state.currencies.is_empty() {
                 app.currency_popup_state.list_state.select(Some(0));
@@ -890,9 +930,10 @@ fn render_config_error(f: &mut Frame, error: &ConfigError) {
 
     // Build error content
     let mut lines = vec![
-        Line::from(vec![
-            Span::styled("Configuration Error", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD))
-        ]),
+        Line::from(vec![Span::styled(
+            "Configuration Error",
+            Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+        )]),
         Line::from(""),
     ];
 
@@ -908,9 +949,12 @@ fn render_config_error(f: &mut Frame, error: &ConfigError) {
     lines.push(Line::from(""));
 
     // File location
-    lines.push(Line::from(vec![
-        Span::styled("Location:", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
-    ]));
+    lines.push(Line::from(vec![Span::styled(
+        "Location:",
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD),
+    )]));
     for line in error.location_description().lines() {
         lines.push(Line::from(vec![
             Span::raw("  "),
@@ -920,9 +964,12 @@ fn render_config_error(f: &mut Frame, error: &ConfigError) {
     lines.push(Line::from(""));
 
     // Error message
-    lines.push(Line::from(vec![
-        Span::styled("Error:", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
-    ]));
+    lines.push(Line::from(vec![Span::styled(
+        "Error:",
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD),
+    )]));
     for line in error.error_message().lines() {
         lines.push(Line::from(vec![
             Span::raw("  "),
@@ -935,8 +982,16 @@ fn render_config_error(f: &mut Frame, error: &ConfigError) {
     lines.push(Line::from(""));
     lines.push(Line::from(vec![
         Span::styled("Press ", Style::default().fg(Color::DarkGray)),
-        Span::styled("q", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
-        Span::styled(" to quit and fix the configuration file.", Style::default().fg(Color::DarkGray)),
+        Span::styled(
+            "q",
+            Style::default()
+                .fg(Color::White)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(
+            " to quit and fix the configuration file.",
+            Style::default().fg(Color::DarkGray),
+        ),
     ]));
 
     let paragraph = Paragraph::new(lines)
@@ -945,7 +1000,7 @@ fn render_config_error(f: &mut Frame, error: &ConfigError) {
                 .borders(Borders::ALL)
                 .border_style(Style::default().fg(Color::Red))
                 .title(" Config Error ")
-                .title_style(Style::default().fg(Color::Red).add_modifier(Modifier::BOLD))
+                .title_style(Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)),
         )
         .wrap(Wrap { trim: false });
 
@@ -1017,7 +1072,9 @@ fn render_currency_popup(f: &mut Frame, app: &mut App) {
         .split(main_chunks[0]);
 
     // Category tabs
-    let tab_titles: Vec<&str> = app.currency_popup_state.categories
+    let tab_titles: Vec<&str> = app
+        .currency_popup_state
+        .categories
         .iter()
         .map(|s| s.as_str())
         .collect();
@@ -1039,7 +1096,9 @@ fn render_currency_popup(f: &mut Frame, app: &mut App) {
     f.render_widget(tabs.block(tab_block), left_chunks[0]);
 
     // Currency list
-    let items: Vec<ListItem> = app.currency_popup_state.currencies
+    let items: Vec<ListItem> = app
+        .currency_popup_state
+        .currencies
         .iter()
         .map(|(_, name, _)| {
             ListItem::new(Span::styled(
@@ -1063,7 +1122,11 @@ fn render_currency_popup(f: &mut Frame, app: &mut App) {
         )
         .highlight_symbol("> ");
 
-    f.render_stateful_widget(list, left_chunks[1], &mut app.currency_popup_state.list_state);
+    f.render_stateful_widget(
+        list,
+        left_chunks[1],
+        &mut app.currency_popup_state.list_state,
+    );
 
     // Right side: preview panel
     let preview_content = build_currency_preview(app);
@@ -1086,7 +1149,8 @@ fn build_currency_preview(app: &App) -> Text<'static> {
     let item = app.selected_item().map(|(item, _)| item);
 
     // Get selected currency
-    let currency = app.get_selected_currency_id()
+    let currency = app
+        .get_selected_currency_id()
         .and_then(|id| app.generator().config().currencies.get(id));
 
     // Show current item header
@@ -1166,9 +1230,13 @@ fn build_currency_preview(app: &App) -> Text<'static> {
 
         if !item.prefixes.is_empty() || !item.suffixes.is_empty() {
             lines.push(Line::from(Span::styled(
-                format!("Mods ({}/{}P {}/{}S):",
-                    item.prefixes.len(), item.rarity.max_prefixes(),
-                    item.suffixes.len(), item.rarity.max_suffixes()),
+                format!(
+                    "Mods ({}/{}P {}/{}S):",
+                    item.prefixes.len(),
+                    item.rarity.max_prefixes(),
+                    item.suffixes.len(),
+                    item.rarity.max_suffixes()
+                ),
                 Style::default().fg(Color::Gray),
             )));
 
@@ -1181,7 +1249,10 @@ fn build_currency_preview(app: &App) -> Text<'static> {
                 lines.push(Line::from(vec![
                     marker,
                     Span::styled(prefix.display(), Style::default().fg(Color::Cyan)),
-                    Span::styled(format!(" [T{}]", prefix.tier), Style::default().fg(Color::DarkGray)),
+                    Span::styled(
+                        format!(" [T{}]", prefix.tier),
+                        Style::default().fg(Color::DarkGray),
+                    ),
                 ]));
             }
             for (i, suffix) in item.suffixes.iter().enumerate() {
@@ -1193,7 +1264,10 @@ fn build_currency_preview(app: &App) -> Text<'static> {
                 lines.push(Line::from(vec![
                     marker,
                     Span::styled(suffix.display(), Style::default().fg(Color::Green)),
-                    Span::styled(format!(" [T{}]", suffix.tier), Style::default().fg(Color::DarkGray)),
+                    Span::styled(
+                        format!(" [T{}]", suffix.tier),
+                        Style::default().fg(Color::DarkGray),
+                    ),
                 ]));
             }
         } else {
@@ -1215,7 +1289,9 @@ fn build_currency_preview(app: &App) -> Text<'static> {
     if let Some(currency) = currency {
         lines.push(Line::from(Span::styled(
             currency.name.clone(),
-            Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
         )));
         lines.push(Line::from(Span::styled(
             currency.description.clone(),
@@ -1231,8 +1307,11 @@ fn build_currency_preview(app: &App) -> Text<'static> {
 
         let reqs = &currency.requires;
         if !reqs.rarities.is_empty() {
-            let rarity_str: Vec<String> = reqs.rarities.iter().map(|r| format!("{:?}", r)).collect();
-            let meets_req = item.map(|i| reqs.rarities.contains(&i.rarity)).unwrap_or(false);
+            let rarity_str: Vec<String> =
+                reqs.rarities.iter().map(|r| format!("{:?}", r)).collect();
+            let meets_req = item
+                .map(|i| reqs.rarities.contains(&i.rarity))
+                .unwrap_or(false);
             let color = if meets_req { Color::Green } else { Color::Red };
             lines.push(Line::from(vec![
                 Span::raw("  Rarity: ".to_string()),
@@ -1240,25 +1319,44 @@ fn build_currency_preview(app: &App) -> Text<'static> {
             ]));
         }
         if reqs.has_affix {
-            let meets_req = item.map(|i| !i.prefixes.is_empty() || !i.suffixes.is_empty()).unwrap_or(false);
+            let meets_req = item
+                .map(|i| !i.prefixes.is_empty() || !i.suffixes.is_empty())
+                .unwrap_or(false);
             let color = if meets_req { Color::Green } else { Color::Red };
-            lines.push(Line::from(Span::styled("  Must have affixes".to_string(), Style::default().fg(color))));
+            lines.push(Line::from(Span::styled(
+                "  Must have affixes".to_string(),
+                Style::default().fg(color),
+            )));
         }
         if reqs.has_affix_slot {
-            let meets_req = item.map(|i| i.can_add_prefix() || i.can_add_suffix()).unwrap_or(false);
+            let meets_req = item
+                .map(|i| i.can_add_prefix() || i.can_add_suffix())
+                .unwrap_or(false);
             // Check against target rarity if set_rarity is specified
             let meets_req = if !meets_req && currency.effects.set_rarity.is_some() {
                 let target = currency.effects.set_rarity.unwrap();
                 item.map(|i| {
-                    let prefix_count = if currency.effects.clear_affixes { 0 } else { i.prefixes.len() };
-                    let suffix_count = if currency.effects.clear_affixes { 0 } else { i.suffixes.len() };
+                    let prefix_count = if currency.effects.clear_affixes {
+                        0
+                    } else {
+                        i.prefixes.len()
+                    };
+                    let suffix_count = if currency.effects.clear_affixes {
+                        0
+                    } else {
+                        i.suffixes.len()
+                    };
                     prefix_count < target.max_prefixes() || suffix_count < target.max_suffixes()
-                }).unwrap_or(false)
+                })
+                .unwrap_or(false)
             } else {
                 meets_req
             };
             let color = if meets_req { Color::Green } else { Color::Red };
-            lines.push(Line::from(Span::styled("  Must have affix slot".to_string(), Style::default().fg(color))));
+            lines.push(Line::from(Span::styled(
+                "  Must have affix slot".to_string(),
+                Style::default().fg(color),
+            )));
         }
 
         lines.push(Line::from(""));
@@ -1277,7 +1375,10 @@ fn build_currency_preview(app: &App) -> Text<'static> {
             ]));
         }
         if effects.clear_affixes {
-            lines.push(Line::from(Span::styled("  Clear all affixes".to_string(), Style::default().fg(Color::Red))));
+            lines.push(Line::from(Span::styled(
+                "  Clear all affixes".to_string(),
+                Style::default().fg(Color::Red),
+            )));
         }
         if let Some(count) = effects.remove_affixes {
             lines.push(Line::from(Span::styled(
@@ -1305,7 +1406,11 @@ fn build_currency_preview(app: &App) -> Text<'static> {
         if !effects.add_specific_affix.is_empty() {
             if effects.add_specific_affix.len() == 1 {
                 let affix_id = &effects.add_specific_affix[0].id;
-                let affix_name = app.generator().config().affixes.get(affix_id)
+                let affix_name = app
+                    .generator()
+                    .config()
+                    .affixes
+                    .get(affix_id)
                     .map(|a| a.name.clone())
                     .unwrap_or_else(|| affix_id.clone());
                 lines.push(Line::from(Span::styled(
@@ -1318,10 +1423,17 @@ fn build_currency_preview(app: &App) -> Text<'static> {
                     Style::default().fg(Color::Green),
                 )));
                 for specific in &effects.add_specific_affix {
-                    let affix_name = app.generator().config().affixes.get(&specific.id)
+                    let affix_name = app
+                        .generator()
+                        .config()
+                        .affixes
+                        .get(&specific.id)
                         .map(|a| a.name.clone())
                         .unwrap_or_else(|| specific.id.clone());
-                    let tier_str = specific.tier.map(|t| format!(" (T{})", t)).unwrap_or_default();
+                    let tier_str = specific
+                        .tier
+                        .map(|t| format!(" (T{})", t))
+                        .unwrap_or_default();
                     lines.push(Line::from(Span::styled(
                         format!("    - {}{}", affix_name, tier_str),
                         Style::default().fg(Color::DarkGray),
@@ -1394,7 +1506,11 @@ fn render_detail(f: &mut Frame, app: &App, area: Rect) {
     f.render_widget(paragraph, chunks[1]);
 }
 
-fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generator) -> Text<'static> {
+fn render_item_stats(
+    item: &Item,
+    changed: &ChangedAffixes,
+    generator: &Generator,
+) -> Text<'static> {
     let mut lines: Vec<Line> = Vec::new();
 
     // Header
@@ -1422,13 +1538,18 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
 
     // Item tags
     if !item.tags.is_empty() {
-        let tag_spans: Vec<Span> = item.tags.iter().enumerate().flat_map(|(i, tag)| {
-            let mut spans = vec![Span::styled(tag.clone(), Style::default().fg(Color::Cyan))];
-            if i < item.tags.len() - 1 {
-                spans.push(Span::styled(", ", Style::default().fg(Color::DarkGray)));
-            }
-            spans
-        }).collect();
+        let tag_spans: Vec<Span> = item
+            .tags
+            .iter()
+            .enumerate()
+            .flat_map(|(i, tag)| {
+                let mut spans = vec![Span::styled(tag.clone(), Style::default().fg(Color::Cyan))];
+                if i < item.tags.len() - 1 {
+                    spans.push(Span::styled(", ", Style::default().fg(Color::DarkGray)));
+                }
+                spans
+            })
+            .collect();
         let mut line_spans = vec![Span::styled("Tags: ", Style::default().fg(Color::DarkGray))];
         line_spans.extend(tag_spans);
         lines.push(Line::from(line_spans));
@@ -1526,7 +1647,10 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                 Span::raw("   ")
             };
             let tier_range = if let Some((max_min, max_max)) = prefix.tier_max_value {
-                format!("({}-{} to {}-{}) ", prefix.tier_min, prefix.tier_max, max_min, max_max)
+                format!(
+                    "({}-{} to {}-{}) ",
+                    prefix.tier_min, prefix.tier_max, max_min, max_max
+                )
             } else {
                 format!("({}-{}) ", prefix.tier_min, prefix.tier_max)
             };
@@ -1540,10 +1664,7 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                     format!("[T{}] ", prefix.tier),
                     Style::default().fg(Color::Yellow),
                 ),
-                Span::styled(
-                    tier_range,
-                    Style::default().fg(Color::DarkGray),
-                ),
+                Span::styled(tier_range, Style::default().fg(Color::DarkGray)),
                 Span::styled("P".to_string(), Style::default().fg(Color::DarkGray)),
             ]));
             // Show affix scope and tags
@@ -1554,11 +1675,17 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                 };
                 let mut info_parts = vec![
                     Span::raw("      "),
-                    Span::styled(format!("{:?}", affix_config.scope), Style::default().fg(scope_color)),
+                    Span::styled(
+                        format!("{:?}", affix_config.scope),
+                        Style::default().fg(scope_color),
+                    ),
                 ];
                 if !affix_config.tags.is_empty() {
                     let tags_str = affix_config.tags.join(", ");
-                    info_parts.push(Span::styled(format!(" | tags: {}", tags_str), Style::default().fg(Color::DarkGray)));
+                    info_parts.push(Span::styled(
+                        format!(" | tags: {}", tags_str),
+                        Style::default().fg(Color::DarkGray),
+                    ));
                 }
                 lines.push(Line::from(info_parts));
             }
@@ -1570,7 +1697,10 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                 Span::raw("   ")
             };
             let tier_range = if let Some((max_min, max_max)) = suffix.tier_max_value {
-                format!("({}-{} to {}-{}) ", suffix.tier_min, suffix.tier_max, max_min, max_max)
+                format!(
+                    "({}-{} to {}-{}) ",
+                    suffix.tier_min, suffix.tier_max, max_min, max_max
+                )
             } else {
                 format!("({}-{}) ", suffix.tier_min, suffix.tier_max)
             };
@@ -1584,10 +1714,7 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                     format!("[T{}] ", suffix.tier),
                     Style::default().fg(Color::Yellow),
                 ),
-                Span::styled(
-                    tier_range,
-                    Style::default().fg(Color::DarkGray),
-                ),
+                Span::styled(tier_range, Style::default().fg(Color::DarkGray)),
                 Span::styled("S".to_string(), Style::default().fg(Color::DarkGray)),
             ]));
             // Show affix scope and tags
@@ -1598,11 +1725,17 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                 };
                 let mut info_parts = vec![
                     Span::raw("      "),
-                    Span::styled(format!("{:?}", affix_config.scope), Style::default().fg(scope_color)),
+                    Span::styled(
+                        format!("{:?}", affix_config.scope),
+                        Style::default().fg(scope_color),
+                    ),
                 ];
                 if !affix_config.tags.is_empty() {
                     let tags_str = affix_config.tags.join(", ");
-                    info_parts.push(Span::styled(format!(" | tags: {}", tags_str), Style::default().fg(Color::DarkGray)));
+                    info_parts.push(Span::styled(
+                        format!(" | tags: {}", tags_str),
+                        Style::default().fg(Color::DarkGray),
+                    ));
                 }
                 lines.push(Line::from(info_parts));
             }
@@ -1786,12 +1919,15 @@ fn render_recipes(generator: &Generator) -> Text<'static> {
 
                 lines.push(Line::from(vec![
                     Span::raw("    • "),
+                    Span::styled(format!("{:?}", req.stat), Style::default().fg(Color::Cyan)),
                     Span::styled(
-                        format!("{:?}", req.stat),
-                        Style::default().fg(Color::Cyan),
+                        affix_type_str.to_string(),
+                        Style::default().fg(Color::Yellow),
                     ),
-                    Span::styled(affix_type_str.to_string(), Style::default().fg(Color::Yellow)),
-                    Span::styled(format!(" [{}]", tier_str), Style::default().fg(Color::DarkGray)),
+                    Span::styled(
+                        format!(" [{}]", tier_str),
+                        Style::default().fg(Color::DarkGray),
+                    ),
                     mapping_indicator,
                 ]));
             }
@@ -1864,7 +2000,9 @@ fn render_help(f: &mut Frame, app: &App, area: Rect) {
     let help_text = if let Some(ref msg) = app.message {
         Span::styled(msg.clone(), Style::default().fg(Color::Yellow))
     } else {
-        Span::raw("n: New | U: Unique | c: Currency | A: Add Affix | Tab: Detail | d: Delete | q: Quit")
+        Span::raw(
+            "n: New | U: Unique | c: Currency | A: Add Affix | Tab: Detail | d: Delete | q: Quit",
+        )
     };
 
     let help = Paragraph::new(Line::from(help_text))
@@ -1885,9 +2023,9 @@ fn render_base_type_popup(f: &mut Frame, app: &mut App) {
         .base_type_ids
         .iter()
         .filter_map(|id| {
-            generator.get_base_type(id).map(|base| {
-                (base.name.clone(), format!("{:?}", base.class))
-            })
+            generator
+                .get_base_type(id)
+                .map(|base| (base.name.clone(), format!("{:?}", base.class)))
         })
         .collect();
 
