@@ -32,6 +32,53 @@ affixes = [
     "acc_cold_resist",
     "acc_lightning_resist",
     "acc_strength",
+    # Status Effects - Poison
+    "poison_damage_over_time",
+    "poison_magnitude",
+    "convert_physical_to_poison",
+    "convert_chaos_to_poison",
+    "increased_poison_duration",
+    "poison_max_stacks",
+    # Status Effects - Bleed
+    "bleed_damage_over_time",
+    "bleed_magnitude",
+    "convert_physical_to_bleed",
+    "increased_bleed_duration",
+    "bleed_max_stacks",
+    # Status Effects - Burn
+    "burn_damage_over_time",
+    "burn_magnitude",
+    "convert_fire_to_burn",
+    "convert_physical_to_burn",
+    "increased_burn_duration",
+    "burn_max_stacks",
+    # Status Effects - Freeze
+    "freeze_magnitude",
+    "convert_cold_to_freeze",
+    "increased_freeze_duration",
+    "freeze_max_stacks",
+    # Status Effects - Chill
+    "chill_magnitude",
+    "convert_cold_to_chill",
+    "increased_chill_duration",
+    "chill_max_stacks",
+    # Status Effects - Static
+    "static_magnitude",
+    "convert_lightning_to_static",
+    "increased_static_duration",
+    "static_max_stacks",
+    # Status Effects - Fear
+    "fear_magnitude",
+    "convert_chaos_to_fear",
+    "convert_physical_to_fear",
+    "increased_fear_duration",
+    "fear_max_stacks",
+    # Status Effects - Slow
+    "slow_magnitude",
+    "convert_cold_to_slow",
+    "convert_physical_to_slow",
+    "increased_slow_duration",
+    "slow_max_stacks",
 ]
 
 [[pools]]

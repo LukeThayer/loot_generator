@@ -1,0 +1,1196 @@
+# Status Effect Affixes
+
+# =============================================================================
+# POISON - Chaos/Physical DoT
+# =============================================================================
+
+# PREFIXES
+
+[[affixes]]
+id = "poison_damage_over_time"
+name = "Venomous"
+type = "prefix"
+stat = "poison_damage_over_time"
+tags = ["poison", "chaos", "damage", "ailment"]
+allowed_classes = ["dagger", "claw", "one_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 40
+max = 60
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 25
+max = 39
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 10
+max = 24
+min_ilvl = 1
+
+[[affixes]]
+id = "poison_magnitude"
+name = "Toxic"
+type = "prefix"
+stat = "poison_magnitude"
+tags = ["poison", "chaos", "ailment"]
+allowed_classes = ["dagger", "claw", "one_hand_sword", "bow", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_physical_to_poison"
+name = "Noxious"
+type = "prefix"
+stat = "convert_physical_to_poison"
+tags = ["poison", "chaos", "physical", "conversion"]
+allowed_classes = ["dagger", "claw", "one_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_chaos_to_poison"
+name = "Virulent"
+type = "prefix"
+stat = "convert_chaos_to_poison"
+tags = ["poison", "chaos", "conversion"]
+allowed_classes = ["dagger", "claw", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+# SUFFIXES
+
+[[affixes]]
+id = "increased_poison_duration"
+name = "of Toxicity"
+type = "suffix"
+stat = "increased_poison_duration"
+tags = ["poison", "chaos", "ailment", "duration"]
+allowed_classes = ["dagger", "claw", "one_hand_sword", "bow", "gloves", "helmet"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "poison_max_stacks"
+name = "of Plague"
+type = "suffix"
+stat = "poison_max_stacks"
+tags = ["poison", "chaos", "ailment"]
+allowed_classes = ["dagger", "claw", "gloves", "body_armour"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 4
+max = 6
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 2
+max = 3
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 1
+max = 1
+min_ilvl = 1
+
+# =============================================================================
+# BLEED - Physical DoT
+# =============================================================================
+
+# PREFIXES
+
+[[affixes]]
+id = "bleed_damage_over_time"
+name = "Serrated"
+type = "prefix"
+stat = "bleed_damage_over_time"
+tags = ["bleed", "physical", "damage", "ailment"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "dagger", "claw"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 40
+max = 60
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 25
+max = 39
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 10
+max = 24
+min_ilvl = 1
+
+[[affixes]]
+id = "bleed_magnitude"
+name = "Jagged"
+type = "prefix"
+stat = "bleed_magnitude"
+tags = ["bleed", "physical", "ailment"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "dagger", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_physical_to_bleed"
+name = "Lacerating"
+type = "prefix"
+stat = "convert_physical_to_bleed"
+tags = ["bleed", "physical", "conversion"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "dagger"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+# SUFFIXES
+
+[[affixes]]
+id = "increased_bleed_duration"
+name = "of Hemorrhage"
+type = "suffix"
+stat = "increased_bleed_duration"
+tags = ["bleed", "physical", "ailment", "duration"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "dagger", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "bleed_max_stacks"
+name = "of Rupture"
+type = "suffix"
+stat = "bleed_max_stacks"
+tags = ["bleed", "physical", "ailment"]
+allowed_classes = ["one_hand_sword", "one_hand_axe", "dagger", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 4
+max = 6
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 2
+max = 3
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 1
+max = 1
+min_ilvl = 1
+
+# =============================================================================
+# BURN - Fire DoT
+# =============================================================================
+
+# PREFIXES
+
+[[affixes]]
+id = "burn_damage_over_time"
+name = "Scorching"
+type = "prefix"
+stat = "burn_damage_over_time"
+tags = ["burn", "fire", "elemental", "damage", "ailment"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 40
+max = 60
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 25
+max = 39
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 10
+max = 24
+min_ilvl = 1
+
+[[affixes]]
+id = "burn_magnitude"
+name = "Searing"
+type = "prefix"
+stat = "burn_magnitude"
+tags = ["burn", "fire", "elemental", "ailment"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_fire_to_burn"
+name = "Incinerating"
+type = "prefix"
+stat = "convert_fire_to_burn"
+tags = ["burn", "fire", "elemental", "conversion"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_physical_to_burn"
+name = "Blazing"
+type = "prefix"
+stat = "convert_physical_to_burn"
+tags = ["burn", "fire", "physical", "conversion"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_mace", "two_hand_mace"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 200
+min = 20
+max = 35
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 500
+min = 12
+max = 19
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 1000
+min = 5
+max = 11
+min_ilvl = 1
+
+# SUFFIXES
+
+[[affixes]]
+id = "increased_burn_duration"
+name = "of Immolation"
+type = "suffix"
+stat = "increased_burn_duration"
+tags = ["burn", "fire", "elemental", "ailment", "duration"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves", "helmet"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "burn_max_stacks"
+name = "of Conflagration"
+type = "suffix"
+stat = "burn_max_stacks"
+tags = ["burn", "fire", "elemental", "ailment"]
+allowed_classes = ["wand", "staff", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 4
+max = 6
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 2
+max = 3
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 1
+max = 1
+min_ilvl = 1
+
+# =============================================================================
+# FREEZE - Cold CC
+# =============================================================================
+
+# PREFIXES
+
+[[affixes]]
+id = "freeze_magnitude"
+name = "Glacial"
+type = "prefix"
+stat = "freeze_magnitude"
+tags = ["freeze", "cold", "elemental", "ailment"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_cold_to_freeze"
+name = "Permafrost"
+type = "prefix"
+stat = "convert_cold_to_freeze"
+tags = ["freeze", "cold", "elemental", "conversion"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+# SUFFIXES
+
+[[affixes]]
+id = "increased_freeze_duration"
+name = "of the Glacier"
+type = "suffix"
+stat = "increased_freeze_duration"
+tags = ["freeze", "cold", "elemental", "ailment", "duration"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves", "helmet"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "freeze_max_stacks"
+name = "of Absolute Zero"
+type = "suffix"
+stat = "freeze_max_stacks"
+tags = ["freeze", "cold", "elemental", "ailment"]
+allowed_classes = ["wand", "staff", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 3
+max = 5
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 2
+max = 2
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 1
+max = 1
+min_ilvl = 1
+
+# =============================================================================
+# CHILL - Cold Slow
+# =============================================================================
+
+# PREFIXES
+
+[[affixes]]
+id = "chill_magnitude"
+name = "Numbing"
+type = "prefix"
+stat = "chill_magnitude"
+tags = ["chill", "cold", "elemental", "ailment"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_cold_to_chill"
+name = "Frigid"
+type = "prefix"
+stat = "convert_cold_to_chill"
+tags = ["chill", "cold", "elemental", "conversion"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+# SUFFIXES
+
+[[affixes]]
+id = "increased_chill_duration"
+name = "of Frostbite"
+type = "suffix"
+stat = "increased_chill_duration"
+tags = ["chill", "cold", "elemental", "ailment", "duration"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves", "helmet"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "chill_max_stacks"
+name = "of the Tundra"
+type = "suffix"
+stat = "chill_max_stacks"
+tags = ["chill", "cold", "elemental", "ailment"]
+allowed_classes = ["wand", "staff", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 3
+max = 5
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 2
+max = 2
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 1
+max = 1
+min_ilvl = 1
+
+# =============================================================================
+# STATIC - Lightning Effect
+# =============================================================================
+
+# PREFIXES
+
+[[affixes]]
+id = "static_magnitude"
+name = "Charged"
+type = "prefix"
+stat = "static_magnitude"
+tags = ["static", "lightning", "elemental", "ailment"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_lightning_to_static"
+name = "Voltaic"
+type = "prefix"
+stat = "convert_lightning_to_static"
+tags = ["static", "lightning", "elemental", "conversion"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+# SUFFIXES
+
+[[affixes]]
+id = "increased_static_duration"
+name = "of the Storm"
+type = "suffix"
+stat = "increased_static_duration"
+tags = ["static", "lightning", "elemental", "ailment", "duration"]
+allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves", "helmet"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "static_max_stacks"
+name = "of Tempests"
+type = "suffix"
+stat = "static_max_stacks"
+tags = ["static", "lightning", "elemental", "ailment"]
+allowed_classes = ["wand", "staff", "gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 3
+max = 5
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 2
+max = 2
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 1
+max = 1
+min_ilvl = 1
+
+# =============================================================================
+# FEAR - Chaos/Psychological CC
+# =============================================================================
+
+# PREFIXES
+
+[[affixes]]
+id = "fear_magnitude"
+name = "Terrifying"
+type = "prefix"
+stat = "fear_magnitude"
+tags = ["fear", "chaos", "ailment"]
+allowed_classes = ["wand", "staff", "dagger", "one_hand_mace", "two_hand_mace", "helmet"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_chaos_to_fear"
+name = "Nightmarish"
+type = "prefix"
+stat = "convert_chaos_to_fear"
+tags = ["fear", "chaos", "conversion"]
+allowed_classes = ["wand", "staff", "dagger"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_physical_to_fear"
+name = "Dreadful"
+type = "prefix"
+stat = "convert_physical_to_fear"
+tags = ["fear", "physical", "chaos", "conversion"]
+allowed_classes = ["one_hand_mace", "two_hand_mace", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 200
+min = 20
+max = 35
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 500
+min = 12
+max = 19
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 1000
+min = 5
+max = 11
+min_ilvl = 1
+
+# SUFFIXES
+
+[[affixes]]
+id = "increased_fear_duration"
+name = "of Terror"
+type = "suffix"
+stat = "increased_fear_duration"
+tags = ["fear", "chaos", "ailment", "duration"]
+allowed_classes = ["wand", "staff", "dagger", "one_hand_mace", "helmet"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "fear_max_stacks"
+name = "of Nightmares"
+type = "suffix"
+stat = "fear_max_stacks"
+tags = ["fear", "chaos", "ailment"]
+allowed_classes = ["wand", "staff", "helmet"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 3
+max = 5
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 2
+max = 2
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 1
+max = 1
+min_ilvl = 1
+
+# =============================================================================
+# SLOW - Movement Impairment
+# =============================================================================
+
+# PREFIXES
+
+[[affixes]]
+id = "slow_magnitude"
+name = "Hindering"
+type = "prefix"
+stat = "slow_magnitude"
+tags = ["slow", "ailment", "utility"]
+allowed_classes = ["bow", "wand", "staff", "one_hand_mace", "two_hand_mace"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_cold_to_slow"
+name = "Impeding"
+type = "prefix"
+stat = "convert_cold_to_slow"
+tags = ["slow", "cold", "elemental", "conversion"]
+allowed_classes = ["bow", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 25
+max = 40
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 15
+max = 24
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 5
+max = 14
+min_ilvl = 1
+
+[[affixes]]
+id = "convert_physical_to_slow"
+name = "Crippling"
+type = "prefix"
+stat = "convert_physical_to_slow"
+tags = ["slow", "physical", "conversion"]
+allowed_classes = ["one_hand_mace", "two_hand_mace", "bow"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 200
+min = 20
+max = 35
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 500
+min = 12
+max = 19
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 1000
+min = 5
+max = 11
+min_ilvl = 1
+
+# SUFFIXES
+
+[[affixes]]
+id = "increased_slow_duration"
+name = "of Stagnation"
+type = "suffix"
+stat = "increased_slow_duration"
+tags = ["slow", "ailment", "duration", "utility"]
+allowed_classes = ["bow", "wand", "staff", "one_hand_mace", "boots"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 30
+max = 50
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 8
+max = 17
+min_ilvl = 1
+
+[[affixes]]
+id = "slow_max_stacks"
+name = "of Exhaustion"
+type = "suffix"
+stat = "slow_max_stacks"
+tags = ["slow", "ailment", "utility"]
+allowed_classes = ["bow", "wand", "staff", "boots"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 3
+max = 5
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 2
+max = 2
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 1
+max = 1
+min_ilvl = 1

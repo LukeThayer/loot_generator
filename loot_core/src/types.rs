@@ -33,6 +33,20 @@ pub enum DamageType {
     Chaos,
 }
 
+/// Status effect types that damage can be converted to
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum StatusEffect {
+    Freeze,
+    Chill,
+    Burn,
+    Fear,
+    Slow,
+    Static,
+    Poison,
+    Bleed,
+}
+
 /// Item rarity levels
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
 #[serde(rename_all = "snake_case")]
@@ -158,10 +172,81 @@ pub enum StatType {
     IncreasedAttackSpeed,
     IncreasedCriticalChance,
     IncreasedCriticalDamage,
-    // Poison/Ailment
+    // Status effect - Poison
     PoisonDamageOverTime,
-    ChanceToPoison,
     IncreasedPoisonDuration,
+    PoisonMagnitude,
+    PoisonMaxStacks,
+    ConvertPhysicalToPoison,
+    ConvertFireToPoison,
+    ConvertColdToPoison,
+    ConvertLightningToPoison,
+    ConvertChaosToPoison,
+    // Status effect - Bleed
+    BleedDamageOverTime,
+    IncreasedBleedDuration,
+    BleedMagnitude,
+    BleedMaxStacks,
+    ConvertPhysicalToBleed,
+    ConvertFireToBleed,
+    ConvertColdToBleed,
+    ConvertLightningToBleed,
+    ConvertChaosToBleed,
+    // Status effect - Burn
+    BurnDamageOverTime,
+    IncreasedBurnDuration,
+    BurnMagnitude,
+    BurnMaxStacks,
+    ConvertPhysicalToBurn,
+    ConvertFireToBurn,
+    ConvertColdToBurn,
+    ConvertLightningToBurn,
+    ConvertChaosToBurn,
+    // Status effect - Freeze
+    IncreasedFreezeDuration,
+    FreezeMagnitude,
+    FreezeMaxStacks,
+    ConvertPhysicalToFreeze,
+    ConvertFireToFreeze,
+    ConvertColdToFreeze,
+    ConvertLightningToFreeze,
+    ConvertChaosToFreeze,
+    // Status effect - Chill
+    IncreasedChillDuration,
+    ChillMagnitude,
+    ChillMaxStacks,
+    ConvertPhysicalToChill,
+    ConvertFireToChill,
+    ConvertColdToChill,
+    ConvertLightningToChill,
+    ConvertChaosToChill,
+    // Status effect - Static
+    IncreasedStaticDuration,
+    StaticMagnitude,
+    StaticMaxStacks,
+    ConvertPhysicalToStatic,
+    ConvertFireToStatic,
+    ConvertColdToStatic,
+    ConvertLightningToStatic,
+    ConvertChaosToStatic,
+    // Status effect - Fear
+    IncreasedFearDuration,
+    FearMagnitude,
+    FearMaxStacks,
+    ConvertPhysicalToFear,
+    ConvertFireToFear,
+    ConvertColdToFear,
+    ConvertLightningToFear,
+    ConvertChaosToFear,
+    // Status effect - Slow
+    IncreasedSlowDuration,
+    SlowMagnitude,
+    SlowMaxStacks,
+    ConvertPhysicalToSlow,
+    ConvertFireToSlow,
+    ConvertColdToSlow,
+    ConvertLightningToSlow,
+    ConvertChaosToSlow,
     // Defenses
     AddedArmour,
     AddedEvasion,

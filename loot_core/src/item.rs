@@ -252,6 +252,7 @@ impl Modifier {
             self.stat,
             StatType::IncreasedPhysicalDamage
                 | StatType::IncreasedElementalDamage
+                | StatType::IncreasedChaosDamage
                 | StatType::IncreasedAttackSpeed
                 | StatType::IncreasedCriticalChance
                 | StatType::IncreasedCriticalDamage
@@ -271,6 +272,65 @@ impl Modifier {
                 | StatType::AllResistances
                 | StatType::LifeLeech
                 | StatType::ManaLeech
+                // Status effect durations
+                | StatType::IncreasedPoisonDuration
+                | StatType::IncreasedBleedDuration
+                | StatType::IncreasedBurnDuration
+                | StatType::IncreasedFreezeDuration
+                | StatType::IncreasedChillDuration
+                | StatType::IncreasedStaticDuration
+                | StatType::IncreasedFearDuration
+                | StatType::IncreasedSlowDuration
+                // Status effect magnitudes
+                | StatType::PoisonMagnitude
+                | StatType::BleedMagnitude
+                | StatType::BurnMagnitude
+                | StatType::FreezeMagnitude
+                | StatType::ChillMagnitude
+                | StatType::StaticMagnitude
+                | StatType::FearMagnitude
+                | StatType::SlowMagnitude
+                // Damage conversions to status effects
+                | StatType::ConvertPhysicalToPoison
+                | StatType::ConvertFireToPoison
+                | StatType::ConvertColdToPoison
+                | StatType::ConvertLightningToPoison
+                | StatType::ConvertChaosToPoison
+                | StatType::ConvertPhysicalToBleed
+                | StatType::ConvertFireToBleed
+                | StatType::ConvertColdToBleed
+                | StatType::ConvertLightningToBleed
+                | StatType::ConvertChaosToBleed
+                | StatType::ConvertPhysicalToBurn
+                | StatType::ConvertFireToBurn
+                | StatType::ConvertColdToBurn
+                | StatType::ConvertLightningToBurn
+                | StatType::ConvertChaosToBurn
+                | StatType::ConvertPhysicalToFreeze
+                | StatType::ConvertFireToFreeze
+                | StatType::ConvertColdToFreeze
+                | StatType::ConvertLightningToFreeze
+                | StatType::ConvertChaosToFreeze
+                | StatType::ConvertPhysicalToChill
+                | StatType::ConvertFireToChill
+                | StatType::ConvertColdToChill
+                | StatType::ConvertLightningToChill
+                | StatType::ConvertChaosToChill
+                | StatType::ConvertPhysicalToStatic
+                | StatType::ConvertFireToStatic
+                | StatType::ConvertColdToStatic
+                | StatType::ConvertLightningToStatic
+                | StatType::ConvertChaosToStatic
+                | StatType::ConvertPhysicalToFear
+                | StatType::ConvertFireToFear
+                | StatType::ConvertColdToFear
+                | StatType::ConvertLightningToFear
+                | StatType::ConvertChaosToFear
+                | StatType::ConvertPhysicalToSlow
+                | StatType::ConvertFireToSlow
+                | StatType::ConvertColdToSlow
+                | StatType::ConvertLightningToSlow
+                | StatType::ConvertChaosToSlow
         );
 
         if is_percent {
