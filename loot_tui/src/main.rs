@@ -1367,7 +1367,7 @@ fn render_detail(f: &mut Frame, app: &App, area: Rect) {
     let content = match app.detail_tab {
         DetailTab::Stats => {
             if let Some((item, _)) = app.selected_item() {
-                render_item_stats(item, &app.changed_affixes)
+                render_item_stats(item, &app.changed_affixes, app.generator())
             } else {
                 Text::from("No item selected\n\nPress 'n' to create a new item")
             }
@@ -1389,7 +1389,7 @@ fn render_detail(f: &mut Frame, app: &App, area: Rect) {
     f.render_widget(paragraph, chunks[1]);
 }
 
-fn render_item_stats(item: &Item, changed: &ChangedAffixes) -> Text<'static> {
+fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generator) -> Text<'static> {
     let mut lines: Vec<Line> = Vec::new();
 
     // Header
@@ -1414,6 +1414,21 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes) -> Text<'static> {
             Style::default().fg(Color::DarkGray),
         ),
     ]));
+
+    // Item tags
+    if !item.tags.is_empty() {
+        let tag_spans: Vec<Span> = item.tags.iter().enumerate().flat_map(|(i, tag)| {
+            let mut spans = vec![Span::styled(tag.clone(), Style::default().fg(Color::Cyan))];
+            if i < item.tags.len() - 1 {
+                spans.push(Span::styled(", ", Style::default().fg(Color::DarkGray)));
+            }
+            spans
+        }).collect();
+        let mut line_spans = vec![Span::styled("Tags: ", Style::default().fg(Color::DarkGray))];
+        line_spans.extend(tag_spans);
+        lines.push(Line::from(line_spans));
+    }
+
     lines.push(Line::from(""));
 
     // Defenses
@@ -1521,6 +1536,16 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes) -> Text<'static> {
                 ),
                 Span::styled("P".to_string(), Style::default().fg(Color::DarkGray)),
             ]));
+            // Show affix tags
+            if let Some(affix_config) = generator.config().affixes.get(&prefix.affix_id) {
+                if !affix_config.tags.is_empty() {
+                    let tags_str = affix_config.tags.join(", ");
+                    lines.push(Line::from(vec![
+                        Span::raw("      "),
+                        Span::styled(format!("tags: {}", tags_str), Style::default().fg(Color::DarkGray)),
+                    ]));
+                }
+            }
         }
         for (i, suffix) in item.suffixes.iter().enumerate() {
             let marker = if changed.suffixes.contains(&i) {
@@ -1544,6 +1569,16 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes) -> Text<'static> {
                 ),
                 Span::styled("S".to_string(), Style::default().fg(Color::DarkGray)),
             ]));
+            // Show affix tags
+            if let Some(affix_config) = generator.config().affixes.get(&suffix.affix_id) {
+                if !affix_config.tags.is_empty() {
+                    let tags_str = affix_config.tags.join(", ");
+                    lines.push(Line::from(vec![
+                        Span::raw("      "),
+                        Span::styled(format!("tags: {}", tags_str), Style::default().fg(Color::DarkGray)),
+                    ]));
+                }
+            }
         }
         lines.push(Line::from(""));
     }

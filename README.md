@@ -560,38 +560,55 @@ When rolling an affix, only tiers where `min_ilvl <= item.requirements.level` ar
 
 ### Tags and Spawn Weighting
 
-Tags are strings that describe item and affix characteristics. They serve two purposes:
+Tags are strings that describe item and affix characteristics. They create thematic connections between items and the affixes that can appear on them.
 
-1. **Filtering** - Affixes must have at least one tag matching the item to be eligible
-2. **Weighting** - Matching tags increase spawn weight
+**Why tags exist:**
+- Ensure thematic consistency (fire weapons get fire affixes, not cold)
+- Create build diversity (caster items get spell affixes, attack items get attack affixes)
+- Allow fine-grained control beyond just item class restrictions
+- Enable weighted preferences without hard restrictions
+
+**Tags serve two purposes:**
+
+1. **Filtering** - Affixes must have at least one tag matching the item to be eligible to roll
+2. **Weighting** - Each matching tag increases spawn weight by 50%, making thematically appropriate affixes more common
 
 **Tag matching rules:**
 - An affix with tags `["physical", "damage"]` can only roll on items that have at least one of those tags
-- An affix with no tags can roll on any item (no filtering)
+- An affix with no tags can roll on any item (no filtering applied)
 - Each matching tag increases spawn weight by **50%**
+- Tags are case-sensitive strings
 
-**Example:**
+**Example - Eligible affix:**
 ```
-Item tags: ["melee", "physical", "attack"]
-Affix tags: ["physical", "damage"]
+Item: Iron Sword
+  tags: ["melee", "physical", "attack", "sword"]
+
+Affix: "Heavy" (added physical damage)
+  tags: ["physical", "damage", "attack"]
 
 Step 1 - Eligibility check:
-  Matching tags: "physical" ✓
-  Affix is eligible (at least one match)
+  Matching tags: "physical", "attack" ✓
+  Affix is eligible (at least one match found)
 
 Step 2 - Weight calculation:
   Base weight: 1000
-  Matching tags: 1 ("physical")
-  Final weight: 1000 × 1.5 = 1500
+  Matching tags: 2 ("physical", "attack")
+  Multiplier: 1.0 + (2 × 0.5) = 2.0
+  Final weight: 1000 × 2.0 = 2000
 ```
 
-**Non-matching example:**
+**Example - Ineligible affix:**
 ```
-Item tags: ["caster", "intelligence", "elemental"]
-Affix tags: ["physical", "melee"]
+Item: Crystal Wand
+  tags: ["caster", "ranged", "elemental"]
+
+Affix: "Heavy" (added physical damage)
+  tags: ["physical", "damage", "attack"]
 
 Matching tags: 0
 Affix is NOT eligible (no matching tags)
+→ Physical damage affixes cannot roll on caster wands
 ```
 
 **Common tag categories:**
@@ -603,6 +620,17 @@ Affix is NOT eligible (no matching tags)
 | Defense type | `armour`, `evasion`, `energy_shield` | Match defense affixes to armour types |
 | Attribute | `strength`, `dexterity`, `intelligence` | Attribute-based weighting |
 | Special | `life`, `defense`, `damage`, `speed` | General categories |
+
+**Design tips:**
+- Give base types 3-5 tags that describe their intended use
+- Give affixes 2-3 tags that describe what builds want them
+- Use overlapping tags to create natural affinities
+- Affixes with no tags are "universal" and can roll anywhere (use sparingly)
+
+**Interaction with other systems:**
+- Tags work alongside `allowed_classes` - both must pass for an affix to be eligible
+- Tags are independent of affix pools - pools control which affixes a currency can add
+- Tags do not affect tier selection - only which affixes can roll, not which tier
 
 ### Item Classes
 
