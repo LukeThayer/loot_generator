@@ -5,7 +5,7 @@
 id = "iron_helmet"
 name = "Iron Helmet"
 class = "helmet"
-tags = ["armour", "strength"]
+tags = ["armour", "strength", "defense", "melee", "physical"]
 requirements = { level = 5, strength = 15 }
 
 [base_types.defenses]
@@ -15,7 +15,7 @@ armour = { min = 30, max = 40 }
 id = "leather_cap"
 name = "Leather Cap"
 class = "helmet"
-tags = ["evasion", "dexterity"]
+tags = ["evasion", "dexterity", "defense", "attack", "physical"]
 requirements = { level = 3, dexterity = 12 }
 
 [base_types.defenses]
@@ -25,7 +25,7 @@ evasion = { min = 25, max = 35 }
 id = "silk_hood"
 name = "Silk Hood"
 class = "helmet"
-tags = ["energy_shield", "intelligence", "caster"]
+tags = ["energy_shield", "intelligence", "caster", "defense", "elemental"]
 requirements = { level = 8, intelligence = 20 }
 
 [base_types.defenses]
@@ -36,7 +36,7 @@ energy_shield = { min = 15, max = 25 }
 id = "plate_vest"
 name = "Plate Vest"
 class = "body_armour"
-tags = ["armour", "strength"]
+tags = ["armour", "strength", "defense", "melee", "physical", "life"]
 requirements = { level = 10, strength = 30 }
 
 [base_types.defenses]
@@ -46,7 +46,7 @@ armour = { min = 80, max = 100 }
 id = "leather_vest"
 name = "Leather Vest"
 class = "body_armour"
-tags = ["evasion", "dexterity"]
+tags = ["evasion", "dexterity", "defense", "attack", "physical", "life"]
 requirements = { level = 8, dexterity = 25 }
 
 [base_types.defenses]
@@ -56,7 +56,7 @@ evasion = { min = 60, max = 80 }
 id = "silk_robe"
 name = "Silk Robe"
 class = "body_armour"
-tags = ["energy_shield", "intelligence", "caster"]
+tags = ["energy_shield", "intelligence", "caster", "defense", "elemental", "life"]
 requirements = { level = 12, intelligence = 35 }
 
 [base_types.defenses]
@@ -67,18 +67,38 @@ energy_shield = { min = 40, max = 55 }
 id = "iron_gauntlets"
 name = "Iron Gauntlets"
 class = "gloves"
-tags = ["armour", "strength", "attack"]
+tags = ["armour", "strength", "attack", "melee", "physical", "damage"]
 requirements = { level = 5, strength = 15 }
 
 [base_types.defenses]
 armour = { min = 15, max = 25 }
+
+[[base_types]]
+id = "leather_gloves"
+name = "Leather Gloves"
+class = "gloves"
+tags = ["evasion", "dexterity", "attack", "physical", "damage", "speed"]
+requirements = { level = 4, dexterity = 12 }
+
+[base_types.defenses]
+evasion = { min = 12, max = 20 }
+
+[[base_types]]
+id = "silk_gloves"
+name = "Silk Gloves"
+class = "gloves"
+tags = ["energy_shield", "intelligence", "caster", "elemental", "damage"]
+requirements = { level = 6, intelligence = 18 }
+
+[base_types.defenses]
+energy_shield = { min = 8, max = 15 }
 
 # Boots
 [[base_types]]
 id = "iron_greaves"
 name = "Iron Greaves"
 class = "boots"
-tags = ["armour", "strength"]
+tags = ["armour", "strength", "defense", "melee", "physical", "speed"]
 requirements = { level = 5, strength = 15 }
 
 [base_types.defenses]
@@ -88,3 +108,79 @@ armour = { min = 20, max = 30 }
 stat = "increased_movement_speed"
 min = 10
 max = 15
+
+[[base_types]]
+id = "leather_boots"
+name = "Leather Boots"
+class = "boots"
+tags = ["evasion", "dexterity", "defense", "attack", "physical", "speed"]
+requirements = { level = 4, dexterity = 12 }
+
+[base_types.defenses]
+evasion = { min = 15, max = 25 }
+
+[base_types.implicit]
+stat = "increased_movement_speed"
+min = 15
+max = 20
+
+[[base_types]]
+id = "silk_slippers"
+name = "Silk Slippers"
+class = "boots"
+tags = ["energy_shield", "intelligence", "caster", "elemental", "speed"]
+requirements = { level = 6, intelligence = 18 }
+
+[base_types.defenses]
+energy_shield = { min = 10, max = 18 }
+
+[base_types.implicit]
+stat = "increased_movement_speed"
+min = 10
+max = 15
+
+# Shields
+[[base_types]]
+id = "iron_shield"
+name = "Iron Shield"
+class = "shield"
+tags = ["armour", "strength", "defense", "melee", "physical", "life"]
+requirements = { level = 8, strength = 20 }
+
+[base_types.defenses]
+armour = { min = 40, max = 60 }
+
+[base_types.implicit]
+stat = "all_resistances"
+min = 5
+max = 10
+
+[[base_types]]
+id = "buckler"
+name = "Buckler"
+class = "shield"
+tags = ["evasion", "dexterity", "defense", "attack", "physical"]
+requirements = { level = 6, dexterity = 15 }
+
+[base_types.defenses]
+evasion = { min = 30, max = 45 }
+
+[base_types.implicit]
+stat = "increased_evasion"
+min = 10
+max = 20
+
+[[base_types]]
+id = "spirit_shield"
+name = "Spirit Shield"
+class = "shield"
+tags = ["energy_shield", "intelligence", "caster", "defense", "elemental"]
+requirements = { level = 10, intelligence = 25 }
+
+[base_types.defenses]
+energy_shield = { min = 25, max = 40 }
+
+[base_types.implicit]
+stat = "increased_energy_shield"
+min = 10
+max = 20

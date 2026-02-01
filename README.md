@@ -662,6 +662,14 @@ Item classes restrict which affixes can roll on which items via the `allowed_cla
 | Boots | `boots` | Feet slot |
 | Shield | `shield` | Off-hand defense |
 
+**Accessory Classes:**
+
+| Class | TOML ID | Description |
+|-------|---------|-------------|
+| Ring | `ring` | Finger slot (2 slots) |
+| Amulet | `amulet` | Neck slot |
+| Belt | `belt` | Waist slot |
+
 **Class restrictions in affixes:**
 
 ```toml

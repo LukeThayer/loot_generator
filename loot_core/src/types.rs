@@ -88,6 +88,10 @@ pub enum ItemClass {
     BodyArmour,
     Gloves,
     Boots,
+    // Accessories
+    Ring,
+    Amulet,
+    Belt,
 }
 
 impl ItemClass {
@@ -116,6 +120,15 @@ impl ItemClass {
                 | ItemClass::Gloves
                 | ItemClass::Boots
                 | ItemClass::Shield
+        )
+    }
+
+    pub fn is_accessory(&self) -> bool {
+        matches!(
+            self,
+            ItemClass::Ring
+                | ItemClass::Amulet
+                | ItemClass::Belt
         )
     }
 }

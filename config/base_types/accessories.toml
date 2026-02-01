@@ -1,0 +1,325 @@
+# Accessory Base Types
+
+# =============================================================================
+# RINGS
+# =============================================================================
+
+[[base_types]]
+id = "iron_ring"
+name = "Iron Ring"
+class = "ring"
+tags = ["ring", "physical", "strength", "melee", "attack"]
+requirements = { level = 1 }
+
+[base_types.implicit]
+stat = "added_physical_damage"
+min = 1
+max = 4
+
+[[base_types]]
+id = "coral_ring"
+name = "Coral Ring"
+class = "ring"
+tags = ["ring", "life", "defense", "physical"]
+requirements = { level = 5 }
+
+[base_types.implicit]
+stat = "added_life"
+min = 20
+max = 30
+
+[[base_types]]
+id = "ruby_ring"
+name = "Ruby Ring"
+class = "ring"
+tags = ["ring", "fire", "elemental", "resistance"]
+requirements = { level = 10 }
+
+[base_types.implicit]
+stat = "fire_resistance"
+min = 20
+max = 30
+
+[[base_types]]
+id = "sapphire_ring"
+name = "Sapphire Ring"
+class = "ring"
+tags = ["ring", "cold", "elemental", "resistance"]
+requirements = { level = 10 }
+
+[base_types.implicit]
+stat = "cold_resistance"
+min = 20
+max = 30
+
+[[base_types]]
+id = "topaz_ring"
+name = "Topaz Ring"
+class = "ring"
+tags = ["ring", "lightning", "elemental", "resistance"]
+requirements = { level = 10 }
+
+[base_types.implicit]
+stat = "lightning_resistance"
+min = 20
+max = 30
+
+[[base_types]]
+id = "amethyst_ring"
+name = "Amethyst Ring"
+class = "ring"
+tags = ["ring", "chaos", "resistance"]
+requirements = { level = 15 }
+
+[base_types.implicit]
+stat = "chaos_resistance"
+min = 15
+max = 25
+
+[[base_types]]
+id = "diamond_ring"
+name = "Diamond Ring"
+class = "ring"
+tags = ["ring", "attack", "damage", "physical"]
+requirements = { level = 20 }
+
+[base_types.implicit]
+stat = "increased_critical_chance"
+min = 20
+max = 30
+
+[[base_types]]
+id = "moonstone_ring"
+name = "Moonstone Ring"
+class = "ring"
+tags = ["ring", "caster", "intelligence", "elemental", "energy_shield"]
+requirements = { level = 15, intelligence = 20 }
+
+[base_types.implicit]
+stat = "added_energy_shield"
+min = 15
+max = 25
+
+[[base_types]]
+id = "opal_ring"
+name = "Opal Ring"
+class = "ring"
+tags = ["ring", "elemental", "caster", "damage", "fire", "cold", "lightning"]
+requirements = { level = 25, intelligence = 30 }
+
+[base_types.implicit]
+stat = "increased_elemental_damage"
+min = 15
+max = 25
+
+# =============================================================================
+# AMULETS
+# =============================================================================
+
+[[base_types]]
+id = "jade_amulet"
+name = "Jade Amulet"
+class = "amulet"
+tags = ["amulet", "dexterity", "evasion", "attack", "speed"]
+requirements = { level = 5 }
+
+[base_types.implicit]
+stat = "added_dexterity"
+min = 20
+max = 30
+
+[[base_types]]
+id = "amber_amulet"
+name = "Amber Amulet"
+class = "amulet"
+tags = ["amulet", "strength", "armour", "melee", "physical"]
+requirements = { level = 5 }
+
+[base_types.implicit]
+stat = "added_strength"
+min = 20
+max = 30
+
+[[base_types]]
+id = "lapis_amulet"
+name = "Lapis Amulet"
+class = "amulet"
+tags = ["amulet", "intelligence", "energy_shield", "caster", "elemental"]
+requirements = { level = 5 }
+
+[base_types.implicit]
+stat = "added_intelligence"
+min = 20
+max = 30
+
+[[base_types]]
+id = "onyx_amulet"
+name = "Onyx Amulet"
+class = "amulet"
+tags = ["amulet", "strength", "dexterity", "intelligence", "attack", "caster"]
+requirements = { level = 15 }
+
+[base_types.implicit]
+stat = "added_all_attributes"
+min = 10
+max = 16
+
+[[base_types]]
+id = "gold_amulet"
+name = "Gold Amulet"
+class = "amulet"
+tags = ["amulet", "magic_find"]
+requirements = { level = 20 }
+
+[base_types.implicit]
+stat = "increased_item_rarity"
+min = 12
+max = 20
+
+[[base_types]]
+id = "coral_amulet"
+name = "Coral Amulet"
+class = "amulet"
+tags = ["amulet", "life", "defense", "physical"]
+requirements = { level = 10 }
+
+[base_types.implicit]
+stat = "added_life"
+min = 30
+max = 50
+
+[[base_types]]
+id = "turquoise_amulet"
+name = "Turquoise Amulet"
+class = "amulet"
+tags = ["amulet", "dexterity", "intelligence", "caster", "attack", "speed"]
+requirements = { level = 15 }
+
+[base_types.implicit]
+stat = "added_dexterity"
+min = 12
+max = 18
+
+[[base_types]]
+id = "citrine_amulet"
+name = "Citrine Amulet"
+class = "amulet"
+tags = ["amulet", "strength", "intelligence", "melee", "caster", "physical", "elemental"]
+requirements = { level = 15 }
+
+[base_types.implicit]
+stat = "added_strength"
+min = 12
+max = 18
+
+[[base_types]]
+id = "agate_amulet"
+name = "Agate Amulet"
+class = "amulet"
+tags = ["amulet", "strength", "dexterity", "melee", "attack", "physical"]
+requirements = { level = 15 }
+
+[base_types.implicit]
+stat = "added_strength"
+min = 12
+max = 18
+
+# =============================================================================
+# BELTS
+# =============================================================================
+
+[[base_types]]
+id = "leather_belt"
+name = "Leather Belt"
+class = "belt"
+tags = ["belt", "life", "defense", "physical"]
+requirements = { level = 1 }
+
+[base_types.implicit]
+stat = "added_life"
+min = 25
+max = 40
+
+[[base_types]]
+id = "heavy_belt"
+name = "Heavy Belt"
+class = "belt"
+tags = ["belt", "strength", "melee", "physical", "attack"]
+requirements = { level = 10, strength = 20 }
+
+[base_types.implicit]
+stat = "added_strength"
+min = 25
+max = 35
+
+[[base_types]]
+id = "cloth_belt"
+name = "Cloth Belt"
+class = "belt"
+tags = ["belt", "energy_shield", "caster", "intelligence", "elemental"]
+requirements = { level = 10, intelligence = 20 }
+
+[base_types.implicit]
+stat = "added_energy_shield"
+min = 20
+max = 35
+
+[[base_types]]
+id = "studded_belt"
+name = "Studded Belt"
+class = "belt"
+tags = ["belt", "damage", "physical", "attack"]
+requirements = { level = 15 }
+
+[base_types.implicit]
+stat = "increased_physical_damage"
+min = 20
+max = 30
+
+[[base_types]]
+id = "rustic_sash"
+name = "Rustic Sash"
+class = "belt"
+tags = ["belt", "damage", "physical", "melee", "attack"]
+requirements = { level = 5 }
+
+[base_types.implicit]
+stat = "increased_physical_damage"
+min = 12
+max = 20
+
+[[base_types]]
+id = "chain_belt"
+name = "Chain Belt"
+class = "belt"
+tags = ["belt", "energy_shield", "defense", "caster"]
+requirements = { level = 15, intelligence = 25 }
+
+[base_types.implicit]
+stat = "added_energy_shield"
+min = 30
+max = 45
+
+[[base_types]]
+id = "crystal_belt"
+name = "Crystal Belt"
+class = "belt"
+tags = ["belt", "energy_shield", "caster", "elemental", "defense"]
+requirements = { level = 40, intelligence = 60 }
+
+[base_types.implicit]
+stat = "added_energy_shield"
+min = 60
+max = 80
+
+[[base_types]]
+id = "stygian_vise"
+name = "Stygian Vise"
+class = "belt"
+tags = ["belt", "life", "defense", "chaos", "damage"]
+requirements = { level = 35 }
+
+[base_types.implicit]
+stat = "added_life"
+min = 40
+max = 60
