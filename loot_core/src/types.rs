@@ -178,6 +178,9 @@ pub enum StatType {
     AddedChaosDamage,
     // Percentage increases
     IncreasedPhysicalDamage,
+    IncreasedFireDamage,
+    IncreasedColdDamage,
+    IncreasedLightningDamage,
     IncreasedElementalDamage,
     IncreasedChaosDamage,
     IncreasedAttackSpeed,

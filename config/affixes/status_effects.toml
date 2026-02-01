@@ -11,6 +11,7 @@ id = "poison_damage_over_time"
 name = "Venomous"
 type = "prefix"
 stat = "poison_damage_over_time"
+scope = "global"
 tags = ["poison", "chaos", "damage", "ailment"]
 allowed_classes = ["dagger", "claw", "one_hand_sword", "bow"]
 
@@ -40,6 +41,7 @@ id = "poison_magnitude"
 name = "Toxic"
 type = "prefix"
 stat = "poison_magnitude"
+scope = "global"
 tags = ["poison", "chaos", "ailment"]
 allowed_classes = ["dagger", "claw", "one_hand_sword", "bow", "gloves"]
 
@@ -69,6 +71,7 @@ id = "convert_physical_to_poison"
 name = "Noxious"
 type = "prefix"
 stat = "convert_physical_to_poison"
+scope = "global"
 tags = ["poison", "chaos", "physical", "conversion"]
 allowed_classes = ["dagger", "claw", "one_hand_sword", "bow"]
 
@@ -98,6 +101,7 @@ id = "convert_chaos_to_poison"
 name = "Virulent"
 type = "prefix"
 stat = "convert_chaos_to_poison"
+scope = "global"
 tags = ["poison", "chaos", "conversion"]
 allowed_classes = ["dagger", "claw", "wand", "staff"]
 
@@ -129,6 +133,7 @@ id = "increased_poison_duration"
 name = "of Toxicity"
 type = "suffix"
 stat = "increased_poison_duration"
+scope = "global"
 tags = ["poison", "chaos", "ailment", "duration"]
 allowed_classes = ["dagger", "claw", "one_hand_sword", "bow", "gloves", "helmet"]
 
@@ -158,6 +163,7 @@ id = "poison_max_stacks"
 name = "of Plague"
 type = "suffix"
 stat = "poison_max_stacks"
+scope = "global"
 tags = ["poison", "chaos", "ailment"]
 allowed_classes = ["dagger", "claw", "gloves", "body_armour"]
 
@@ -193,6 +199,7 @@ id = "bleed_damage_over_time"
 name = "Serrated"
 type = "prefix"
 stat = "bleed_damage_over_time"
+scope = "global"
 tags = ["bleed", "physical", "damage", "ailment"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "dagger", "claw"]
 
@@ -222,6 +229,7 @@ id = "bleed_magnitude"
 name = "Jagged"
 type = "prefix"
 stat = "bleed_magnitude"
+scope = "global"
 tags = ["bleed", "physical", "ailment"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "dagger", "gloves"]
 
@@ -251,6 +259,7 @@ id = "convert_physical_to_bleed"
 name = "Lacerating"
 type = "prefix"
 stat = "convert_physical_to_bleed"
+scope = "global"
 tags = ["bleed", "physical", "conversion"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "dagger"]
 
@@ -282,6 +291,7 @@ id = "increased_bleed_duration"
 name = "of Hemorrhage"
 type = "suffix"
 stat = "increased_bleed_duration"
+scope = "global"
 tags = ["bleed", "physical", "ailment", "duration"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "dagger", "gloves"]
 
@@ -311,6 +321,7 @@ id = "bleed_max_stacks"
 name = "of Rupture"
 type = "suffix"
 stat = "bleed_max_stacks"
+scope = "global"
 tags = ["bleed", "physical", "ailment"]
 allowed_classes = ["one_hand_sword", "one_hand_axe", "dagger", "gloves"]
 
@@ -346,6 +357,7 @@ id = "burn_damage_over_time"
 name = "Scorching"
 type = "prefix"
 stat = "burn_damage_over_time"
+scope = "global"
 tags = ["burn", "fire", "elemental", "damage", "ailment"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
 
@@ -375,6 +387,7 @@ id = "burn_magnitude"
 name = "Searing"
 type = "prefix"
 stat = "burn_magnitude"
+scope = "global"
 tags = ["burn", "fire", "elemental", "ailment"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves"]
 
@@ -404,6 +417,7 @@ id = "convert_fire_to_burn"
 name = "Incinerating"
 type = "prefix"
 stat = "convert_fire_to_burn"
+scope = "global"
 tags = ["burn", "fire", "elemental", "conversion"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword"]
 
@@ -433,6 +447,7 @@ id = "convert_physical_to_burn"
 name = "Blazing"
 type = "prefix"
 stat = "convert_physical_to_burn"
+scope = "global"
 tags = ["burn", "fire", "physical", "conversion"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_mace", "two_hand_mace"]
 
@@ -464,6 +479,7 @@ id = "increased_burn_duration"
 name = "of Immolation"
 type = "suffix"
 stat = "increased_burn_duration"
+scope = "global"
 tags = ["burn", "fire", "elemental", "ailment", "duration"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves", "helmet"]
 
@@ -493,6 +509,7 @@ id = "burn_max_stacks"
 name = "of Conflagration"
 type = "suffix"
 stat = "burn_max_stacks"
+scope = "global"
 tags = ["burn", "fire", "elemental", "ailment"]
 allowed_classes = ["wand", "staff", "gloves"]
 
@@ -528,6 +545,7 @@ id = "freeze_magnitude"
 name = "Glacial"
 type = "prefix"
 stat = "freeze_magnitude"
+scope = "global"
 tags = ["freeze", "cold", "elemental", "ailment"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
 
@@ -557,6 +575,7 @@ id = "convert_cold_to_freeze"
 name = "Permafrost"
 type = "prefix"
 stat = "convert_cold_to_freeze"
+scope = "global"
 tags = ["freeze", "cold", "elemental", "conversion"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
 
@@ -588,6 +607,7 @@ id = "increased_freeze_duration"
 name = "of the Glacier"
 type = "suffix"
 stat = "increased_freeze_duration"
+scope = "global"
 tags = ["freeze", "cold", "elemental", "ailment", "duration"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves", "helmet"]
 
@@ -617,6 +637,7 @@ id = "freeze_max_stacks"
 name = "of Absolute Zero"
 type = "suffix"
 stat = "freeze_max_stacks"
+scope = "global"
 tags = ["freeze", "cold", "elemental", "ailment"]
 allowed_classes = ["wand", "staff", "gloves"]
 
@@ -652,6 +673,7 @@ id = "chill_magnitude"
 name = "Numbing"
 type = "prefix"
 stat = "chill_magnitude"
+scope = "global"
 tags = ["chill", "cold", "elemental", "ailment"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
 
@@ -681,6 +703,7 @@ id = "convert_cold_to_chill"
 name = "Frigid"
 type = "prefix"
 stat = "convert_cold_to_chill"
+scope = "global"
 tags = ["chill", "cold", "elemental", "conversion"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
 
@@ -712,6 +735,7 @@ id = "increased_chill_duration"
 name = "of Frostbite"
 type = "suffix"
 stat = "increased_chill_duration"
+scope = "global"
 tags = ["chill", "cold", "elemental", "ailment", "duration"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves", "helmet"]
 
@@ -741,6 +765,7 @@ id = "chill_max_stacks"
 name = "of the Tundra"
 type = "suffix"
 stat = "chill_max_stacks"
+scope = "global"
 tags = ["chill", "cold", "elemental", "ailment"]
 allowed_classes = ["wand", "staff", "gloves"]
 
@@ -776,6 +801,7 @@ id = "static_magnitude"
 name = "Charged"
 type = "prefix"
 stat = "static_magnitude"
+scope = "global"
 tags = ["static", "lightning", "elemental", "ailment"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
 
@@ -805,6 +831,7 @@ id = "convert_lightning_to_static"
 name = "Voltaic"
 type = "prefix"
 stat = "convert_lightning_to_static"
+scope = "global"
 tags = ["static", "lightning", "elemental", "conversion"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "bow"]
 
@@ -836,6 +863,7 @@ id = "increased_static_duration"
 name = "of the Storm"
 type = "suffix"
 stat = "increased_static_duration"
+scope = "global"
 tags = ["static", "lightning", "elemental", "ailment", "duration"]
 allowed_classes = ["wand", "staff", "one_hand_sword", "two_hand_sword", "gloves", "helmet"]
 
@@ -865,6 +893,7 @@ id = "static_max_stacks"
 name = "of Tempests"
 type = "suffix"
 stat = "static_max_stacks"
+scope = "global"
 tags = ["static", "lightning", "elemental", "ailment"]
 allowed_classes = ["wand", "staff", "gloves"]
 
@@ -900,6 +929,7 @@ id = "fear_magnitude"
 name = "Terrifying"
 type = "prefix"
 stat = "fear_magnitude"
+scope = "global"
 tags = ["fear", "chaos", "ailment"]
 allowed_classes = ["wand", "staff", "dagger", "one_hand_mace", "two_hand_mace", "helmet"]
 
@@ -929,6 +959,7 @@ id = "convert_chaos_to_fear"
 name = "Nightmarish"
 type = "prefix"
 stat = "convert_chaos_to_fear"
+scope = "global"
 tags = ["fear", "chaos", "conversion"]
 allowed_classes = ["wand", "staff", "dagger"]
 
@@ -958,6 +989,7 @@ id = "convert_physical_to_fear"
 name = "Dreadful"
 type = "prefix"
 stat = "convert_physical_to_fear"
+scope = "global"
 tags = ["fear", "physical", "chaos", "conversion"]
 allowed_classes = ["one_hand_mace", "two_hand_mace", "staff"]
 
@@ -989,6 +1021,7 @@ id = "increased_fear_duration"
 name = "of Terror"
 type = "suffix"
 stat = "increased_fear_duration"
+scope = "global"
 tags = ["fear", "chaos", "ailment", "duration"]
 allowed_classes = ["wand", "staff", "dagger", "one_hand_mace", "helmet"]
 
@@ -1018,6 +1051,7 @@ id = "fear_max_stacks"
 name = "of Nightmares"
 type = "suffix"
 stat = "fear_max_stacks"
+scope = "global"
 tags = ["fear", "chaos", "ailment"]
 allowed_classes = ["wand", "staff", "helmet"]
 
@@ -1053,6 +1087,7 @@ id = "slow_magnitude"
 name = "Hindering"
 type = "prefix"
 stat = "slow_magnitude"
+scope = "global"
 tags = ["slow", "ailment", "utility"]
 allowed_classes = ["bow", "wand", "staff", "one_hand_mace", "two_hand_mace"]
 
@@ -1082,6 +1117,7 @@ id = "convert_cold_to_slow"
 name = "Impeding"
 type = "prefix"
 stat = "convert_cold_to_slow"
+scope = "global"
 tags = ["slow", "cold", "elemental", "conversion"]
 allowed_classes = ["bow", "wand", "staff"]
 
@@ -1111,6 +1147,7 @@ id = "convert_physical_to_slow"
 name = "Crippling"
 type = "prefix"
 stat = "convert_physical_to_slow"
+scope = "global"
 tags = ["slow", "physical", "conversion"]
 allowed_classes = ["one_hand_mace", "two_hand_mace", "bow"]
 
@@ -1142,6 +1179,7 @@ id = "increased_slow_duration"
 name = "of Stagnation"
 type = "suffix"
 stat = "increased_slow_duration"
+scope = "global"
 tags = ["slow", "ailment", "duration", "utility"]
 allowed_classes = ["bow", "wand", "staff", "one_hand_mace", "boots"]
 
@@ -1171,6 +1209,7 @@ id = "slow_max_stacks"
 name = "of Exhaustion"
 type = "suffix"
 stat = "slow_max_stacks"
+scope = "global"
 tags = ["slow", "ailment", "utility"]
 allowed_classes = ["bow", "wand", "staff", "boots"]
 

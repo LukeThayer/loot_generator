@@ -14,14 +14,15 @@ pub use types::*;
 #[cfg(test)]
 mod tests {
     use super::item::Modifier;
-    use super::types::StatType;
-    
+    use super::types::{AffixScope, StatType};
+
     #[test]
     fn test_damage_range_display() {
         let modifier = Modifier {
             affix_id: "added_fire_damage".to_string(),
             name: "Flaming".to_string(),
             stat: StatType::AddedFireDamage,
+            scope: AffixScope::Local,
             tier: 1,
             value: 20,
             value_max: Some(35),
@@ -29,16 +30,17 @@ mod tests {
             tier_max: 28,
             tier_max_value: Some((32, 48)),
         };
-        
+
         assert_eq!(modifier.display(), "Adds 20 to 35 Fire Damage");
     }
-    
+
     #[test]
     fn test_non_damage_display() {
         let modifier = Modifier {
             affix_id: "added_life".to_string(),
             name: "Robust".to_string(),
             stat: StatType::AddedLife,
+            scope: AffixScope::Global,
             tier: 1,
             value: 50,
             value_max: None,
@@ -46,7 +48,7 @@ mod tests {
             tier_max: 60,
             tier_max_value: None,
         };
-        
+
         assert_eq!(modifier.display(), "+50 Added Life");
     }
 }

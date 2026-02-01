@@ -415,7 +415,7 @@ pub fn render_edit_form_with_recipe(
 
     lines.push(Line::from(""));
     lines.push(Line::from(Span::styled(
-        "Tab: next field | Ctrl+S: save | Esc: cancel".to_string(),
+        "Tab/Shift+Tab: navigate fields | Ctrl+S: save | Esc: cancel".to_string(),
         Style::default().fg(Color::DarkGray),
     )));
 

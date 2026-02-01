@@ -776,7 +776,7 @@ impl App {
     fn get_field_count(&self) -> usize {
         match &self.editing {
             Some(EditingEntry::BaseType(_)) => 8, // id, name, class, tags, implicit, defenses, damage, requirements
-            Some(EditingEntry::Affix(_)) => 7, // id, name, type, stat, tags, allowed_classes, tiers
+            Some(EditingEntry::Affix(_)) => 8, // id, name, type, stat, scope, tags, allowed_classes, tiers
             Some(EditingEntry::AffixPool(_)) => 4, // id, name, description, affixes
             Some(EditingEntry::Currency(_)) => 6, // id, name, description, category, requires, effects
             Some(EditingEntry::Unique(_)) => 6,   // id, name, base_type, flavor, mods, recipe
@@ -1132,6 +1132,9 @@ impl App {
             "AddedLightningDamage" => Ok(StatType::AddedLightningDamage),
             "AddedChaosDamage" => Ok(StatType::AddedChaosDamage),
             "IncreasedPhysicalDamage" => Ok(StatType::IncreasedPhysicalDamage),
+            "IncreasedFireDamage" => Ok(StatType::IncreasedFireDamage),
+            "IncreasedColdDamage" => Ok(StatType::IncreasedColdDamage),
+            "IncreasedLightningDamage" => Ok(StatType::IncreasedLightningDamage),
             "IncreasedElementalDamage" => Ok(StatType::IncreasedElementalDamage),
             "IncreasedChaosDamage" => Ok(StatType::IncreasedChaosDamage),
             "IncreasedAttackSpeed" => Ok(StatType::IncreasedAttackSpeed),
@@ -1321,6 +1324,9 @@ impl App {
             "AddedChaosDamage",
             // Percentage increases
             "IncreasedPhysicalDamage",
+            "IncreasedFireDamage",
+            "IncreasedColdDamage",
+            "IncreasedLightningDamage",
             "IncreasedElementalDamage",
             "IncreasedChaosDamage",
             "IncreasedAttackSpeed",
@@ -1607,7 +1613,7 @@ impl App {
                     self.message = Some(format!("Unknown tag: {}", value));
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 7 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 6 => {
                 // Parse ItemClass from string
                 if let Ok(class) = Self::parse_item_class(&value) {
                     if !affix.allowed_classes.contains(&class) {
@@ -1652,7 +1658,7 @@ impl App {
                     None
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 7 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 6 => {
                 if nested_idx < affix.allowed_classes.len() {
                     affix.allowed_classes.remove(nested_idx);
                     Some(affix.allowed_classes.len())

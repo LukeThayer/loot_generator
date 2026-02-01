@@ -73,6 +73,7 @@ id = "added_cold_damage"
 name = "Frozen"
 type = "prefix"
 stat = "added_cold_damage"
+scope = "local"
 tags = ["elemental", "cold", "damage"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "wand", "staff"]
 
@@ -105,6 +106,7 @@ id = "added_lightning_damage"
 name = "Shocking"
 type = "prefix"
 stat = "added_lightning_damage"
+scope = "local"
 tags = ["elemental", "lightning", "damage"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "wand", "staff"]
 
@@ -132,6 +134,128 @@ max = 3
 max_value = { min = 12, max = 20 }
 min_ilvl = 1
 
+# Percentage increased damage
+
+[[affixes]]
+id = "increased_physical_damage"
+name = "Cruel"
+type = "prefix"
+stat = "increased_physical_damage"
+scope = "local"
+tags = ["physical", "damage", "attack"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "one_hand_mace", "two_hand_mace", "bow", "dagger", "claw"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 120
+max = 150
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 80
+max = 119
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 40
+max = 79
+min_ilvl = 1
+
+[[affixes]]
+id = "increased_fire_damage"
+name = "Incandescent"
+type = "prefix"
+stat = "increased_fire_damage"
+scope = "global"
+tags = ["elemental", "fire", "damage"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 60
+max = 80
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 35
+max = 59
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 15
+max = 34
+min_ilvl = 1
+
+[[affixes]]
+id = "increased_cold_damage"
+name = "Polar"
+type = "prefix"
+stat = "increased_cold_damage"
+scope = "global"
+tags = ["elemental", "cold", "damage"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 60
+max = 80
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 35
+max = 59
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 15
+max = 34
+min_ilvl = 1
+
+[[affixes]]
+id = "increased_lightning_damage"
+name = "Crackling"
+type = "prefix"
+stat = "increased_lightning_damage"
+scope = "global"
+tags = ["elemental", "lightning", "damage"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "wand", "staff"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 60
+max = 80
+min_ilvl = 50
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 35
+max = 59
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 15
+max = 34
+min_ilvl = 1
+
 # SUFFIXES
 
 [[affixes]]
@@ -139,7 +263,7 @@ id = "increased_attack_speed"
 name = "of Speed"
 type = "suffix"
 stat = "increased_attack_speed"
-scope = "local"
+scope = "global"
 tags = ["attack", "speed"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "bow", "dagger", "claw"]
 
@@ -169,6 +293,7 @@ id = "increased_critical_chance"
 name = "of Destruction"
 type = "suffix"
 stat = "increased_critical_chance"
+scope = "global"
 tags = ["critical", "attack"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "dagger", "claw", "wand"]
 
@@ -198,6 +323,7 @@ id = "added_accuracy"
 name = "of Precision"
 type = "suffix"
 stat = "added_accuracy"
+scope = "global"
 tags = ["attack", "accuracy"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "dagger", "claw"]
 

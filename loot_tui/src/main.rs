@@ -452,6 +452,7 @@ impl App {
             affix_id: affix.id.clone(),
             name: affix.name.clone(),
             stat: affix.stat,
+            scope: affix.scope,
             tier: tier.tier,
             value,
             value_max,

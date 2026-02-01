@@ -7,6 +7,7 @@ id = "added_life"
 name = "Robust"
 type = "prefix"
 stat = "added_life"
+scope = "global"
 tags = ["life", "defense"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -36,6 +37,7 @@ id = "increased_armour"
 name = "Reinforced"
 type = "prefix"
 stat = "increased_armour"
+scope = "global"
 tags = ["armour", "defense"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -65,6 +67,7 @@ id = "increased_evasion"
 name = "Agile"
 type = "prefix"
 stat = "increased_evasion"
+scope = "global"
 tags = ["evasion", "defense"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -94,6 +97,7 @@ id = "increased_energy_shield"
 name = "Shimmering"
 type = "prefix"
 stat = "increased_energy_shield"
+scope = "global"
 tags = ["energy_shield", "defense", "caster"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -125,6 +129,7 @@ id = "fire_resistance"
 name = "of the Salamander"
 type = "suffix"
 stat = "fire_resistance"
+scope = "global"
 tags = ["fire", "resistance", "defense"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -154,6 +159,7 @@ id = "cold_resistance"
 name = "of the Penguin"
 type = "suffix"
 stat = "cold_resistance"
+scope = "global"
 tags = ["cold", "resistance", "defense"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -183,6 +189,7 @@ id = "lightning_resistance"
 name = "of Grounding"
 type = "suffix"
 stat = "lightning_resistance"
+scope = "global"
 tags = ["lightning", "resistance", "defense"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -212,6 +219,7 @@ id = "added_strength"
 name = "of the Bear"
 type = "suffix"
 stat = "added_strength"
+scope = "global"
 tags = ["strength", "attribute"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -241,6 +249,7 @@ id = "added_dexterity"
 name = "of the Cat"
 type = "suffix"
 stat = "added_dexterity"
+scope = "global"
 tags = ["dexterity", "attribute"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -270,6 +279,7 @@ id = "added_intelligence"
 name = "of the Owl"
 type = "suffix"
 stat = "added_intelligence"
+scope = "global"
 tags = ["intelligence", "attribute", "caster"]
 allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 
@@ -299,6 +309,7 @@ id = "increased_movement_speed"
 name = "of Haste"
 type = "suffix"
 stat = "increased_movement_speed"
+scope = "global"
 tags = ["speed", "utility"]
 allowed_classes = ["boots"]
 

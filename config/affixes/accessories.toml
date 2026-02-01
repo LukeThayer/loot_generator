@@ -7,6 +7,7 @@ id = "acc_added_life"
 name = "Healthy"
 type = "prefix"
 stat = "added_life"
+scope = "global"
 tags = ["ring", "amulet", "belt", "life", "defense"]
 allowed_classes = ["ring", "amulet", "belt"]
 
@@ -36,6 +37,7 @@ id = "acc_added_physical"
 name = "Heavy"
 type = "prefix"
 stat = "added_physical_damage"
+scope = "global"
 tags = ["ring", "physical", "attack", "damage"]
 allowed_classes = ["ring"]
 
@@ -67,6 +69,7 @@ id = "acc_fire_resist"
 name = "of the Salamander"
 type = "suffix"
 stat = "fire_resistance"
+scope = "global"
 tags = ["ring", "amulet", "belt", "fire", "resistance"]
 allowed_classes = ["ring", "amulet", "belt"]
 
@@ -96,6 +99,7 @@ id = "acc_cold_resist"
 name = "of the Yeti"
 type = "suffix"
 stat = "cold_resistance"
+scope = "global"
 tags = ["ring", "amulet", "belt", "cold", "resistance"]
 allowed_classes = ["ring", "amulet", "belt"]
 
@@ -125,6 +129,7 @@ id = "acc_lightning_resist"
 name = "of the Storm"
 type = "suffix"
 stat = "lightning_resistance"
+scope = "global"
 tags = ["ring", "amulet", "belt", "lightning", "resistance"]
 allowed_classes = ["ring", "amulet", "belt"]
 
@@ -154,6 +159,7 @@ id = "acc_strength"
 name = "of the Giant"
 type = "suffix"
 stat = "added_strength"
+scope = "global"
 tags = ["ring", "amulet", "belt", "strength"]
 allowed_classes = ["ring", "amulet", "belt"]
 

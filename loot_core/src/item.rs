@@ -211,6 +211,9 @@ pub struct Modifier {
     pub name: String,
     /// The stat this modifies
     pub stat: StatType,
+    /// Whether this modifier applies locally to the item or globally to the character
+    #[serde(default)]
+    pub scope: AffixScope,
     /// The rolled tier
     pub tier: u32,
     /// The rolled value within the tier's range (or min value for damage ranges)
@@ -239,6 +242,7 @@ impl Modifier {
             affix_id: affix.id.clone(),
             name: affix.name.clone(),
             stat: affix.stat,
+            scope: affix.scope,
             tier: tier.tier,
             value,
             value_max,
