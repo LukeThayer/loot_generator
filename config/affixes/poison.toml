@@ -5,7 +5,7 @@
 # ============================================================================
 
 [[affixes]]
-id = "poison_damage_flat"
+id = "added_chaos_damage"
 name = "Venomous"
 type = "prefix"
 stat = "added_chaos_damage"
@@ -17,21 +17,24 @@ tier = 1
 weight = 100
 min = 35
 max = 50
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 22
 max = 34
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 10
 max = 21
+min_ilvl = 1
 
 [[affixes]]
-id = "poison_damage_percent"
+id = "increased_chaos_damage"
 name = "Noxious"
 type = "prefix"
 stat = "increased_chaos_damage"
@@ -43,18 +46,21 @@ tier = 1
 weight = 100
 min = 60
 max = 80
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 40
 max = 59
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 20
 max = 39
+min_ilvl = 1
 
 [[affixes]]
 id = "poison_damage_over_time"
@@ -69,18 +75,21 @@ tier = 1
 weight = 100
 min = 40
 max = 55
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 25
 max = 39
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 12
 max = 24
+min_ilvl = 1
 
 # ============================================================================
 # POISON SUFFIXES
@@ -99,21 +108,24 @@ tier = 1
 weight = 100
 min = 40
 max = 50
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 25
 max = 39
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 10
 max = 24
+min_ilvl = 1
 
 [[affixes]]
-id = "poison_duration"
+id = "increased_poison_duration"
 name = "of Lingering"
 type = "suffix"
 stat = "increased_poison_duration"
@@ -125,21 +137,24 @@ tier = 1
 weight = 100
 min = 30
 max = 40
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 18
 max = 29
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 8
 max = 17
+min_ilvl = 1
 
 [[affixes]]
-id = "chaos_resist"
+id = "chaos_resistance"
 name = "of the Plague"
 type = "suffix"
 stat = "chaos_resistance"
@@ -151,15 +166,18 @@ tier = 1
 weight = 100
 min = 26
 max = 35
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 16
 max = 25
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 8
 max = 15
+min_ilvl = 1

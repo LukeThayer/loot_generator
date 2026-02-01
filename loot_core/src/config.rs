@@ -49,13 +49,13 @@ impl Config {
             return Ok(result);
         }
 
-        for entry in std::fs::read_dir(dir)? {
+        for entry in Self::read_dir_with_context(dir)? {
             let entry = entry?;
             let path = entry.path();
 
             if path.extension().map_or(false, |ext| ext == "toml") {
-                let content = std::fs::read_to_string(&path)?;
-                let wrapper: BaseTypesWrapper = toml::from_str(&content)?;
+                let content = Self::read_file_with_context(&path)?;
+                let wrapper: BaseTypesWrapper = Self::parse_toml_with_context(&content, &path)?;
                 for bt in wrapper.base_types {
                     result.insert(bt.id.clone(), bt);
                 }
@@ -74,13 +74,13 @@ impl Config {
             return Ok(result);
         }
 
-        for entry in std::fs::read_dir(dir)? {
+        for entry in Self::read_dir_with_context(dir)? {
             let entry = entry?;
             let path = entry.path();
 
             if path.extension().map_or(false, |ext| ext == "toml") {
-                let content = std::fs::read_to_string(&path)?;
-                let wrapper: AffixesWrapper = toml::from_str(&content)?;
+                let content = Self::read_file_with_context(&path)?;
+                let wrapper: AffixesWrapper = Self::parse_toml_with_context(&content, &path)?;
                 for affix in wrapper.affixes {
                     result.insert(affix.id.clone(), affix);
                 }
@@ -99,13 +99,13 @@ impl Config {
             return Ok(result);
         }
 
-        for entry in std::fs::read_dir(dir)? {
+        for entry in Self::read_dir_with_context(dir)? {
             let entry = entry?;
             let path = entry.path();
 
             if path.extension().map_or(false, |ext| ext == "toml") {
-                let content = std::fs::read_to_string(&path)?;
-                let wrapper: AffixPoolsWrapper = toml::from_str(&content)?;
+                let content = Self::read_file_with_context(&path)?;
+                let wrapper: AffixPoolsWrapper = Self::parse_toml_with_context(&content, &path)?;
                 for pool in wrapper.pools {
                     result.insert(pool.id.clone(), pool);
                 }
@@ -124,13 +124,13 @@ impl Config {
             return Ok(result);
         }
 
-        for entry in std::fs::read_dir(dir)? {
+        for entry in Self::read_dir_with_context(dir)? {
             let entry = entry?;
             let path = entry.path();
 
             if path.extension().map_or(false, |ext| ext == "toml") {
-                let content = std::fs::read_to_string(&path)?;
-                let wrapper: CurrenciesWrapper = toml::from_str(&content)?;
+                let content = Self::read_file_with_context(&path)?;
+                let wrapper: CurrenciesWrapper = Self::parse_toml_with_context(&content, &path)?;
                 for currency in wrapper.currencies {
                     result.insert(currency.id.clone(), currency);
                 }
@@ -152,14 +152,13 @@ impl Config {
             return Ok((uniques, recipes));
         }
 
-        let entries = std::fs::read_dir(dir)?;
-        for entry in entries {
+        for entry in Self::read_dir_with_context(dir)? {
             let entry = entry?;
             let path = entry.path();
 
             if path.extension().map_or(false, |ext| ext == "toml") {
-                let content = std::fs::read_to_string(&path)?;
-                let file_config: UniqueFileConfig = toml::from_str(&content)?;
+                let content = Self::read_file_with_context(&path)?;
+                let file_config: UniqueFileConfig = Self::parse_toml_with_context(&content, &path)?;
 
                 let unique_id = file_config.unique.id.clone();
                 let base_type = file_config.unique.base_type.clone();
@@ -177,36 +176,117 @@ impl Config {
 
         Ok((uniques, recipes))
     }
+
+    // Helper functions for error context
+
+    fn read_dir_with_context(dir: &Path) -> Result<std::fs::ReadDir, ConfigError> {
+        std::fs::read_dir(dir).map_err(|e| ConfigError::Io {
+            error: e,
+            path: Some(dir.to_path_buf()),
+        })
+    }
+
+    fn read_file_with_context(path: &Path) -> Result<String, ConfigError> {
+        std::fs::read_to_string(path).map_err(|e| ConfigError::Io {
+            error: e,
+            path: Some(path.to_path_buf()),
+        })
+    }
+
+    fn parse_toml_with_context<T: serde::de::DeserializeOwned>(
+        content: &str,
+        path: &Path,
+    ) -> Result<T, ConfigError> {
+        toml::from_str(content).map_err(|e| ConfigError::Parse {
+            error: e,
+            path: path.to_path_buf(),
+        })
+    }
 }
 
 #[derive(Debug)]
 pub enum ConfigError {
-    Io(std::io::Error),
-    Parse(toml::de::Error),
+    /// IO error with optional file path
+    Io {
+        error: std::io::Error,
+        path: Option<std::path::PathBuf>,
+    },
+    /// TOML parse error with file path and location details
+    Parse {
+        error: toml::de::Error,
+        path: std::path::PathBuf,
+    },
+}
+
+impl ConfigError {
+    /// Get the file path associated with this error, if any
+    pub fn file_path(&self) -> Option<&std::path::Path> {
+        match self {
+            ConfigError::Io { path, .. } => path.as_deref(),
+            ConfigError::Parse { path, .. } => Some(path),
+        }
+    }
+
+    /// Get a user-friendly description of where the error occurred
+    pub fn location_description(&self) -> String {
+        match self {
+            ConfigError::Io { path: Some(p), .. } => {
+                format!("File: {}", p.display())
+            }
+            ConfigError::Io { path: None, .. } => "Unknown location".to_string(),
+            ConfigError::Parse { error, path } => {
+                let mut desc = format!("File: {}", path.display());
+                if let Some(span) = error.span() {
+                    desc.push_str(&format!("\nPosition: bytes {}..{}", span.start, span.end));
+                }
+                desc
+            }
+        }
+    }
+
+    /// Get the underlying error message
+    pub fn error_message(&self) -> String {
+        match self {
+            ConfigError::Io { error, .. } => error.to_string(),
+            ConfigError::Parse { error, .. } => {
+                // Extract just the message part, not the span info (we show that separately)
+                let msg = error.message();
+                msg.to_string()
+            }
+        }
+    }
 }
 
 impl From<std::io::Error> for ConfigError {
     fn from(e: std::io::Error) -> Self {
-        ConfigError::Io(e)
-    }
-}
-
-impl From<toml::de::Error> for ConfigError {
-    fn from(e: toml::de::Error) -> Self {
-        ConfigError::Parse(e)
+        ConfigError::Io { error: e, path: None }
     }
 }
 
 impl std::fmt::Display for ConfigError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ConfigError::Io(e) => write!(f, "IO error: {}", e),
-            ConfigError::Parse(e) => write!(f, "Parse error: {}", e),
+            ConfigError::Io { error, path: Some(p) } => {
+                write!(f, "IO error in '{}': {}", p.display(), error)
+            }
+            ConfigError::Io { error, path: None } => {
+                write!(f, "IO error: {}", error)
+            }
+            ConfigError::Parse { error, path } => {
+                write!(f, "Parse error in '{}': {}", path.display(), error)
+            }
         }
     }
 }
 
-impl std::error::Error for ConfigError {}
+impl std::error::Error for ConfigError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            ConfigError::Io { error, .. } => Some(error),
+            ConfigError::Parse { error, .. } => Some(error),
+        }
+    }
+}
 
 // Wrapper types for TOML parsing
 
@@ -278,14 +358,27 @@ pub struct DefensesConfig {
     pub energy_shield: Option<RollRange>,
 }
 
+/// Individual damage type with its own range
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DamageConfig {
+pub struct DamageEntry {
+    #[serde(rename = "type")]
+    pub damage_type: DamageType,
     pub min: i32,
     pub max: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DamageConfig {
+    /// List of damage types, each with their own min/max range
+    #[serde(default)]
+    pub damages: Vec<DamageEntry>,
     #[serde(default)]
     pub attack_speed: f32,
     #[serde(default)]
     pub critical_chance: f32,
+    /// Spell efficiency percentage (for casting weapons like wands/staves)
+    #[serde(default)]
+    pub spell_efficiency: f32,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
@@ -315,6 +408,9 @@ pub struct AffixTierConfig {
     pub weight: u32,
     pub min: i32,
     pub max: i32,
+    /// Minimum item level required for this tier to roll
+    #[serde(default)]
+    pub min_ilvl: u32,
 }
 
 /// Affix pool configuration - groups of affixes that can be referenced by currencies

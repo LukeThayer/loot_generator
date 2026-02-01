@@ -11,7 +11,7 @@ rarities = ["normal"]
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "fire_damage_flat" }]
+add_specific_affix = [{ id = "added_fire_damage" }]
 
 [[currencies]]
 id = "imbue_cold"
@@ -24,7 +24,7 @@ rarities = ["normal"]
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "cold_damage_flat" }]
+add_specific_affix = [{ id = "added_cold_damage" }]
 
 [[currencies]]
 id = "imbue_lightning"
@@ -37,7 +37,7 @@ rarities = ["normal"]
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "lightning_damage_flat" }]
+add_specific_affix = [{ id = "added_lightning_damage" }]
 
 [[currencies]]
 id = "imbue_elemental"
@@ -51,9 +51,9 @@ rarities = ["normal"]
 [currencies.effects]
 set_rarity = "magic"
 add_specific_affix = [
-    { id = "fire_damage_flat" },
-    { id = "cold_damage_flat" },
-    { id = "lightning_damage_flat" },
+    { id = "added_fire_damage" },
+    { id = "added_cold_damage" },
+    { id = "added_lightning_damage" },
 ]
 
 [[currencies]]
@@ -67,7 +67,7 @@ rarities = ["normal"]
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "life_flat" }]
+add_specific_affix = [{ id = "added_life" }]
 
 [[currencies]]
 id = "imbue_physical"
@@ -80,7 +80,7 @@ rarities = ["normal"]
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "phys_damage_flat" }]
+add_specific_affix = [{ id = "added_physical_damage" }]
 
 [[currencies]]
 id = "imbue_speed"
@@ -93,7 +93,7 @@ rarities = ["normal"]
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "movement_speed" }]
+add_specific_affix = [{ id = "increased_movement_speed" }]
 
 [[currencies]]
 id = "imbue_resistance"
@@ -107,7 +107,7 @@ rarities = ["normal"]
 [currencies.effects]
 set_rarity = "magic"
 add_specific_affix = [
-    { id = "fire_resist" },
-    { id = "cold_resist" },
-    { id = "lightning_resist" },
+    { id = "fire_resistance" },
+    { id = "cold_resistance" },
+    { id = "lightning_resistance" },
 ]

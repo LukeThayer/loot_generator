@@ -226,22 +226,78 @@ config/
 id = "iron_sword"
 name = "Iron Sword"
 class = "one_hand_sword"
-tags = ["melee", "physical", "attack"]
+tags = ["melee", "physical", "attack", "sword"]
 
 [base_types.implicit]
 stat = "added_accuracy"
-min = 8
-max = 12
+min = 10
+max = 20
 
 [base_types.damage]
-min = 5
-max = 15
 attack_speed = 1.3
 critical_chance = 5.0
+spell_efficiency = 0.0     # 0% = pure attack weapon
+
+[[base_types.damage.damages]]
+type = "physical"
+min = 5
+max = 12
 
 [base_types.requirements]
 level = 1
 strength = 10
+```
+
+**Hybrid weapon example (physical + elemental):**
+
+```toml
+[[base_types]]
+id = "infernal_sceptre"
+name = "Infernal Sceptre"
+class = "one_hand_mace"
+tags = ["caster", "melee", "fire"]
+
+[base_types.implicit]
+stat = "fire_resistance"
+min = 15
+max = 25
+
+[base_types.damage]
+attack_speed = 1.2
+critical_chance = 6.0
+spell_efficiency = 80.0    # 80% spell damage effectiveness
+
+[[base_types.damage.damages]]
+type = "physical"
+min = 5
+max = 10
+
+[[base_types.damage.damages]]
+type = "fire"
+min = 8
+max = 16
+
+[base_types.requirements]
+level = 30
+strength = 20
+intelligence = 35
+```
+
+**Armour example:**
+
+```toml
+[[base_types]]
+id = "plate_vest"
+name = "Plate Vest"
+class = "body_armour"
+tags = ["armour", "strength"]
+
+[base_types.defenses]
+armour = { min = 80, max = 100 }
+
+[base_types.requirements]
+level = 10
+strength = 30
 ```
 
 ### Affixes
@@ -254,32 +310,57 @@ name = "Heavy"
 type = "prefix"
 stat = "added_physical_damage"
 tags = ["physical", "damage", "attack"]
-allowed_classes = ["one_hand_sword", "two_hand_sword", "dagger"]
+allowed_classes = ["one_hand_sword", "two_hand_sword", "dagger", "bow"]
 
 [[affixes.tiers]]
 tier = 1
-weight = 100    # Rarer
+weight = 100      # Rarer (lower weight)
 min = 25
 max = 35
+min_ilvl = 68     # Only on level 68+ items
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 18
 max = 24
+min_ilvl = 45
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 10
 max = 17
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 4
-weight = 1000   # Most common
+weight = 1000     # Most common (higher weight)
 min = 4
 max = 9
+min_ilvl = 1      # Can appear on any item
 ```
+
+**Affix field reference:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `String` | Unique identifier |
+| `name` | `String` | Display name |
+| `type` | `"prefix"` or `"suffix"` | Affix slot type |
+| `stat` | `StatType` | Which stat this modifies |
+| `tags` | `[String]` | Tags for spawn weighting |
+| `allowed_classes` | `[ItemClass]` | Classes this can roll on (empty = all) |
+
+**Tier field reference:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `tier` | `u32` | Tier number (1 = best) |
+| `weight` | `u32` | Spawn weight (higher = more common) |
+| `min` | `i32` | Minimum rolled value |
+| `max` | `i32` | Maximum rolled value |
+| `min_ilvl` | `u32` | Minimum item level required |
 
 ### Affix Pools
 
@@ -447,32 +528,294 @@ mode = "percentage"
 influence = 0.8
 ```
 
-## Item Structure
+## Core Systems
 
-### Rarities
+This section explains how the item generation systems work in detail.
 
-| Rarity | Prefixes | Suffixes | Description |
-|--------|----------|----------|-------------|
-| Normal | 0 | 0 | No affixes |
-| Magic | 0-1 | 0-1 | Up to 2 total |
-| Rare | 0-3 | 0-3 | Up to 6 total, random name |
-| Unique | - | - | Fixed mods, fixed name |
+### Item Level and Tier Restrictions
+
+Every item has a **level requirement** (from its base type). This level determines which affix tiers can roll on the item.
+
+Each affix tier has a `min_ilvl` (minimum item level) requirement:
+
+```toml
+[[affixes.tiers]]
+tier = 1          # Best tier
+weight = 100
+min = 90
+max = 110
+min_ilvl = 68     # Only drops on level 68+ items
+
+[[affixes.tiers]]
+tier = 4          # Worst tier
+weight = 1000
+min = 15
+max = 34
+min_ilvl = 1      # Can drop on any item
+```
+
+When rolling an affix, only tiers where `min_ilvl <= item.requirements.level` are eligible. This prevents powerful T1 affixes from appearing on low-level items.
+
+**Example:** An Iron Helmet (level 5) can only roll T4 affixes. A Dragon Crown (level 68) can roll any tier.
+
+### Tags and Spawn Weighting
+
+Tags are strings that describe item and affix characteristics. They create synergies that influence affix spawn rates.
+
+**How it works:**
+1. Base types have tags: `["melee", "physical", "attack"]`
+2. Affixes have tags: `["physical", "damage"]`
+3. When rolling affixes, each matching tag increases spawn weight by **50%**
+
+```
+Base affix weight: 1000
+Item tags: ["melee", "physical", "attack"]
+Affix tags: ["physical", "damage"]
+Matching tags: 1 ("physical")
+Final weight: 1000 × 1.5 = 1500
+```
+
+**Common tag categories:**
+
+| Category | Tags | Purpose |
+|----------|------|---------|
+| Damage type | `physical`, `fire`, `cold`, `lightning`, `chaos` | Match damage affixes to weapon types |
+| Combat style | `melee`, `ranged`, `attack`, `caster` | Match affixes to playstyle |
+| Defense type | `armour`, `evasion`, `energy_shield` | Match defense affixes to armour types |
+| Attribute | `strength`, `dexterity`, `intelligence` | Attribute-based weighting |
+| Special | `life`, `defense`, `damage`, `speed` | General categories |
 
 ### Item Classes
 
-**Weapons:** `one_hand_sword`, `two_hand_sword`, `one_hand_axe`, `two_hand_axe`, `one_hand_mace`, `two_hand_mace`, `dagger`, `claw`, `bow`, `wand`, `staff`
+Item classes restrict which affixes can roll on which items via the `allowed_classes` field.
 
-**Armour:** `helmet`, `body_armour`, `gloves`, `boots`, `shield`
+**Weapon Classes:**
+
+| Class | TOML ID | Description |
+|-------|---------|-------------|
+| One-Hand Sword | `one_hand_sword` | Fast, balanced melee |
+| Two-Hand Sword | `two_hand_sword` | High damage melee |
+| One-Hand Axe | `one_hand_axe` | Crit-focused melee |
+| Two-Hand Axe | `two_hand_axe` | Heavy damage |
+| One-Hand Mace | `one_hand_mace` | Blunt melee |
+| Two-Hand Mace | `two_hand_mace` | Slow, high damage |
+| Dagger | `dagger` | Fast, crit-focused |
+| Claw | `claw` | Fast dual-wield |
+| Wand | `wand` | Caster ranged |
+| Bow | `bow` | Physical ranged |
+| Staff | `staff` | Two-hand caster |
+
+**Armour Classes:**
+
+| Class | TOML ID | Description |
+|-------|---------|-------------|
+| Helmet | `helmet` | Head slot |
+| Body Armour | `body_armour` | Chest slot |
+| Gloves | `gloves` | Hand slot |
+| Boots | `boots` | Feet slot |
+| Shield | `shield` | Off-hand defense |
+
+**Class restrictions in affixes:**
+
+```toml
+[[affixes]]
+id = "added_physical_damage"
+allowed_classes = ["one_hand_sword", "two_hand_sword", "dagger", "bow"]
+# Empty allowed_classes = can roll on any class
+```
+
+### Affix Pools
+
+Pools are named collections of affix IDs. Currencies must specify which pools they draw from.
+
+**Why pools exist:**
+- Separate "common" affixes from "special" affixes
+- Create themed crafting (elemental, poison, etc.)
+- Control which affixes specific currencies can add
+
+**Pool structure:**
+
+```toml
+# config/affix_pools/default.toml
+[[pools]]
+id = "common"
+name = "Common Affixes"
+affixes = ["added_life", "fire_resistance", "added_physical_damage", ...]
+
+[[pools]]
+id = "elemental"
+name = "Elemental Affixes"
+affixes = ["added_fire_damage", "added_cold_damage", "added_lightning_damage"]
+
+# config/affix_pools/poison.toml
+[[pools]]
+id = "poison"
+name = "Poison Affixes"
+affixes = ["poison_damage_flat", "chance_to_poison", "poison_duration"]
+```
+
+**Currencies reference pools:**
+
+```toml
+[[currencies]]
+id = "chaos_orb"
+[currencies.effects]
+affix_pools = ["common"]           # Draw from common pool only
+
+[[currencies]]
+id = "poison_imbue"
+[currencies.effects]
+affix_pools = ["poison"]           # Draw from poison pool only
+```
+
+**Pool selection rules:**
+1. If `affix_pools` is empty, currency fails with `NoAffixPoolsSpecified`
+2. Multiple pools are combined (union of all affix IDs)
+3. Affixes must still pass class restrictions
+
+### Affix Tiers
+
+Each affix has multiple tiers with different value ranges and spawn weights.
+
+```toml
+[[affixes]]
+id = "added_life"
+stat = "added_life"
+
+[[affixes.tiers]]
+tier = 1           # Tier number (1 = best)
+weight = 100       # Lower = rarer
+min = 90           # Minimum rolled value
+max = 110          # Maximum rolled value
+min_ilvl = 68      # Minimum item level required
+
+[[affixes.tiers]]
+tier = 2
+weight = 300       # 3x more common than T1
+min = 60
+max = 89
+min_ilvl = 45
+
+[[affixes.tiers]]
+tier = 3
+weight = 600       # 6x more common than T1
+min = 35
+max = 59
+min_ilvl = 25
+
+[[affixes.tiers]]
+tier = 4
+weight = 1000      # 10x more common than T1
+min = 15
+max = 34
+min_ilvl = 1
+```
+
+**Tier selection process:**
+1. Filter tiers by `min_ilvl <= item_level`
+2. Sum weights of eligible tiers
+3. Random weighted selection
+4. Roll value within tier's min-max range
+
+### Damage Types
+
+Weapons can deal multiple damage types, each with its own range:
+
+```toml
+[base_types.damage]
+attack_speed = 1.4
+critical_chance = 5.0
+spell_efficiency = 0.0      # 0% for pure attack weapons
+
+[[base_types.damage.damages]]
+type = "physical"
+min = 10
+max = 25
+
+[[base_types.damage.damages]]
+type = "fire"
+min = 5
+max = 15
+```
+
+**Available damage types:**
+
+| Type | TOML ID | Color (TUI) |
+|------|---------|-------------|
+| Physical | `physical` | White |
+| Fire | `fire` | Red |
+| Cold | `cold` | Cyan |
+| Lightning | `lightning` | Yellow |
+| Chaos | `chaos` | Magenta |
 
 ### Stat Types
 
-Flat additions: `added_physical_damage`, `added_fire_damage`, `added_cold_damage`, `added_lightning_damage`, `added_chaos_damage`, `added_life`, `added_accuracy`, etc.
+All stats that affixes can modify:
 
-Percentage increases: `increased_physical_damage`, `increased_attack_speed`, `increased_critical_chance`, `increased_armour`, `increased_movement_speed`, etc.
+**Flat Additions:**
+- `added_physical_damage`, `added_fire_damage`, `added_cold_damage`, `added_lightning_damage`, `added_chaos_damage`
+- `added_armour`, `added_evasion`, `added_energy_shield`
+- `added_life`, `added_mana`, `added_accuracy`
+- `added_strength`, `added_dexterity`, `added_intelligence`, `added_constitution`, `added_wisdom`, `added_charisma`, `added_all_attributes`
 
-Resistances: `fire_resistance`, `cold_resistance`, `lightning_resistance`, `chaos_resistance`
+**Percentage Increases:**
+- `increased_physical_damage`, `increased_elemental_damage`, `increased_chaos_damage`
+- `increased_attack_speed`, `increased_critical_chance`, `increased_critical_damage`
+- `increased_armour`, `increased_evasion`, `increased_energy_shield`
+- `increased_life`, `increased_mana`, `increased_accuracy`, `increased_movement_speed`
+- `increased_item_rarity`, `increased_item_quantity`
 
-Poison/Ailment: `poison_damage_over_time`, `chance_to_poison`, `increased_poison_duration`
+**Resistances (displayed as %):**
+- `fire_resistance`, `cold_resistance`, `lightning_resistance`, `chaos_resistance`, `all_resistances`
+
+**Resource Recovery:**
+- `life_regeneration`, `mana_regeneration`, `life_on_hit`, `life_leech`, `mana_leech`
+
+**Poison/Ailment:**
+- `poison_damage_over_time`, `chance_to_poison`, `increased_poison_duration`
+
+### Requirements
+
+Items have attribute requirements that must be met to equip:
+
+```toml
+[base_types.requirements]
+level = 45         # Character level
+strength = 65      # Attribute requirements
+dexterity = 0
+constitution = 0
+intelligence = 0
+wisdom = 0
+charisma = 0
+```
+
+**The level requirement is particularly important** as it determines which affix tiers can roll (see Item Level section above).
+
+### Rarities
+
+| Rarity | Prefixes | Suffixes | Total | Description |
+|--------|----------|----------|-------|-------------|
+| Normal | 0 | 0 | 0 | No affixes, white items |
+| Magic | 0-1 | 0-1 | 1-2 | Blue items |
+| Rare | 0-3 | 0-3 | 4-6 | Yellow items, random name |
+| Unique | - | - | Fixed | Orange items, predetermined mods |
+
+### Implicit Modifiers
+
+Base types can have an implicit modifier that is always present (separate from affixes):
+
+```toml
+[base_types.implicit]
+stat = "added_accuracy"
+min = 10
+max = 20
+```
+
+Implicits:
+- Are rolled when the item is created
+- Cannot be removed or rerolled by currencies
+- Do not count toward affix limits
+- Are displayed separately from explicit modifiers
 
 ## TUI Application
 

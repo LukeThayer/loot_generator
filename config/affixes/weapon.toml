@@ -5,7 +5,7 @@
 # ============================================================================
 
 [[affixes]]
-id = "phys_damage_flat"
+id = "added_physical_damage"
 name = "Heavy"
 type = "prefix"
 stat = "added_physical_damage"
@@ -17,27 +17,31 @@ tier = 1
 weight = 100
 min = 25
 max = 35
+min_ilvl = 68
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 18
 max = 24
+min_ilvl = 45
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 10
 max = 17
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 4
 weight = 1000
 min = 4
 max = 9
+min_ilvl = 1
 
 [[affixes]]
-id = "phys_damage_percent"
+id = "increased_physical_damage"
 name = "Cruel"
 type = "prefix"
 stat = "increased_physical_damage"
@@ -49,27 +53,31 @@ tier = 1
 weight = 100
 min = 150
 max = 179
+min_ilvl = 68
 
 [[affixes.tiers]]
 tier = 2
 weight = 250
 min = 120
 max = 149
+min_ilvl = 45
 
 [[affixes.tiers]]
 tier = 3
 weight = 500
 min = 90
 max = 119
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 4
 weight = 1000
 min = 60
 max = 89
+min_ilvl = 1
 
 [[affixes]]
-id = "fire_damage_flat"
+id = "added_fire_damage"
 name = "Flaming"
 type = "prefix"
 stat = "added_fire_damage"
@@ -81,21 +89,24 @@ tier = 1
 weight = 150
 min = 30
 max = 45
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 18
 max = 29
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
 min = 8
 max = 17
+min_ilvl = 1
 
 [[affixes]]
-id = "cold_damage_flat"
+id = "added_cold_damage"
 name = "Frozen"
 type = "prefix"
 stat = "added_cold_damage"
@@ -107,21 +118,24 @@ tier = 1
 weight = 150
 min = 30
 max = 45
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 18
 max = 29
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
 min = 8
 max = 17
+min_ilvl = 1
 
 [[affixes]]
-id = "lightning_damage_flat"
+id = "added_lightning_damage"
 name = "Shocking"
 type = "prefix"
 stat = "added_lightning_damage"
@@ -133,25 +147,28 @@ tier = 1
 weight = 150
 min = 5
 max = 60
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 3
 max = 40
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
 min = 1
 max = 25
+min_ilvl = 1
 
 # ============================================================================
 # WEAPON SUFFIXES
 # ============================================================================
 
 [[affixes]]
-id = "attack_speed"
+id = "increased_attack_speed"
 name = "of Speed"
 type = "suffix"
 stat = "increased_attack_speed"
@@ -163,21 +180,24 @@ tier = 1
 weight = 100
 min = 20
 max = 25
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 14
 max = 19
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 8
 max = 13
+min_ilvl = 1
 
 [[affixes]]
-id = "crit_chance"
+id = "increased_critical_chance"
 name = "of Destruction"
 type = "suffix"
 stat = "increased_critical_chance"
@@ -189,21 +209,24 @@ tier = 1
 weight = 150
 min = 30
 max = 38
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 20
 max = 29
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
 min = 10
 max = 19
+min_ilvl = 1
 
 [[affixes]]
-id = "accuracy"
+id = "added_accuracy"
 name = "of Precision"
 type = "suffix"
 stat = "added_accuracy"
@@ -215,15 +238,18 @@ tier = 1
 weight = 200
 min = 150
 max = 200
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 500
 min = 80
 max = 149
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 1000
 min = 30
 max = 79
+min_ilvl = 1

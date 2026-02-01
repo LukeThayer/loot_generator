@@ -45,10 +45,14 @@ impl Item {
         };
 
         let damage = base.damage.as_ref().map(|d| WeaponDamage {
-            min: d.min,
-            max: d.max,
+            damages: d.damages.iter().map(|e| DamageValue {
+                damage_type: e.damage_type,
+                min: e.min,
+                max: e.max,
+            }).collect(),
             attack_speed: d.attack_speed,
             critical_chance: d.critical_chance,
+            spell_efficiency: d.spell_efficiency,
         });
 
         Item {
@@ -108,12 +112,17 @@ impl Item {
         // Damage (for weapons)
         if let Some(ref dmg) = self.damage {
             md.push_str("### Damage\n");
-            md.push_str(&format!("- Physical: {}-{}\n", dmg.min, dmg.max));
+            for entry in &dmg.damages {
+                md.push_str(&format!("- {:?}: {}-{}\n", entry.damage_type, entry.min, entry.max));
+            }
             if dmg.attack_speed > 0.0 {
                 md.push_str(&format!("- Attack Speed: {:.2}\n", dmg.attack_speed));
             }
             if dmg.critical_chance > 0.0 {
                 md.push_str(&format!("- Critical Chance: {:.1}%\n", dmg.critical_chance));
+            }
+            if dmg.spell_efficiency > 0.0 {
+                md.push_str(&format!("- Spell Efficiency: {:.0}%\n", dmg.spell_efficiency));
             }
             md.push('\n');
         }
@@ -176,13 +185,21 @@ impl Defenses {
     }
 }
 
+/// Individual damage entry with type and range
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DamageValue {
+    pub damage_type: DamageType,
+    pub min: i32,
+    pub max: i32,
+}
+
 /// Weapon damage values
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WeaponDamage {
-    pub min: i32,
-    pub max: i32,
+    pub damages: Vec<DamageValue>,
     pub attack_speed: f32,
     pub critical_chance: f32,
+    pub spell_efficiency: f32,
 }
 
 /// A rolled modifier instance

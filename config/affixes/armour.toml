@@ -5,7 +5,7 @@
 # ============================================================================
 
 [[affixes]]
-id = "life_flat"
+id = "added_life"
 name = "Robust"
 type = "prefix"
 stat = "added_life"
@@ -17,27 +17,31 @@ tier = 1
 weight = 100
 min = 90
 max = 110
+min_ilvl = 68
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
 min = 60
 max = 89
+min_ilvl = 45
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
 min = 35
 max = 59
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 4
 weight = 1000
 min = 15
 max = 34
+min_ilvl = 1
 
 [[affixes]]
-id = "armour_percent"
+id = "increased_armour"
 name = "Reinforced"
 type = "prefix"
 stat = "increased_armour"
@@ -49,21 +53,24 @@ tier = 1
 weight = 150
 min = 80
 max = 100
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 50
 max = 79
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
 min = 25
 max = 49
+min_ilvl = 1
 
 [[affixes]]
-id = "evasion_percent"
+id = "increased_evasion"
 name = "Agile"
 type = "prefix"
 stat = "increased_evasion"
@@ -75,21 +82,24 @@ tier = 1
 weight = 150
 min = 80
 max = 100
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 50
 max = 79
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
 min = 25
 max = 49
+min_ilvl = 1
 
 [[affixes]]
-id = "es_percent"
+id = "increased_energy_shield"
 name = "Shimmering"
 type = "prefix"
 stat = "increased_energy_shield"
@@ -101,207 +111,43 @@ tier = 1
 weight = 150
 min = 80
 max = 100
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 50
 max = 79
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
 min = 25
 max = 49
+min_ilvl = 1
+
+[[affixes]]
+id = "added_lords_strength"
+name = "Lord's"
+type = "prefix"
+stat = "added_strength"
+tags = ["attribute", "strength"]
+allowed_classes = ["gloves"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 10
+min = 65
+max = 100
+min_ilvl = 75
 
 # ============================================================================
 # ARMOUR SUFFIXES
 # ============================================================================
 
 [[affixes]]
-id = "strength"
-name = "of the Bear"
-type = "suffix"
-stat = "added_strength"
-tags = ["strength", "attribute"]
-allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 200
-min = 40
-max = 50
-
-[[affixes.tiers]]
-tier = 2
-weight = 500
-min = 25
-max = 39
-
-[[affixes.tiers]]
-tier = 3
-weight = 1000
-min = 10
-max = 24
-
-[[affixes]]
-id = "dexterity"
-name = "of the Cat"
-type = "suffix"
-stat = "added_dexterity"
-tags = ["dexterity", "attribute"]
-allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 200
-min = 40
-max = 50
-
-[[affixes.tiers]]
-tier = 2
-weight = 500
-min = 25
-max = 39
-
-[[affixes.tiers]]
-tier = 3
-weight = 1000
-min = 10
-max = 24
-
-[[affixes]]
-id = "intelligence"
-name = "of the Owl"
-type = "suffix"
-stat = "added_intelligence"
-tags = ["intelligence", "attribute", "caster"]
-allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 200
-min = 40
-max = 50
-
-[[affixes.tiers]]
-tier = 2
-weight = 500
-min = 25
-max = 39
-
-[[affixes.tiers]]
-tier = 3
-weight = 1000
-min = 10
-max = 24
-
-[[affixes]]
-id = "fire_resist"
-name = "of the Salamander"
-type = "suffix"
-stat = "fire_resistance"
-tags = ["fire", "resistance", "defense"]
-allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 150
-min = 36
-max = 45
-
-[[affixes.tiers]]
-tier = 2
-weight = 400
-min = 24
-max = 35
-
-[[affixes.tiers]]
-tier = 3
-weight = 800
-min = 12
-max = 23
-
-[[affixes]]
-id = "cold_resist"
-name = "of the Penguin"
-type = "suffix"
-stat = "cold_resistance"
-tags = ["cold", "resistance", "defense"]
-allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 150
-min = 36
-max = 45
-
-[[affixes.tiers]]
-tier = 2
-weight = 400
-min = 24
-max = 35
-
-[[affixes.tiers]]
-tier = 3
-weight = 800
-min = 12
-max = 23
-
-[[affixes]]
-id = "lightning_resist"
-name = "of Grounding"
-type = "suffix"
-stat = "lightning_resistance"
-tags = ["lightning", "resistance", "defense"]
-allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 150
-min = 36
-max = 45
-
-[[affixes.tiers]]
-tier = 2
-weight = 400
-min = 24
-max = 35
-
-[[affixes.tiers]]
-tier = 3
-weight = 800
-min = 12
-max = 23
-
-[[affixes]]
-id = "movement_speed"
-name = "of Haste"
-type = "suffix"
-stat = "increased_movement_speed"
-tags = ["speed", "utility"]
-allowed_classes = ["boots"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 25
-max = 30
-
-[[affixes.tiers]]
-tier = 2
-weight = 300
-min = 18
-max = 24
-
-[[affixes.tiers]]
-tier = 3
-weight = 600
-min = 10
-max = 17
-
-[[affixes]]
-id = "life_regen"
+id = "life_regeneration"
 name = "of Regeneration"
 type = "suffix"
 stat = "life_regeneration"
@@ -313,15 +159,221 @@ tier = 1
 weight = 200
 min = 15
 max = 20
+min_ilvl = 60
 
 [[affixes.tiers]]
 tier = 2
 weight = 500
 min = 8
 max = 14
+min_ilvl = 35
 
 [[affixes.tiers]]
 tier = 3
 weight = 1000
 min = 3
 max = 7
+min_ilvl = 1
+
+[[affixes]]
+id = "fire_resistance"
+name = "of the Salamander"
+type = "suffix"
+stat = "fire_resistance"
+tags = ["fire", "resistance", "defense"]
+allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 36
+max = 45
+min_ilvl = 60
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 24
+max = 35
+min_ilvl = 35
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 12
+max = 23
+min_ilvl = 1
+
+[[affixes]]
+id = "cold_resistance"
+name = "of the Penguin"
+type = "suffix"
+stat = "cold_resistance"
+tags = ["cold", "resistance", "defense"]
+allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 36
+max = 45
+min_ilvl = 60
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 24
+max = 35
+min_ilvl = 35
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 12
+max = 23
+min_ilvl = 1
+
+[[affixes]]
+id = "lightning_resistance"
+name = "of Grounding"
+type = "suffix"
+stat = "lightning_resistance"
+tags = ["lightning", "resistance", "defense"]
+allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 150
+min = 36
+max = 45
+min_ilvl = 60
+
+[[affixes.tiers]]
+tier = 2
+weight = 400
+min = 24
+max = 35
+min_ilvl = 35
+
+[[affixes.tiers]]
+tier = 3
+weight = 800
+min = 12
+max = 23
+min_ilvl = 1
+
+[[affixes]]
+id = "added_strength"
+name = "of the Bear"
+type = "suffix"
+stat = "added_strength"
+tags = ["strength", "attribute"]
+allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 200
+min = 40
+max = 50
+min_ilvl = 60
+
+[[affixes.tiers]]
+tier = 2
+weight = 500
+min = 25
+max = 39
+min_ilvl = 35
+
+[[affixes.tiers]]
+tier = 3
+weight = 1000
+min = 10
+max = 24
+min_ilvl = 1
+
+[[affixes]]
+id = "added_dexterity"
+name = "of the Cat"
+type = "suffix"
+stat = "added_dexterity"
+tags = ["dexterity", "attribute"]
+allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 200
+min = 40
+max = 50
+min_ilvl = 60
+
+[[affixes.tiers]]
+tier = 2
+weight = 500
+min = 25
+max = 39
+min_ilvl = 35
+
+[[affixes.tiers]]
+tier = 3
+weight = 1000
+min = 10
+max = 24
+min_ilvl = 1
+
+[[affixes]]
+id = "added_intelligence"
+name = "of the Owl"
+type = "suffix"
+stat = "added_intelligence"
+tags = ["intelligence", "attribute", "caster"]
+allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 200
+min = 40
+max = 50
+min_ilvl = 60
+
+[[affixes.tiers]]
+tier = 2
+weight = 500
+min = 25
+max = 39
+min_ilvl = 35
+
+[[affixes.tiers]]
+tier = 3
+weight = 1000
+min = 10
+max = 24
+min_ilvl = 1
+
+[[affixes]]
+id = "increased_movement_speed"
+name = "of Haste"
+type = "suffix"
+stat = "increased_movement_speed"
+tags = ["speed", "utility"]
+allowed_classes = ["boots"]
+
+[[affixes.tiers]]
+tier = 1
+weight = 100
+min = 25
+max = 30
+min_ilvl = 60
+
+[[affixes.tiers]]
+tier = 2
+weight = 300
+min = 18
+max = 24
+min_ilvl = 35
+
+[[affixes.tiers]]
+tier = 3
+weight = 600
+min = 10
+max = 17
+min_ilvl = 1

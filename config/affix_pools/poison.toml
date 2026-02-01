@@ -5,10 +5,10 @@ id = "poison"
 name = "Poison Affixes"
 description = "Toxic affixes that can only be obtained through special means"
 affixes = [
-    "poison_damage_flat",
-    "poison_damage_percent",
+    "added_chaos_damage",
+    "increased_chaos_damage",
     "poison_damage_over_time",
     "chance_to_poison",
-    "poison_duration",
-    "chaos_resist",
+    "increased_poison_duration",
+    "chaos_resistance",
 ]

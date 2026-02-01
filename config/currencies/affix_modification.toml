@@ -1,5 +1,3 @@
-# Affix Modification Currencies
-
 [[currencies]]
 id = "add_affix"
 name = "Affix Shard"
@@ -8,39 +6,19 @@ category = "Crafting"
 
 [currencies.requires]
 rarities = ["magic"]
+has_affix = false
 has_affix_slot = true
 
 [currencies.effects]
 set_rarity = "magic"
-add_affixes = { min = 1, max = 1 }
+clear_affixes = false
+add_specific_affix = []
+try_unique = false
 affix_pools = ["common"]
 
-[[currencies]]
-id = "add_rare_affix"
-name = "Exalted Shard"
-description = "Adds an affix to a rare item"
-category = "Crafting"
-
-[currencies.requires]
-rarities = ["rare"]
-has_affix_slot = true
-
-[currencies.effects]
-add_affixes = { min = 1, max = 1 }
-affix_pools = ["common"]
-
-[[currencies]]
-id = "remove_affix"
-name = "Nullification Orb"
-description = "Removes a random affix from an item"
-category = "Crafting"
-
-[currencies.requires]
-rarities = ["magic", "rare"]
-has_affix = true
-
-[currencies.effects]
-remove_affixes = 1
+[currencies.effects.add_affixes]
+min = 1
+max = 1
 
 [[currencies]]
 id = "reroll_magic"
@@ -50,11 +28,18 @@ category = "Crafting"
 
 [currencies.requires]
 rarities = ["magic"]
+has_affix = false
+has_affix_slot = false
 
 [currencies.effects]
 clear_affixes = true
-add_affixes = { min = 1, max = 2 }
+add_specific_affix = []
+try_unique = false
 affix_pools = ["common"]
+
+[currencies.effects.add_affixes]
+min = 1
+max = 2
 
 [[currencies]]
 id = "reroll_affix"
@@ -65,7 +50,80 @@ category = "Crafting"
 [currencies.requires]
 rarities = ["rare"]
 has_affix = true
+has_affix_slot = false
 
 [currencies.effects]
+clear_affixes = false
+add_specific_affix = []
 reroll_affixes = 1
+try_unique = false
 affix_pools = ["common"]
+
+[[currencies]]
+id = "remove_affix"
+name = "Nullification Orb"
+description = "Removes a random affix from an item"
+category = "Crafting"
+
+[currencies.requires]
+rarities = [
+    "magic",
+    "rare",
+]
+has_affix = true
+has_affix_slot = false
+
+[currencies.effects]
+clear_affixes = false
+add_specific_affix = []
+remove_affixes = 1
+try_unique = false
+affix_pools = []
+
+[[currencies]]
+id = "add_rare_affix"
+name = "Exalted Shard"
+description = "Adds an affix to a rare item"
+category = "Crafting"
+
+[currencies.requires]
+rarities = ["rare"]
+has_affix = false
+has_affix_slot = true
+
+[currencies.effects]
+clear_affixes = false
+add_specific_affix = []
+try_unique = false
+affix_pools = ["common"]
+
+[currencies.effects.add_affixes]
+min = 1
+max = 1
+
+[[currencies]]
+id = "chaos"
+name = "Chaos"
+description = "Who know, Who Cares"
+category = ""
+
+[currencies.requires]
+rarities = [
+    "unique",
+    "normal",
+    "magic",
+    "rare",
+]
+has_affix = false
+has_affix_slot = false
+
+[currencies.effects]
+set_rarity = "rare"
+clear_affixes = true
+add_specific_affix = []
+try_unique = true
+affix_pools = ["common"]
+
+[currencies.effects.add_affixes]
+min = 3
+max = 3

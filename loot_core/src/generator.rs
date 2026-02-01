@@ -124,9 +124,10 @@ impl Generator {
         item_tags: &[Tag],
         affix_type: AffixType,
         existing_affix_ids: &[String],
+        item_level: u32,
         rng: &mut ChaCha8Rng,
     ) -> Option<Modifier> {
-        self.roll_affix_from_pools(class, item_tags, affix_type, existing_affix_ids, &[], rng)
+        self.roll_affix_from_pools(class, item_tags, affix_type, existing_affix_ids, &[], item_level, rng)
     }
 
     /// Roll a random affix for an item, filtered by affix pools
@@ -138,6 +139,7 @@ impl Generator {
         affix_type: AffixType,
         existing_affix_ids: &[String],
         pools: &[String],
+        item_level: u32,
         rng: &mut ChaCha8Rng,
     ) -> Option<Modifier> {
         let valid_affixes: Vec<_> = self
@@ -174,13 +176,26 @@ impl Generator {
 
         let affix = selected_affix?;
 
-        // Select tier (weighted by tier weight)
-        let tier_total: u32 = affix.tiers.iter().map(|t| t.weight).sum();
+        // Select tier (weighted by tier weight, filtered by item level)
+        // Only include tiers where min_ilvl <= item_level
+        let eligible_tiers: Vec<_> = affix.tiers.iter()
+            .filter(|t| t.min_ilvl <= item_level)
+            .collect();
+
+        if eligible_tiers.is_empty() {
+            return None;
+        }
+
+        let tier_total: u32 = eligible_tiers.iter().map(|t| t.weight).sum();
+        if tier_total == 0 {
+            return None;
+        }
+
         let mut tier_roll = rng.gen_range(0..tier_total);
         let mut selected_tier = None;
-        for tier in &affix.tiers {
+        for tier in &eligible_tiers {
             if tier_roll < tier.weight {
-                selected_tier = Some(tier);
+                selected_tier = Some(*tier);
                 break;
             }
             tier_roll -= tier.weight;
@@ -228,8 +243,9 @@ impl Generator {
                 (false, false) => break,
             };
 
+            let item_level = item.requirements.level as u32;
             if let Some(modifier) =
-                self.roll_affix(item.class, &item.tags, affix_type, &existing, rng)
+                self.roll_affix(item.class, &item.tags, affix_type, &existing, item_level, rng)
             {
                 match affix_type {
                     AffixType::Prefix => item.prefixes.push(modifier),
@@ -275,8 +291,9 @@ impl Generator {
                 (false, false) => break,
             };
 
+            let item_level = item.requirements.level as u32;
             if let Some(modifier) =
-                self.roll_affix(item.class, &item.tags, affix_type, &existing, rng)
+                self.roll_affix(item.class, &item.tags, affix_type, &existing, item_level, rng)
             {
                 match affix_type {
                     AffixType::Prefix => item.prefixes.push(modifier),

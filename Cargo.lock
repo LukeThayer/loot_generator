@@ -50,6 +50,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "config_editor"
+version = "0.1.0"
+dependencies = [
+ "crossterm",
+ "loot_core",
+ "ratatui",
+ "serde",
+ "toml",
+]
+
+[[package]]
 name = "crossterm"
 version = "0.28.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

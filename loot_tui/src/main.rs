@@ -3,7 +3,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use loot_core::config::{Config, MappingMode};
+use loot_core::config::{Config, ConfigError, MappingMode};
 use loot_core::currency::apply_currency;
 use loot_core::generator::Generator;
 use loot_core::storage::{Operation, StoredItem};
@@ -29,8 +29,10 @@ fn main() -> Result<(), io::Error> {
 
     // Load config and create app
     let config_path = Path::new("config");
-    let config = Config::load_from_dir(config_path).unwrap_or_default();
-    let mut app = App::new(config);
+    let mut app = match Config::load_from_dir(config_path) {
+        Ok(config) => App::new(config),
+        Err(e) => App::with_config_error(e),
+    };
 
     // Run app
     let res = run_app(&mut terminal, &mut app);
@@ -105,7 +107,7 @@ struct CurrencyPopupState {
 }
 
 struct App {
-    generator: Generator,
+    generator: Option<Generator>,
     inventory: Vec<(Item, StoredItem)>,
     inventory_state: ListState,
     base_type_state: ListState,
@@ -125,6 +127,8 @@ struct App {
     add_affix_state: AddAffixState,
     /// State for the Currency popup
     currency_popup_state: CurrencyPopupState,
+    /// Config error if loading failed
+    config_error: Option<ConfigError>,
 }
 
 impl App {
@@ -168,7 +172,7 @@ impl App {
         };
 
         App {
-            generator,
+            generator: Some(generator),
             inventory: Vec::new(),
             inventory_state: ListState::default(),
             base_type_state,
@@ -185,7 +189,35 @@ impl App {
             changed_affixes: ChangedAffixes::default(),
             add_affix_state: AddAffixState::default(),
             currency_popup_state,
+            config_error: None,
         }
+    }
+
+    fn with_config_error(error: ConfigError) -> Self {
+        App {
+            generator: None,
+            inventory: Vec::new(),
+            inventory_state: ListState::default(),
+            base_type_state: ListState::default(),
+            unique_state: ListState::default(),
+            focus: Focus::Inventory,
+            detail_tab: DetailTab::Stats,
+            show_base_types: false,
+            show_uniques: false,
+            show_add_affix: false,
+            show_currencies: false,
+            message: None,
+            base_type_ids: Vec::new(),
+            unique_ids: Vec::new(),
+            changed_affixes: ChangedAffixes::default(),
+            add_affix_state: AddAffixState::default(),
+            currency_popup_state: CurrencyPopupState::default(),
+            config_error: Some(error),
+        }
+    }
+
+    fn generator(&self) -> &Generator {
+        self.generator.as_ref().expect("Generator not available - config error")
     }
 
     fn selected_item(&self) -> Option<&(Item, StoredItem)> {
@@ -198,7 +230,7 @@ impl App {
         let seed: u64 = rand::random();
         let mut rng = Generator::make_rng(seed);
 
-        if let Some(item) = self.generator.generate_normal(base_type_id, &mut rng) {
+        if let Some(item) = self.generator().generate_normal(base_type_id, &mut rng) {
             let stored = StoredItem::new(base_type_id.to_string(), seed);
             self.message = Some(format!("Generated: {}", item.name));
             self.inventory.push((item, stored));
@@ -210,7 +242,7 @@ impl App {
         let seed: u64 = rand::random();
         let mut rng = Generator::make_rng(seed);
 
-        if let Some(item) = self.generator.generate_unique(unique_id, &mut rng) {
+        if let Some(item) = self.generator().generate_unique(unique_id, &mut rng) {
             // Store with unique_ prefix to distinguish from normal items
             let stored = StoredItem::new(format!("unique:{}", unique_id), seed);
             self.message = Some(format!("Generated unique: {}", item.name));
@@ -223,7 +255,7 @@ impl App {
         // Clear previous highlights
         self.changed_affixes = ChangedAffixes::default();
 
-        let Some(currency) = self.generator.config().currencies.get(currency_id) else {
+        let Some(currency) = self.generator().config().currencies.get(currency_id) else {
             self.message = Some(format!("Unknown currency: {}", currency_id));
             return;
         };
@@ -234,6 +266,9 @@ impl App {
             self.message = Some("No item selected".to_string());
             return;
         };
+
+        // Clone currency config before getting mutable reference to inventory
+        let currency = self.generator().config().currencies.get(currency_id).unwrap().clone();
 
         let Some((item, stored)) = self.inventory.get_mut(idx) else {
             self.message = Some("No item selected".to_string());
@@ -249,10 +284,10 @@ impl App {
         let op_seed: u64 = rand::random();
         let mut rng = Generator::make_rng(op_seed);
 
-        // Need to clone the currency config to avoid borrow issues
-        let currency = self.generator.config().currencies.get(currency_id).unwrap().clone();
+        // Get generator reference - safe because we're not borrowing inventory anymore here
+        let generator = self.generator.as_ref().unwrap();
 
-        match apply_currency(&self.generator, item, &currency, &mut rng) {
+        match apply_currency(generator, item, &currency, &mut rng) {
             Ok(()) => {
                 stored.push_operation(Operation::Currency(currency_id.to_string()));
                 self.message = Some(format!("Applied {} -> {}", currency_name, item.name));
@@ -319,7 +354,7 @@ impl App {
         // Allow up to 3 prefixes and 3 suffixes regardless of current rarity
         let mut affixes: Vec<(String, String, loot_core::AffixType)> = Vec::new();
 
-        for affix in self.generator.config().affixes.values() {
+        for affix in self.generator().config().affixes.values() {
             // Skip if already on item
             if existing_ids.contains(&affix.id) {
                 continue;
@@ -367,7 +402,7 @@ impl App {
             return;
         };
 
-        let Some(affix) = self.generator.config().affixes.get(affix_id) else {
+        let Some(affix) = self.generator().config().affixes.get(affix_id) else {
             return;
         };
 
@@ -392,19 +427,15 @@ impl App {
             return;
         };
 
-        let Some(affix) = self.generator.config().affixes.get(affix_id) else {
+        let Some(affix) = self.generator().config().affixes.get(affix_id).cloned() else {
             return;
         };
 
-        let Some(tier) = affix.tiers.get(tier_idx) else {
+        let Some(tier) = affix.tiers.get(tier_idx).cloned() else {
             return;
         };
 
         let Some(inv_idx) = self.inventory_state.selected() else {
-            return;
-        };
-
-        let Some((item, _)) = self.inventory.get_mut(inv_idx) else {
             return;
         };
 
@@ -425,10 +456,18 @@ impl App {
             tier_max: tier.max,
         };
 
+        let affix_type = affix.affix_type;
+        let affix_name = affix.name.clone();
+        let tier_num = tier.tier;
+
+        let Some((item, _)) = self.inventory.get_mut(inv_idx) else {
+            return;
+        };
+
         // Track the change
         self.changed_affixes = ChangedAffixes::default();
 
-        match affix.affix_type {
+        match affix_type {
             loot_core::AffixType::Prefix => {
                 self.changed_affixes.prefixes.push(item.prefixes.len());
                 item.prefixes.push(modifier);
@@ -446,12 +485,12 @@ impl App {
             // Generate a rare name if upgrading to rare
             let seed: u64 = rand::random();
             let mut rng = Generator::make_rng(seed);
-            item.name = self.generator.generate_rare_name(&mut rng);
+            item.name = self.generator.as_ref().unwrap().generate_rare_name(&mut rng);
         } else if total_affixes >= 1 && item.rarity == loot_core::Rarity::Normal {
             item.rarity = loot_core::Rarity::Magic;
         }
 
-        self.message = Some(format!("Added {} T{} ({})", affix.name, tier.tier, value));
+        self.message = Some(format!("Added {} T{} ({})", affix_name, tier_num, value));
         self.show_add_affix = false;
         self.focus = Focus::Inventory;
     }
@@ -473,7 +512,7 @@ impl App {
             .cloned()
             .unwrap_or_default();
 
-        let mut currencies: Vec<(String, String, String)> = self.generator
+        let mut currencies: Vec<(String, String, String)> = self.generator()
             .config()
             .currencies
             .values()
@@ -795,6 +834,12 @@ fn handle_add_affix_keys(app: &mut App, code: KeyCode) {
 }
 
 fn ui(f: &mut Frame, app: &mut App) {
+    // If there's a config error, show it instead of the normal UI
+    if let Some(ref error) = app.config_error {
+        render_config_error(f, error);
+        return;
+    }
+
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)])
@@ -830,6 +875,77 @@ fn ui(f: &mut Frame, app: &mut App) {
     if app.show_currencies {
         render_currency_popup(f, app);
     }
+}
+
+fn render_config_error(f: &mut Frame, error: &ConfigError) {
+    let area = f.area();
+
+    // Create centered area for error display
+    let error_area = centered_rect(80, 60, area);
+
+    // Build error content
+    let mut lines = vec![
+        Line::from(vec![
+            Span::styled("Configuration Error", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD))
+        ]),
+        Line::from(""),
+    ];
+
+    // Error type
+    let error_type = match error {
+        ConfigError::Io { .. } => "File I/O Error",
+        ConfigError::Parse { .. } => "TOML Parse Error",
+    };
+    lines.push(Line::from(vec![
+        Span::styled("Type: ", Style::default().fg(Color::Yellow)),
+        Span::raw(error_type),
+    ]));
+    lines.push(Line::from(""));
+
+    // File location
+    lines.push(Line::from(vec![
+        Span::styled("Location:", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+    ]));
+    for line in error.location_description().lines() {
+        lines.push(Line::from(vec![
+            Span::raw("  "),
+            Span::styled(line.to_string(), Style::default().fg(Color::Cyan)),
+        ]));
+    }
+    lines.push(Line::from(""));
+
+    // Error message
+    lines.push(Line::from(vec![
+        Span::styled("Error:", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+    ]));
+    for line in error.error_message().lines() {
+        lines.push(Line::from(vec![
+            Span::raw("  "),
+            Span::raw(line.to_string()),
+        ]));
+    }
+    lines.push(Line::from(""));
+
+    // Instructions
+    lines.push(Line::from(""));
+    lines.push(Line::from(vec![
+        Span::styled("Press ", Style::default().fg(Color::DarkGray)),
+        Span::styled("q", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+        Span::styled(" to quit and fix the configuration file.", Style::default().fg(Color::DarkGray)),
+    ]));
+
+    let paragraph = Paragraph::new(lines)
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(Color::Red))
+                .title(" Config Error ")
+                .title_style(Style::default().fg(Color::Red).add_modifier(Modifier::BOLD))
+        )
+        .wrap(Wrap { trim: false });
+
+    f.render_widget(ratatui::widgets::Clear, error_area);
+    f.render_widget(paragraph, error_area);
 }
 
 fn render_inventory(f: &mut Frame, app: &mut App, area: Rect) {
@@ -966,7 +1082,7 @@ fn build_currency_preview(app: &App) -> Text<'static> {
 
     // Get selected currency
     let currency = app.get_selected_currency_id()
-        .and_then(|id| app.generator.config().currencies.get(id));
+        .and_then(|id| app.generator().config().currencies.get(id));
 
     // Show current item header
     lines.push(Line::from(Span::styled(
@@ -1017,10 +1133,19 @@ fn build_currency_preview(app: &App) -> Text<'static> {
 
         // Damage
         if let Some(ref dmg) = item.damage {
-            lines.push(Line::from(Span::styled(
-                format!("  Damage: {}-{}", dmg.min, dmg.max),
-                Style::default().fg(Color::DarkGray),
-            )));
+            for entry in &dmg.damages {
+                let color = match entry.damage_type {
+                    loot_core::types::DamageType::Physical => Color::White,
+                    loot_core::types::DamageType::Fire => Color::Red,
+                    loot_core::types::DamageType::Cold => Color::Cyan,
+                    loot_core::types::DamageType::Lightning => Color::Yellow,
+                    loot_core::types::DamageType::Chaos => Color::Magenta,
+                };
+                lines.push(Line::from(Span::styled(
+                    format!("  {:?}: {}-{}", entry.damage_type, entry.min, entry.max),
+                    Style::default().fg(color),
+                )));
+            }
         }
 
         // Implicit
@@ -1175,7 +1300,7 @@ fn build_currency_preview(app: &App) -> Text<'static> {
         if !effects.add_specific_affix.is_empty() {
             if effects.add_specific_affix.len() == 1 {
                 let affix_id = &effects.add_specific_affix[0].id;
-                let affix_name = app.generator.config().affixes.get(affix_id)
+                let affix_name = app.generator().config().affixes.get(affix_id)
                     .map(|a| a.name.clone())
                     .unwrap_or_else(|| affix_id.clone());
                 lines.push(Line::from(Span::styled(
@@ -1188,7 +1313,7 @@ fn build_currency_preview(app: &App) -> Text<'static> {
                     Style::default().fg(Color::Green),
                 )));
                 for specific in &effects.add_specific_affix {
-                    let affix_name = app.generator.config().affixes.get(&specific.id)
+                    let affix_name = app.generator().config().affixes.get(&specific.id)
                         .map(|a| a.name.clone())
                         .unwrap_or_else(|| specific.id.clone());
                     let tier_str = specific.tier.map(|t| format!(" (T{})", t)).unwrap_or_default();
@@ -1254,7 +1379,7 @@ fn render_detail(f: &mut Frame, app: &App, area: Rect) {
                 Text::from("No item selected\n\nPress 'n' to create a new item")
             }
         }
-        DetailTab::Recipes => render_recipes(&app.generator),
+        DetailTab::Recipes => render_recipes(app.generator()),
     };
 
     let paragraph = Paragraph::new(content)
@@ -1315,7 +1440,19 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes) -> Text<'static> {
             "Damage".to_string(),
             Style::default().add_modifier(Modifier::UNDERLINED),
         )));
-        lines.push(Line::from(format!("  Physical: {}-{}", dmg.min, dmg.max)));
+        for entry in &dmg.damages {
+            let color = match entry.damage_type {
+                loot_core::types::DamageType::Physical => Color::White,
+                loot_core::types::DamageType::Fire => Color::Red,
+                loot_core::types::DamageType::Cold => Color::Cyan,
+                loot_core::types::DamageType::Lightning => Color::Yellow,
+                loot_core::types::DamageType::Chaos => Color::Magenta,
+            };
+            lines.push(Line::from(Span::styled(
+                format!("  {:?}: {}-{}", entry.damage_type, entry.min, entry.max),
+                Style::default().fg(color),
+            )));
+        }
         if dmg.attack_speed > 0.0 {
             lines.push(Line::from(format!(
                 "  Attack Speed: {:.2}",
@@ -1326,6 +1463,12 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes) -> Text<'static> {
             lines.push(Line::from(format!(
                 "  Crit Chance: {:.1}%",
                 dmg.critical_chance
+            )));
+        }
+        if dmg.spell_efficiency > 0.0 {
+            lines.push(Line::from(format!(
+                "  Spell Efficiency: {:.0}%",
+                dmg.spell_efficiency
             )));
         }
         lines.push(Line::from(""));
@@ -1674,19 +1817,28 @@ fn render_base_type_popup(f: &mut Frame, app: &mut App) {
     // Clear the area
     f.render_widget(ratatui::widgets::Clear, area);
 
-    let items: Vec<ListItem> = app
+    // Collect base type data first to avoid borrow conflicts
+    let generator = app.generator();
+    let item_data: Vec<(String, String)> = app
         .base_type_ids
         .iter()
         .filter_map(|id| {
-            app.generator.get_base_type(id).map(|base| {
-                ListItem::new(Line::from(vec![
-                    Span::raw(&base.name),
-                    Span::styled(
-                        format!(" ({:?})", base.class),
-                        Style::default().fg(Color::DarkGray),
-                    ),
-                ]))
+            generator.get_base_type(id).map(|base| {
+                (base.name.clone(), format!("{:?}", base.class))
             })
+        })
+        .collect();
+
+    let items: Vec<ListItem> = item_data
+        .iter()
+        .map(|(name, class)| {
+            ListItem::new(Line::from(vec![
+                Span::raw(name.as_str()),
+                Span::styled(
+                    format!(" ({})", class),
+                    Style::default().fg(Color::DarkGray),
+                ),
+            ]))
         })
         .collect();
 
@@ -1713,27 +1865,35 @@ fn render_unique_popup(f: &mut Frame, app: &mut App) {
     // Clear the area
     f.render_widget(ratatui::widgets::Clear, area);
 
-    let items: Vec<ListItem> = app
+    // Collect unique data first to avoid borrow conflicts
+    let generator = app.generator();
+    let item_data: Vec<(String, String)> = app
         .unique_ids
         .iter()
         .filter_map(|id| {
-            app.generator.get_unique(id).map(|unique| {
-                let base_name = app
-                    .generator
+            generator.get_unique(id).map(|unique| {
+                let base_name = generator
                     .get_base_type(&unique.base_type)
-                    .map(|b| b.name.as_str())
-                    .unwrap_or("???");
-                ListItem::new(Line::from(vec![
-                    Span::styled(
-                        &unique.name,
-                        Style::default().fg(Color::Rgb(175, 95, 0)), // Orange for uniques
-                    ),
-                    Span::styled(
-                        format!(" ({})", base_name),
-                        Style::default().fg(Color::DarkGray),
-                    ),
-                ]))
+                    .map(|b| b.name.clone())
+                    .unwrap_or_else(|| "???".to_string());
+                (unique.name.clone(), base_name)
             })
+        })
+        .collect();
+
+    let items: Vec<ListItem> = item_data
+        .iter()
+        .map(|(name, base_name)| {
+            ListItem::new(Line::from(vec![
+                Span::styled(
+                    name.as_str(),
+                    Style::default().fg(Color::Rgb(175, 95, 0)), // Orange for uniques
+                ),
+                Span::styled(
+                    format!(" ({})", base_name),
+                    Style::default().fg(Color::DarkGray),
+                ),
+            ]))
         })
         .collect();
 

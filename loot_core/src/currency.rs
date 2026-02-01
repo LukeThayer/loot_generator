@@ -250,7 +250,8 @@ fn add_random_affix(generator: &Generator, item: &mut Item, pools: &[String], rn
         (false, false) => return false,
     };
 
-    if let Some(modifier) = generator.roll_affix_from_pools(item.class, &item.tags, affix_type, &existing, pools, rng)
+    let item_level = item.requirements.level as u32;
+    if let Some(modifier) = generator.roll_affix_from_pools(item.class, &item.tags, affix_type, &existing, pools, item_level, rng)
     {
         match affix_type {
             AffixType::Prefix => item.prefixes.push(modifier),
@@ -271,7 +272,7 @@ fn add_random_affix(generator: &Generator, item: &mut Item, pools: &[String], rn
 
         if can_other {
             if let Some(modifier) =
-                generator.roll_affix_from_pools(item.class, &item.tags, other_type, &existing, pools, rng)
+                generator.roll_affix_from_pools(item.class, &item.tags, other_type, &existing, pools, item_level, rng)
             {
                 match other_type {
                     AffixType::Prefix => item.prefixes.push(modifier),
@@ -366,29 +367,41 @@ fn add_affix_by_id(
         .get(affix_id)
         .ok_or_else(|| CurrencyError::AffixNotFound(affix_id.to_string()))?;
 
+    let item_level = item.requirements.level as u32;
+
     // Select tier
     let selected_tier = if let Some(specific_tier) = tier {
-        // Use specified tier
-        affix
+        // Use specified tier (but verify it's allowed for item level)
+        let tier_cfg = affix
             .tiers
             .iter()
             .find(|t| t.tier == specific_tier)
             .ok_or_else(|| CurrencyError::TierNotFound {
                 affix_id: affix_id.to_string(),
                 tier: specific_tier,
-            })?
+            })?;
+        // Allow specified tier even if item level is too low (explicit override)
+        tier_cfg
     } else {
-        // Roll tier based on weights
-        let total_weight: u32 = affix.tiers.iter().map(|t| t.weight).sum();
+        // Roll tier based on weights, filtered by item level
+        let eligible_tiers: Vec<_> = affix.tiers.iter()
+            .filter(|t| t.min_ilvl <= item_level)
+            .collect();
+
+        if eligible_tiers.is_empty() {
+            return Err(CurrencyError::NoValidAffixes);
+        }
+
+        let total_weight: u32 = eligible_tiers.iter().map(|t| t.weight).sum();
         if total_weight == 0 {
             return Err(CurrencyError::NoValidAffixes);
         }
 
         let mut roll = rng.gen_range(0..total_weight);
         let mut selected = None;
-        for tier_cfg in &affix.tiers {
+        for tier_cfg in &eligible_tiers {
             if roll < tier_cfg.weight {
-                selected = Some(tier_cfg);
+                selected = Some(*tier_cfg);
                 break;
             }
             roll -= tier_cfg.weight;
@@ -455,6 +468,7 @@ fn reroll_random_affix(
 
     let idx = rng.gen_range(0..total);
     let is_prefix = idx < prefix_count;
+    let item_level = item.requirements.level as u32;
 
     if is_prefix {
         item.prefixes.remove(idx);
@@ -467,7 +481,7 @@ fn reroll_random_affix(
             .collect();
 
         if let Some(modifier) =
-            generator.roll_affix_from_pools(item.class, &item.tags, AffixType::Prefix, &existing_ids, pools, rng)
+            generator.roll_affix_from_pools(item.class, &item.tags, AffixType::Prefix, &existing_ids, pools, item_level, rng)
         {
             item.prefixes.push(modifier);
         }
@@ -483,7 +497,7 @@ fn reroll_random_affix(
             .collect();
 
         if let Some(modifier) =
-            generator.roll_affix_from_pools(item.class, &item.tags, AffixType::Suffix, &existing_ids, pools, rng)
+            generator.roll_affix_from_pools(item.class, &item.tags, AffixType::Suffix, &existing_ids, pools, item_level, rng)
         {
             item.suffixes.push(modifier);
         }

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["loot_core", "loot_tui"]
+members = ["loot_core", "loot_tui", "config_editor"]
 
 [workspace.package]
 version = "0.1.0"
