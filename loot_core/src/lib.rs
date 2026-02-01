@@ -9,7 +9,7 @@ pub use config::Config;
 pub use currency::CurrencyError;
 pub use generator::Generator;
 pub use item::Item;
-pub use storage::{BinaryDecode, BinaryEncode, DecodeError, ItemCollection, Operation, StoredItem};
+pub use storage::{BinaryDecode, BinaryEncode, DecodeError, ItemCollection, Operation};
 pub use types::*;
 
 #[cfg(test)]

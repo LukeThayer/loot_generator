@@ -1,10 +1,18 @@
 use crate::config::{AffixConfig, AffixTierConfig, BaseTypeConfig};
+use crate::storage::Operation;
 use crate::types::*;
 use serde::{Deserialize, Serialize};
 
 /// A fully realized item with all stats computed
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Item {
+    // === Storage fields (for serialization) ===
+    /// RNG seed used to generate this item
+    pub seed: u64,
+    /// Operations applied to this item (for deterministic reconstruction)
+    pub operations: Vec<Operation>,
+
+    // === Computed fields ===
     /// Reference to the base type ID
     pub base_type_id: String,
     /// Display name (for rares, this is the generated name)
@@ -32,8 +40,8 @@ pub struct Item {
 }
 
 impl Item {
-    /// Create a new normal (white) item from a base type
-    pub fn new_normal(base: &BaseTypeConfig) -> Self {
+    /// Create a new normal (white) item from a base type with a seed
+    pub(crate) fn new_normal(base: &BaseTypeConfig, seed: u64) -> Self {
         let defenses = if let Some(ref def) = base.defenses {
             Defenses {
                 armour: def.armour.map(|r| r.min), // Will be rolled properly with seed
@@ -60,6 +68,8 @@ impl Item {
         });
 
         Item {
+            seed,
+            operations: Vec::new(),
             base_type_id: base.id.clone(),
             name: base.name.clone(),
             base_name: base.name.clone(),
@@ -73,6 +83,11 @@ impl Item {
             defenses,
             damage,
         }
+    }
+
+    /// Record that a currency was applied to this item
+    pub(crate) fn record_currency(&mut self, currency_id: impl Into<String>) {
+        self.operations.push(Operation::Currency(currency_id.into()));
     }
 
     /// Count total affixes

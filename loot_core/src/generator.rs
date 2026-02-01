@@ -1,6 +1,7 @@
-use crate::config::{AffixConfig, BaseTypeConfig, Config, UniqueConfig};
+use crate::config::{AffixConfig, BaseTypeConfig, Config, CurrencyConfig, UniqueConfig};
 use crate::currency::{apply_currency, CurrencyError};
 use crate::item::{Item, Modifier};
+use crate::storage::Operation;
 use crate::types::*;
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
@@ -24,10 +25,11 @@ impl Generator {
         ChaCha8Rng::seed_from_u64(seed)
     }
 
-    /// Generate a normal item from a base type
-    pub fn generate_normal(&self, base_type_id: &str, rng: &mut ChaCha8Rng) -> Option<Item> {
+    /// Generate a normal item from a base type with the given seed
+    pub fn generate(&self, base_type_id: &str, seed: u64) -> Option<Item> {
         let base = self.config.base_types.get(base_type_id)?;
-        let mut item = Item::new_normal(base);
+        let mut rng = Self::make_rng(seed);
+        let mut item = Item::new_normal(base, seed);
 
         // Roll implicit if present
         if let Some(ref implicit_cfg) = base.implicit {
@@ -62,6 +64,150 @@ impl Generator {
         Some(item)
     }
 
+    /// Apply a currency to an item by currency ID.
+    ///
+    /// Uses the item's seed and operation history to maintain deterministic RNG state.
+    /// Records the operation on success.
+    pub fn apply_currency(
+        &self,
+        item: &mut Item,
+        currency_id: &str,
+    ) -> Option<Result<(), CurrencyError>> {
+        let currency = self.config.currencies.get(currency_id)?;
+
+        // Replay to get correct RNG state
+        let mut rng = self.replay_rng(item);
+
+        // Apply the currency
+        let result = apply_currency(self, item, currency, &mut rng);
+
+        // Record operation on success
+        if result.is_ok() {
+            item.record_currency(currency_id);
+        }
+
+        Some(result)
+    }
+
+    /// Check if a currency can be applied to an item
+    pub fn can_apply_currency(&self, item: &Item, currency_id: &str) -> bool {
+        let Some(currency) = self.config.currencies.get(currency_id) else {
+            return false;
+        };
+
+        let reqs = &currency.requires;
+
+        // Check rarity requirement
+        if !reqs.rarities.is_empty() && !reqs.rarities.contains(&item.rarity) {
+            return false;
+        }
+
+        // Check has_affix requirement
+        if reqs.has_affix && item.prefixes.is_empty() && item.suffixes.is_empty() {
+            return false;
+        }
+
+        // Check has_affix_slot requirement
+        if reqs.has_affix_slot && !item.can_add_prefix() && !item.can_add_suffix() {
+            return false;
+        }
+
+        true
+    }
+
+    /// Reconstruct an item from its base type, seed, and operations
+    pub fn reconstruct(&self, base_type_id: &str, seed: u64, operations: &[Operation]) -> Option<Item> {
+        let mut item = self.generate(base_type_id, seed)?;
+
+        // Replay operations (but don't record them again)
+        let mut rng = self.replay_rng(&item);
+
+        for op in operations {
+            match op {
+                Operation::Currency(currency_id) => {
+                    if let Some(currency) = self.config.currencies.get(currency_id) {
+                        let _ = apply_currency(self, &mut item, currency, &mut rng);
+                    }
+                }
+            }
+        }
+
+        // Set the operations on the reconstructed item
+        item.operations = operations.to_vec();
+
+        Some(item)
+    }
+
+    /// Replay the RNG to the current state based on item's seed and operations
+    fn replay_rng(&self, item: &Item) -> ChaCha8Rng {
+        let base = self.config.base_types.get(&item.base_type_id);
+        let mut rng = Self::make_rng(item.seed);
+
+        // Advance RNG past initial item generation
+        if let Some(base) = base {
+            if base.implicit.is_some() {
+                let _ = rng.gen::<u32>(); // implicit value
+            }
+            if let Some(ref def) = base.defenses {
+                if def.armour.is_some() {
+                    let _ = rng.gen::<u32>();
+                }
+                if def.evasion.is_some() {
+                    let _ = rng.gen::<u32>();
+                }
+                if def.energy_shield.is_some() {
+                    let _ = rng.gen::<u32>();
+                }
+            }
+        }
+
+        // Replay each operation to advance RNG
+        // We need to actually apply each currency to advance the RNG correctly
+        if let Some(base) = base {
+            let mut replay_item = Item::new_normal(base, item.seed);
+
+            // Re-roll initial values
+            if let Some(ref implicit_cfg) = base.implicit {
+                let value = rng.gen_range(implicit_cfg.min..=implicit_cfg.max);
+                replay_item.implicit = Some(Modifier {
+                    affix_id: "implicit".to_string(),
+                    name: "Implicit".to_string(),
+                    stat: implicit_cfg.stat,
+                    scope: AffixScope::Local,
+                    tier: 0,
+                    value,
+                    value_max: None,
+                    tier_min: implicit_cfg.min,
+                    tier_max: implicit_cfg.max,
+                    tier_max_value: None,
+                });
+            }
+            if let Some(ref def_cfg) = base.defenses {
+                if let Some(range) = def_cfg.armour {
+                    replay_item.defenses.armour = Some(rng.gen_range(range.min..=range.max));
+                }
+                if let Some(range) = def_cfg.evasion {
+                    replay_item.defenses.evasion = Some(rng.gen_range(range.min..=range.max));
+                }
+                if let Some(range) = def_cfg.energy_shield {
+                    replay_item.defenses.energy_shield = Some(rng.gen_range(range.min..=range.max));
+                }
+            }
+
+            for op in &item.operations {
+                match op {
+                    Operation::Currency(currency_id) => {
+                        if let Some(currency) = self.config.currencies.get(currency_id) {
+                            let _ = apply_currency(self, &mut replay_item, currency, &mut rng);
+                        }
+                    }
+                }
+            }
+        }
+
+        rng
+    }
+
     /// Get affixes valid for an item class
     pub fn get_valid_affixes(&self, class: ItemClass, affix_type: AffixType) -> Vec<&AffixConfig> {
         self.config
@@ -75,19 +221,16 @@ impl Generator {
     }
 
     /// Get affixes valid for an item class, filtered by affix pools
-    /// If pools is empty, returns all valid affixes
     pub fn get_valid_affixes_from_pools(
         &self,
         class: ItemClass,
         affix_type: AffixType,
         pools: &[String],
     ) -> Vec<&AffixConfig> {
-        // If no pools specified, return all valid affixes
         if pools.is_empty() {
             return self.get_valid_affixes(class, affix_type);
         }
 
-        // Build set of allowed affix IDs from specified pools
         let allowed_ids: std::collections::HashSet<&str> = pools
             .iter()
             .filter_map(|pool_id| self.config.affix_pools.get(pool_id))
@@ -109,14 +252,12 @@ impl Generator {
     fn calculate_weight(&self, affix: &AffixConfig, item_tags: &[Tag]) -> u32 {
         let base_weight: u32 = affix.tiers.iter().map(|t| t.weight).sum();
 
-        // Count matching tags
         let matching_tags = affix
             .tags
             .iter()
             .filter(|tag| item_tags.contains(tag))
             .count();
 
-        // Each matching tag increases weight by 50%
         let multiplier = 1.0 + (matching_tags as f32 * 0.5);
         (base_weight as f32 * multiplier) as u32
     }
@@ -142,19 +283,14 @@ impl Generator {
         )
     }
 
-    /// Check if an affix has at least one tag matching the item's tags
     fn has_matching_tag(affix: &AffixConfig, item_tags: &[Tag]) -> bool {
-        // If affix has no tags, it can roll on anything
         if affix.tags.is_empty() {
             return true;
         }
-        // Otherwise, require at least one matching tag
         affix.tags.iter().any(|tag| item_tags.contains(tag))
     }
 
     /// Roll a random affix for an item, filtered by affix pools
-    /// If pools is empty, uses all valid affixes
-    /// Affixes must have at least one matching tag with the item
     pub fn roll_affix_from_pools(
         &self,
         class: ItemClass,
@@ -169,7 +305,6 @@ impl Generator {
             .get_valid_affixes_from_pools(class, affix_type, pools)
             .into_iter()
             .filter(|a| !existing_affix_ids.contains(&a.id))
-            // Require at least one matching tag between affix and item
             .filter(|a| Self::has_matching_tag(a, item_tags))
             .collect();
 
@@ -177,7 +312,6 @@ impl Generator {
             return None;
         }
 
-        // Calculate weights
         let weights: Vec<u32> = valid_affixes
             .iter()
             .map(|a| self.calculate_weight(a, item_tags))
@@ -188,7 +322,6 @@ impl Generator {
             return None;
         }
 
-        // Weighted random selection for affix
         let mut roll = rng.gen_range(0..total_weight);
         let mut selected_affix = None;
         for (affix, &weight) in valid_affixes.iter().zip(weights.iter()) {
@@ -201,8 +334,6 @@ impl Generator {
 
         let affix = selected_affix?;
 
-        // Select tier (weighted by tier weight, filtered by item level)
-        // Only include tiers where min_ilvl <= item_level
         let eligible_tiers: Vec<_> = affix
             .tiers
             .iter()
@@ -229,11 +360,7 @@ impl Generator {
         }
 
         let tier = selected_tier?;
-
-        // Roll value within tier range
         let value = rng.gen_range(tier.min..=tier.max);
-
-        // Roll max value if this is a damage range stat
         let value_max = tier
             .max_value
             .map(|range| rng.gen_range(range.min..=range.max));
@@ -247,7 +374,6 @@ impl Generator {
         item.prefixes.clear();
         item.suffixes.clear();
 
-        // Roll 1-2 affixes total
         let affix_count = rng.gen_range(1..=2);
 
         for _ in 0..affix_count {
@@ -258,7 +384,6 @@ impl Generator {
                 .map(|m| m.affix_id.clone())
                 .collect();
 
-            // Randomly choose prefix or suffix if both available
             let can_prefix = item.can_add_prefix();
             let can_suffix = item.can_add_suffix();
 
@@ -275,7 +400,7 @@ impl Generator {
                 (false, false) => break,
             };
 
-            let item_level = item.requirements.level as u32;
+            let item_level = item.requirements.level;
             if let Some(modifier) = self.roll_affix(
                 item.class, &item.tags, affix_type, &existing, item_level, rng,
             ) {
@@ -292,11 +417,8 @@ impl Generator {
         item.rarity = Rarity::Rare;
         item.prefixes.clear();
         item.suffixes.clear();
-
-        // Generate a random name
         item.name = self.generate_rare_name(rng);
 
-        // Roll 4-6 affixes total
         let affix_count = rng.gen_range(4..=6);
 
         for _ in 0..affix_count {
@@ -323,7 +445,7 @@ impl Generator {
                 (false, false) => break,
             };
 
-            let item_level = item.requirements.level as u32;
+            let item_level = item.requirements.level;
             if let Some(modifier) = self.roll_affix(
                 item.class, &item.tags, affix_type, &existing, item_level, rng,
             ) {
@@ -374,11 +496,12 @@ impl Generator {
     }
 
     /// Generate a unique item
-    pub fn generate_unique(&self, unique_id: &str, rng: &mut ChaCha8Rng) -> Option<Item> {
+    pub fn generate_unique(&self, unique_id: &str, seed: u64) -> Option<Item> {
         let unique = self.config.uniques.get(unique_id)?;
         let base = self.config.base_types.get(&unique.base_type)?;
 
-        let mut item = Item::new_normal(base);
+        let mut rng = Self::make_rng(seed);
+        let mut item = Item::new_normal(base, seed);
         item.rarity = Rarity::Unique;
         item.name = unique.name.clone();
 
@@ -412,7 +535,7 @@ impl Generator {
             }
         }
 
-        // Roll unique mods (these go into prefixes for display, but uniques don't really have prefix/suffix distinction)
+        // Roll unique mods
         for mod_cfg in &unique.mods {
             let value = rng.gen_range(mod_cfg.min..=mod_cfg.max);
             let modifier = Modifier {
@@ -433,43 +556,8 @@ impl Generator {
         Some(item)
     }
 
-    /// Apply a currency to an item by currency ID
-    ///
-    /// Returns `None` if the currency ID doesn't exist, or `Some(Result)` with
-    /// the result of applying the currency.
-    pub fn apply_currency(
-        &self,
-        item: &mut Item,
-        currency_id: &str,
-        rng: &mut ChaCha8Rng,
-    ) -> Option<Result<(), CurrencyError>> {
-        let currency = self.config.currencies.get(currency_id)?;
-        Some(apply_currency(self, item, currency, rng))
-    }
-
-    /// Check if a currency can be applied to an item
-    pub fn can_apply_currency(&self, item: &Item, currency_id: &str) -> bool {
-        let Some(currency) = self.config.currencies.get(currency_id) else {
-            return false;
-        };
-
-        let reqs = &currency.requires;
-
-        // Check rarity requirement
-        if !reqs.rarities.is_empty() && !reqs.rarities.contains(&item.rarity) {
-            return false;
-        }
-
-        // Check has_affix requirement
-        if reqs.has_affix && item.prefixes.is_empty() && item.suffixes.is_empty() {
-            return false;
-        }
-
-        // Check has_affix_slot requirement
-        if reqs.has_affix_slot && !item.can_add_prefix() && !item.can_add_suffix() {
-            return false;
-        }
-
-        true
+    /// Get a currency config by ID
+    pub fn get_currency(&self, id: &str) -> Option<&CurrencyConfig> {
+        self.config.currencies.get(id)
     }
 }

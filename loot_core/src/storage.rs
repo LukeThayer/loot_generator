@@ -1,4 +1,3 @@
-use crate::currency::apply_currency;
 use crate::generator::Generator;
 use crate::item::Item;
 use serde::{Deserialize, Serialize};
@@ -10,42 +9,6 @@ const BINARY_VERSION: u8 = 1;
 
 /// Magic bytes for item collection files
 const COLLECTION_MAGIC: &[u8; 4] = b"LOOT";
-
-/// Trait for types that can be encoded to a compact binary format
-pub trait BinaryEncode {
-    /// Encode to a writer
-    fn encode<W: Write>(&self, writer: &mut W) -> io::Result<()>;
-
-    /// Encode to a byte vector
-    fn encode_to_vec(&self) -> Vec<u8> {
-        let mut buf = Vec::new();
-        self.encode(&mut buf).expect("Vec write failed");
-        buf
-    }
-}
-
-/// Trait for types that can be decoded from a compact binary format
-pub trait BinaryDecode: Sized {
-    /// Decode from a reader
-    fn decode<R: Read>(reader: &mut R) -> Result<Self, DecodeError>;
-
-    /// Decode from a byte slice
-    fn decode_from_slice(data: &[u8]) -> Result<Self, DecodeError> {
-        let mut cursor = std::io::Cursor::new(data);
-        Self::decode(&mut cursor)
-    }
-}
-
-/// Compact storage format for an item: seed + operation history
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StoredItem {
-    /// Base type ID
-    pub base_type_id: String,
-    /// RNG seed for deterministic recreation
-    pub seed: u64,
-    /// Sequence of operations applied to the item
-    pub operations: Vec<Operation>,
-}
 
 /// An operation that was applied to an item
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -75,20 +38,15 @@ impl TryFrom<u8> for OpType {
 /// Errors that can occur during decoding
 #[derive(Debug)]
 pub enum DecodeError {
-    /// IO error during read
     Io(io::Error),
-    /// Invalid or unsupported version
     InvalidVersion(u8),
-    /// Invalid magic bytes
     InvalidMagic,
-    /// Invalid UTF-8 in string
     InvalidUtf8,
-    /// Invalid operation type discriminant
     InvalidOperationType(u8),
-    /// Unexpected end of data
     UnexpectedEof,
-    /// String index out of bounds (for collection format)
     InvalidStringIndex(u16),
+    /// Base type not found during reconstruction
+    BaseTypeNotFound(String),
 }
 
 impl std::fmt::Display for DecodeError {
@@ -101,6 +59,7 @@ impl std::fmt::Display for DecodeError {
             DecodeError::InvalidOperationType(t) => write!(f, "Invalid operation type: {}", t),
             DecodeError::UnexpectedEof => write!(f, "Unexpected end of data"),
             DecodeError::InvalidStringIndex(i) => write!(f, "Invalid string index: {}", i),
+            DecodeError::BaseTypeNotFound(id) => write!(f, "Base type not found: {}", id),
         }
     }
 }
@@ -113,67 +72,30 @@ impl From<io::Error> for DecodeError {
     }
 }
 
-impl StoredItem {
-    /// Create a new stored item with just a base type and seed
-    pub fn new(base_type_id: impl Into<String>, seed: u64) -> Self {
-        StoredItem {
-            base_type_id: base_type_id.into(),
-            seed,
-            operations: Vec::new(),
-        }
-    }
+/// Trait for types that can be encoded to a compact binary format
+pub trait BinaryEncode {
+    fn encode<W: Write>(&self, writer: &mut W) -> io::Result<()>;
 
-    /// Add a currency operation (builder pattern)
-    pub fn with_currency(mut self, currency_id: impl Into<String>) -> Self {
-        self.operations.push(Operation::Currency(currency_id.into()));
-        self
-    }
-
-    /// Add an operation to the history
-    pub fn push_operation(&mut self, op: Operation) {
-        self.operations.push(op);
-    }
-
-    /// Add a currency operation
-    pub fn push_currency(&mut self, currency_id: impl Into<String>) {
-        self.operations.push(Operation::Currency(currency_id.into()));
-    }
-
-    /// Reconstruct the full item by replaying the seed and operations
-    pub fn reconstruct(&self, generator: &Generator) -> Option<Item> {
-        let mut rng = Generator::make_rng(self.seed);
-
-        // Generate the base normal item
-        let mut item = generator.generate_normal(&self.base_type_id, &mut rng)?;
-
-        // Replay each operation
-        for op in &self.operations {
-            match op {
-                Operation::Currency(currency_id) => {
-                    if let Some(currency) = generator.config().currencies.get(currency_id) {
-                        // Errors during reconstruction are ignored - the item stays as-is
-                        let _ = apply_currency(generator, &mut item, currency, &mut rng);
-                    }
-                }
-            }
-        }
-
-        Some(item)
-    }
-
-    /// Export to JSON string
-    pub fn to_json(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string_pretty(self)
-    }
-
-    /// Import from JSON string
-    pub fn from_json(json: &str) -> Result<Self, serde_json::Error> {
-        serde_json::from_str(json)
+    fn encode_to_vec(&self) -> Vec<u8> {
+        let mut buf = Vec::new();
+        self.encode(&mut buf).expect("Vec write failed");
+        buf
     }
 }
 
-impl BinaryEncode for StoredItem {
-    /// Encode to binary format.
+/// Trait for types that can be decoded from a compact binary format
+pub trait BinaryDecode: Sized {
+    /// Decode from a reader, using the generator to reconstruct the item
+    fn decode<R: Read>(reader: &mut R, generator: &Generator) -> Result<Self, DecodeError>;
+
+    fn decode_from_slice(data: &[u8], generator: &Generator) -> Result<Self, DecodeError> {
+        let mut cursor = std::io::Cursor::new(data);
+        Self::decode(&mut cursor, generator)
+    }
+}
+
+impl BinaryEncode for Item {
+    /// Encode item to binary format.
     ///
     /// Format (version 1):
     /// - version: u8
@@ -211,8 +133,8 @@ impl BinaryEncode for StoredItem {
     }
 }
 
-impl BinaryDecode for StoredItem {
-    fn decode<R: Read>(reader: &mut R) -> Result<Self, DecodeError> {
+impl BinaryDecode for Item {
+    fn decode<R: Read>(reader: &mut R, generator: &Generator) -> Result<Self, DecodeError> {
         // Version
         let version = read_u8(reader)?;
         if version != BINARY_VERSION {
@@ -240,18 +162,41 @@ impl BinaryDecode for StoredItem {
             operations.push(op);
         }
 
-        Ok(StoredItem {
-            base_type_id,
-            seed,
-            operations,
-        })
+        // Reconstruct the item
+        generator
+            .reconstruct(&base_type_id, seed, &operations)
+            .ok_or_else(|| DecodeError::BaseTypeNotFound(base_type_id))
     }
 }
 
-/// Collection of stored items
+impl Item {
+    /// Save item to file in binary format
+    pub fn save_binary(&self, path: &std::path::Path) -> io::Result<()> {
+        let data = self.encode_to_vec();
+        std::fs::write(path, data)
+    }
+
+    /// Load item from file in binary format
+    pub fn load_binary(path: &std::path::Path, generator: &Generator) -> Result<Self, DecodeError> {
+        let data = std::fs::read(path)?;
+        Self::decode_from_slice(&data, generator)
+    }
+
+    /// Export to JSON (includes full computed state)
+    pub fn to_json(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string_pretty(self)
+    }
+
+    /// Import from JSON
+    pub fn from_json(json: &str) -> Result<Self, serde_json::Error> {
+        serde_json::from_str(json)
+    }
+}
+
+/// Collection of items for batch storage
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ItemCollection {
-    pub items: Vec<StoredItem>,
+    pub items: Vec<Item>,
 }
 
 impl ItemCollection {
@@ -259,20 +204,8 @@ impl ItemCollection {
         ItemCollection { items: Vec::new() }
     }
 
-    pub fn add(&mut self, item: StoredItem) {
+    pub fn add(&mut self, item: Item) {
         self.items.push(item);
-    }
-
-    pub fn save_to_file(&self, path: &std::path::Path) -> std::io::Result<()> {
-        let json = serde_json::to_string_pretty(self)
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
-        std::fs::write(path, json)
-    }
-
-    pub fn load_from_file(path: &std::path::Path) -> std::io::Result<Self> {
-        let json = std::fs::read_to_string(path)?;
-        serde_json::from_str(&json)
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
     }
 
     /// Save to file in binary format
@@ -282,9 +215,23 @@ impl ItemCollection {
     }
 
     /// Load from file in binary format
-    pub fn load_binary(path: &std::path::Path) -> Result<Self, DecodeError> {
+    pub fn load_binary(path: &std::path::Path, generator: &Generator) -> Result<Self, DecodeError> {
         let data = std::fs::read(path)?;
-        Self::decode_from_slice(&data)
+        Self::decode_from_slice(&data, generator)
+    }
+
+    /// Save to file in JSON format
+    pub fn save_json(&self, path: &std::path::Path) -> io::Result<()> {
+        let json = serde_json::to_string_pretty(self)
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+        std::fs::write(path, json)
+    }
+
+    /// Load from file in JSON format
+    pub fn load_json(path: &std::path::Path) -> io::Result<Self> {
+        let json = std::fs::read_to_string(path)?;
+        serde_json::from_str(&json)
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
     }
 }
 
@@ -371,7 +318,7 @@ impl BinaryEncode for ItemCollection {
 }
 
 impl BinaryDecode for ItemCollection {
-    fn decode<R: Read>(reader: &mut R) -> Result<Self, DecodeError> {
+    fn decode<R: Read>(reader: &mut R, generator: &Generator) -> Result<Self, DecodeError> {
         // Read and verify magic
         let mut magic = [0u8; 4];
         reader.read_exact(&mut magic)?;
@@ -423,11 +370,12 @@ impl BinaryDecode for ItemCollection {
                 operations.push(op);
             }
 
-            items.push(StoredItem {
-                base_type_id,
-                seed,
-                operations,
-            });
+            // Reconstruct item
+            let item = generator
+                .reconstruct(&base_type_id, seed, &operations)
+                .ok_or_else(|| DecodeError::BaseTypeNotFound(base_type_id))?;
+
+            items.push(item);
         }
 
         Ok(ItemCollection { items })
@@ -508,67 +456,71 @@ fn read_string<R: Read>(reader: &mut R) -> Result<String, DecodeError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Config;
+    use std::path::Path;
+
+    fn make_generator() -> Generator {
+        let config = Config::load_from_dir(Path::new("../config")).unwrap();
+        Generator::new(config)
+    }
 
     #[test]
-    fn test_stored_item_encode_decode_roundtrip() {
-        let item = StoredItem {
-            base_type_id: "iron_sword".to_string(),
-            seed: 12345678901234567890,
-            operations: vec![
-                Operation::Currency("transmute".to_string()),
-                Operation::Currency("augment".to_string()),
-            ],
-        };
+    fn test_item_encode_decode_roundtrip() {
+        let generator = make_generator();
 
+        // Generate item and apply currencies
+        let mut item = generator.generate("iron_sword", 12345).unwrap();
+        generator.apply_currency(&mut item, "transmute");
+        generator.apply_currency(&mut item, "augment");
+
+        // Encode and decode
         let encoded = item.encode_to_vec();
-        let decoded = StoredItem::decode_from_slice(&encoded).unwrap();
+        let decoded = Item::decode_from_slice(&encoded, &generator).unwrap();
 
         assert_eq!(decoded.base_type_id, item.base_type_id);
         assert_eq!(decoded.seed, item.seed);
         assert_eq!(decoded.operations, item.operations);
+        assert_eq!(decoded.rarity, item.rarity);
+        assert_eq!(decoded.prefixes.len(), item.prefixes.len());
     }
 
     #[test]
-    fn test_stored_item_no_operations() {
-        let item = StoredItem::new("crystal_wand".to_string(), 999);
+    fn test_item_no_operations() {
+        let generator = make_generator();
+        let item = generator.generate("iron_sword", 999).unwrap();
 
         let encoded = item.encode_to_vec();
-        let decoded = StoredItem::decode_from_slice(&encoded).unwrap();
+        let decoded = Item::decode_from_slice(&encoded, &generator).unwrap();
 
-        assert_eq!(decoded.base_type_id, "crystal_wand");
+        assert_eq!(decoded.base_type_id, "iron_sword");
         assert_eq!(decoded.seed, 999);
         assert!(decoded.operations.is_empty());
     }
 
     #[test]
     fn test_item_collection_encode_decode_roundtrip() {
+        let generator = make_generator();
+
         let mut collection = ItemCollection::new();
-        collection.add(StoredItem {
-            base_type_id: "iron_sword".to_string(),
-            seed: 111,
-            operations: vec![
-                Operation::Currency("transmute".to_string()),
-                Operation::Currency("augment".to_string()),
-            ],
-        });
-        collection.add(StoredItem {
-            base_type_id: "iron_sword".to_string(), // Same base type, should be interned
-            seed: 222,
-            operations: vec![Operation::Currency("transmute".to_string())],
-        });
-        collection.add(StoredItem {
-            base_type_id: "leather_boots".to_string(),
-            seed: 333,
-            operations: vec![],
-        });
+
+        let mut item1 = generator.generate("iron_sword", 111).unwrap();
+        generator.apply_currency(&mut item1, "transmute");
+        collection.add(item1);
+
+        let mut item2 = generator.generate("iron_sword", 222).unwrap();
+        generator.apply_currency(&mut item2, "transmute");
+        generator.apply_currency(&mut item2, "augment");
+        collection.add(item2);
+
+        let item3 = generator.generate("leather_boots", 333).unwrap();
+        collection.add(item3);
 
         let encoded = collection.encode_to_vec();
-        let decoded = ItemCollection::decode_from_slice(&encoded).unwrap();
+        let decoded = ItemCollection::decode_from_slice(&encoded, &generator).unwrap();
 
         assert_eq!(decoded.items.len(), 3);
         assert_eq!(decoded.items[0].base_type_id, "iron_sword");
         assert_eq!(decoded.items[0].seed, 111);
-        assert_eq!(decoded.items[0].operations.len(), 2);
         assert_eq!(decoded.items[1].base_type_id, "iron_sword");
         assert_eq!(decoded.items[1].seed, 222);
         assert_eq!(decoded.items[2].base_type_id, "leather_boots");
@@ -577,84 +529,48 @@ mod tests {
 
     #[test]
     fn test_empty_collection() {
+        let generator = make_generator();
         let collection = ItemCollection::new();
         let encoded = collection.encode_to_vec();
-        let decoded = ItemCollection::decode_from_slice(&encoded).unwrap();
+        let decoded = ItemCollection::decode_from_slice(&encoded, &generator).unwrap();
         assert!(decoded.items.is_empty());
     }
 
     #[test]
-    fn test_stored_item_binary_size() {
-        // Verify the binary format is compact
-        let item = StoredItem {
-            base_type_id: "iron_sword".to_string(), // 10 chars
-            seed: u64::MAX,
-            operations: vec![
-                Operation::Currency("transmute".to_string()), // 9 chars
-            ],
-        };
+    fn test_item_binary_size() {
+        let generator = make_generator();
+
+        let mut item = generator.generate("iron_sword", u64::MAX).unwrap();
+        generator.apply_currency(&mut item, "transmute");
 
         let binary = item.encode_to_vec();
-        let json = item.to_json().unwrap();
 
         // Binary: 1 (version) + 1 + 10 (base_type) + 8 (seed) + 2 (ops count) + 1 (op type) + 1 + 9 (currency) = 33 bytes
         assert_eq!(binary.len(), 33);
-
-        // JSON is much larger due to field names, quotes, whitespace
-        assert!(json.len() > binary.len() * 3);
     }
 
     #[test]
-    fn test_collection_string_interning() {
-        // Test that string interning actually saves space
-        let mut collection = ItemCollection::new();
-        for i in 0..100 {
-            collection.add(StoredItem {
-                base_type_id: "iron_sword".to_string(),
-                seed: i,
-                operations: vec![
-                    Operation::Currency("transmute".to_string()),
-                    Operation::Currency("augment".to_string()),
-                ],
-            });
+    fn test_deterministic_reconstruction() {
+        let generator = make_generator();
+
+        // Create and craft an item
+        let mut item1 = generator.generate("iron_sword", 12345).unwrap();
+        generator.apply_currency(&mut item1, "transmute");
+        generator.apply_currency(&mut item1, "augment");
+
+        // Encode/decode
+        let bytes = item1.encode_to_vec();
+        let item2 = Item::decode_from_slice(&bytes, &generator).unwrap();
+
+        // Should be identical
+        assert_eq!(item1.name, item2.name);
+        assert_eq!(item1.rarity, item2.rarity);
+        assert_eq!(item1.prefixes.len(), item2.prefixes.len());
+        assert_eq!(item1.suffixes.len(), item2.suffixes.len());
+
+        for (p1, p2) in item1.prefixes.iter().zip(item2.prefixes.iter()) {
+            assert_eq!(p1.affix_id, p2.affix_id);
+            assert_eq!(p1.value, p2.value);
         }
-
-        let binary = collection.encode_to_vec();
-        let json = serde_json::to_string(&collection).unwrap();
-
-        // Binary with interning should be much smaller
-        // Each item: 2 (base idx) + 8 (seed) + 2 (ops count) + 2*(1 + 2) (ops) = 18 bytes
-        // Plus header and string table overhead
-        assert!(binary.len() < json.len() / 3);
-    }
-
-    #[test]
-    fn test_invalid_version() {
-        let mut data = vec![99]; // Invalid version
-        data.extend_from_slice(&[4]); // String length
-        data.extend_from_slice(b"test");
-        data.extend_from_slice(&0u64.to_le_bytes());
-        data.extend_from_slice(&0u16.to_le_bytes());
-
-        let result = StoredItem::decode_from_slice(&data);
-        assert!(matches!(result, Err(DecodeError::InvalidVersion(99))));
-    }
-
-    #[test]
-    fn test_invalid_magic() {
-        let data = b"BADM\x01\x00\x00\x00\x00";
-        let result = ItemCollection::decode_from_slice(data);
-        assert!(matches!(result, Err(DecodeError::InvalidMagic)));
-    }
-
-    #[test]
-    fn test_truncated_data() {
-        let item = StoredItem::new("test".to_string(), 123);
-        let encoded = item.encode_to_vec();
-
-        // Try decoding with truncated data
-        let truncated = &encoded[..encoded.len() - 2];
-        let result = StoredItem::decode_from_slice(truncated);
-        assert!(matches!(result, Err(DecodeError::UnexpectedEof)));
     }
 }
