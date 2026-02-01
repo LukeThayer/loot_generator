@@ -1,113 +1,76 @@
-# Imbue Currencies - upgrade normal to magic with a specific affix
-
 [[currencies]]
 id = "imbue_fire"
 name = "Ember Imbue"
-description = "Imbues a normal item with fire damage, making it magic"
+description = "Imbues with fire damage, upgrading to magic"
 category = "Imbue"
 
 [currencies.requires]
 rarities = ["normal"]
+has_affix = false
+has_affix_slot = false
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "added_fire_damage" }]
+clear_affixes = false
+try_unique = false
+affix_pools = []
 
-[[currencies]]
-id = "imbue_cold"
-name = "Frost Imbue"
-description = "Imbues a normal item with cold damage, making it magic"
-category = "Imbue"
-
-[currencies.requires]
-rarities = ["normal"]
-
-[currencies.effects]
-set_rarity = "magic"
-add_specific_affix = [{ id = "added_cold_damage" }]
-
-[[currencies]]
-id = "imbue_lightning"
-name = "Storm Imbue"
-description = "Imbues a normal item with lightning damage, making it magic"
-category = "Imbue"
-
-[currencies.requires]
-rarities = ["normal"]
-
-[currencies.effects]
-set_rarity = "magic"
-add_specific_affix = [{ id = "added_lightning_damage" }]
-
-[[currencies]]
-id = "imbue_elemental"
-name = "Prismatic Imbue"
-description = "Imbues a normal item with random elemental damage, making it magic"
-category = "Imbue"
-
-[currencies.requires]
-rarities = ["normal"]
-
-[currencies.effects]
-set_rarity = "magic"
-add_specific_affix = [
-    { id = "added_fire_damage" },
-    { id = "added_cold_damage" },
-    { id = "added_lightning_damage" },
-]
+[[currencies.effects.add_specific_affix]]
+id = "added_fire_damage"
+weight = 100
 
 [[currencies]]
 id = "imbue_life"
 name = "Vitality Imbue"
-description = "Imbues a normal armour with life, making it magic"
+description = "Imbues with life, upgrading to magic"
 category = "Imbue"
 
 [currencies.requires]
 rarities = ["normal"]
+has_affix = false
+has_affix_slot = false
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "added_life" }]
+clear_affixes = false
+try_unique = false
+affix_pools = []
+
+[[currencies.effects.add_specific_affix]]
+id = "acc_added_life"
+tier = 1
+weight = 100
+
+[[currencies.effects.add_specific_affix]]
+id = "added_life"
+tier = 1
+weight = 100
 
 [[currencies]]
-id = "imbue_physical"
-name = "Warrior's Imbue"
-description = "Imbues a normal weapon with physical damage, making it magic"
+id = "imbue_elemental"
+name = "Prismatic Imbue"
+description = "Imbues with random elemental damage"
 category = "Imbue"
 
 [currencies.requires]
 rarities = ["normal"]
+has_affix = false
+has_affix_slot = false
 
 [currencies.effects]
 set_rarity = "magic"
-add_specific_affix = [{ id = "added_physical_damage" }]
+clear_affixes = false
+try_unique = false
+affix_pools = []
 
-[[currencies]]
-id = "imbue_speed"
-name = "Haste Imbue"
-description = "Imbues normal boots with movement speed, making them magic"
-category = "Imbue"
+[[currencies.effects.add_specific_affix]]
+id = "added_fire_damage"
+weight = 100
 
-[currencies.requires]
-rarities = ["normal"]
+[[currencies.effects.add_specific_affix]]
+id = "added_cold_damage"
+weight = 100
 
-[currencies.effects]
-set_rarity = "magic"
-add_specific_affix = [{ id = "increased_movement_speed" }]
-
-[[currencies]]
-id = "imbue_resistance"
-name = "Warding Imbue"
-description = "Imbues a normal item with random elemental resistance, making it magic"
-category = "Imbue"
-
-[currencies.requires]
-rarities = ["normal"]
-
-[currencies.effects]
-set_rarity = "magic"
-add_specific_affix = [
-    { id = "fire_resistance" },
-    { id = "cold_resistance" },
-    { id = "lightning_resistance" },
-]
+[[currencies.effects.add_specific_affix]]
+id = "added_lightning_damage"
+weight = 100

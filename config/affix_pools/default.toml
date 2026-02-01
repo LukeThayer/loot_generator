@@ -1,117 +1,43 @@
-[[pools]]
-id = "physical"
-name = "Physical Affixes"
-description = "Affixes related to physical damage"
-affixes = [
-    "added_physical_damage",
-    "increased_physical_damage",
-    "increased_attack_speed",
-    "increased_critical_chance",
-    "added_accuracy",
-]
-
-[[pools]]
-id = "defense"
-name = "Defensive Affixes"
-description = "Affixes focused on survivability"
-affixes = [
-    "added_life",
-    "increased_armour",
-    "increased_evasion",
-    "increased_energy_shield",
-    "fire_resistance",
-    "cold_resistance",
-    "lightning_resistance",
-    "life_regeneration",
-]
-
-[[pools]]
-id = "cold"
-name = "Cold Affixes"
-description = "Affixes related to cold damage and resistance"
-affixes = [
-    "added_cold_damage",
-    "cold_resistance",
-]
-
-[[pools]]
-id = "lightning"
-name = "Lightning Affixes"
-description = "Affixes related to lightning damage and resistance"
-affixes = [
-    "added_lightning_damage",
-    "lightning_resistance",
-]
-
-[[pools]]
-id = "fire"
-name = "Fire Affixes"
-description = "Affixes related to fire damage and resistance"
-affixes = [
-    "added_fire_damage",
-    "fire_resistance",
-]
+# Affix Pools - Groups of affixes that currencies can draw from
 
 [[pools]]
 id = "common"
 name = "Common Affixes"
-description = "All standard affixes available in the game"
+description = "All standard affixes in the game"
 affixes = [
-    # Weapon/Armour affixes
+    # Weapon
     "added_physical_damage",
-    "increased_physical_damage",
     "added_fire_damage",
     "added_cold_damage",
     "added_lightning_damage",
     "increased_attack_speed",
     "increased_critical_chance",
     "added_accuracy",
+    # Armour
     "added_life",
     "increased_armour",
     "increased_evasion",
     "increased_energy_shield",
-    "added_strength",
-    "added_dexterity",
-    "added_intelligence",
     "fire_resistance",
     "cold_resistance",
     "lightning_resistance",
+    "added_strength",
+    "added_dexterity",
+    "added_intelligence",
     "increased_movement_speed",
-    "life_regeneration",
-    # Accessory affixes
+    # Accessories
     "acc_added_life",
-    "acc_added_energy_shield",
-    "acc_added_mana",
     "acc_added_physical",
-    "acc_added_fire",
-    "acc_added_cold",
-    "acc_added_lightning",
-    "acc_added_armour",
-    "acc_added_evasion",
     "acc_fire_resist",
     "acc_cold_resist",
     "acc_lightning_resist",
-    "acc_chaos_resist",
-    "acc_all_resist",
     "acc_strength",
-    "acc_dexterity",
-    "acc_intelligence",
-    "acc_all_attributes",
-    "acc_added_accuracy",
-    "acc_crit_chance",
-    "acc_crit_multi",
-    "acc_life_regen",
-    "acc_mana_regen",
-    "acc_life_leech",
-    "acc_mana_leech",
-    "acc_item_rarity",
-    "belt_increased_life",
 ]
 
 [[pools]]
 id = "elemental"
 name = "Elemental Affixes"
-description = "Affixes related to elemental damage"
+description = "Fire, cold, and lightning damage"
 affixes = [
     "added_fire_damage",
     "added_cold_damage",
@@ -119,128 +45,19 @@ affixes = [
 ]
 
 [[pools]]
-id = "attributes"
-name = "Attribute Affixes"
-description = "Strength, Dexterity, Intelligence"
+id = "defense"
+name = "Defensive Affixes"
+description = "Life, resistances, and defenses"
 affixes = [
-    "added_strength",
-    "added_dexterity",
-    "added_intelligence",
-    "added_lords_strength",
-    "acc_strength",
-    "acc_dexterity",
-    "acc_intelligence",
-    "acc_all_attributes",
-]
-
-[[pools]]
-id = "accessories"
-name = "Accessory Affixes"
-description = "All affixes available on rings, amulets, and belts"
-affixes = [
-    # Prefixes
+    "added_life",
+    "increased_armour",
+    "increased_evasion",
+    "increased_energy_shield",
+    "fire_resistance",
+    "cold_resistance",
+    "lightning_resistance",
     "acc_added_life",
-    "acc_added_energy_shield",
-    "acc_added_mana",
-    "acc_added_physical",
-    "acc_added_fire",
-    "acc_added_cold",
-    "acc_added_lightning",
-    "acc_added_armour",
-    "acc_added_evasion",
-    # Suffixes
     "acc_fire_resist",
     "acc_cold_resist",
     "acc_lightning_resist",
-    "acc_chaos_resist",
-    "acc_all_resist",
-    "acc_strength",
-    "acc_dexterity",
-    "acc_intelligence",
-    "acc_all_attributes",
-    "acc_added_accuracy",
-    "acc_crit_chance",
-    "acc_crit_multi",
-    "acc_life_regen",
-    "acc_mana_regen",
-    "acc_life_leech",
-    "acc_mana_leech",
-    "acc_item_rarity",
-    "belt_increased_life",
-]
-
-[[pools]]
-id = "rings"
-name = "Ring Affixes"
-description = "Affixes specifically for rings"
-affixes = [
-    "acc_added_life",
-    "acc_added_energy_shield",
-    "acc_added_mana",
-    "acc_added_physical",
-    "acc_added_fire",
-    "acc_added_cold",
-    "acc_added_lightning",
-    "acc_fire_resist",
-    "acc_cold_resist",
-    "acc_lightning_resist",
-    "acc_chaos_resist",
-    "acc_all_resist",
-    "acc_strength",
-    "acc_dexterity",
-    "acc_intelligence",
-    "acc_all_attributes",
-    "acc_added_accuracy",
-    "acc_crit_chance",
-    "acc_life_regen",
-    "acc_mana_regen",
-    "acc_life_leech",
-    "acc_mana_leech",
-    "acc_item_rarity",
-]
-
-[[pools]]
-id = "amulets"
-name = "Amulet Affixes"
-description = "Affixes specifically for amulets"
-affixes = [
-    "acc_added_life",
-    "acc_added_energy_shield",
-    "acc_added_mana",
-    "acc_fire_resist",
-    "acc_cold_resist",
-    "acc_lightning_resist",
-    "acc_chaos_resist",
-    "acc_all_resist",
-    "acc_strength",
-    "acc_dexterity",
-    "acc_intelligence",
-    "acc_all_attributes",
-    "acc_added_accuracy",
-    "acc_crit_chance",
-    "acc_crit_multi",
-    "acc_life_regen",
-    "acc_mana_regen",
-    "acc_item_rarity",
-]
-
-[[pools]]
-id = "belts"
-name = "Belt Affixes"
-description = "Affixes specifically for belts"
-affixes = [
-    "acc_added_life",
-    "acc_added_energy_shield",
-    "acc_added_armour",
-    "acc_added_evasion",
-    "acc_fire_resist",
-    "acc_cold_resist",
-    "acc_lightning_resist",
-    "acc_chaos_resist",
-    "acc_all_resist",
-    "acc_strength",
-    "acc_dexterity",
-    "acc_intelligence",
-    "acc_life_regen",
-    "belt_increased_life",
 ]

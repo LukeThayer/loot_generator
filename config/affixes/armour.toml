@@ -1,8 +1,6 @@
-# Armour Affixes
+# Armour Affixes - Minimal set showing defense and utility
 
-# ============================================================================
-# ARMOUR PREFIXES
-# ============================================================================
+# PREFIXES
 
 [[affixes]]
 id = "added_life"
@@ -15,29 +13,22 @@ allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 [[affixes.tiers]]
 tier = 1
 weight = 100
-min = 90
-max = 110
-min_ilvl = 68
+min = 80
+max = 100
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
-min = 60
-max = 89
-min_ilvl = 45
+min = 50
+max = 79
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
-min = 35
-max = 59
-min_ilvl = 25
-
-[[affixes.tiers]]
-tier = 4
-weight = 1000
-min = 15
-max = 34
+min = 25
+max = 49
 min_ilvl = 1
 
 [[affixes]]
@@ -51,22 +42,22 @@ allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 [[affixes.tiers]]
 tier = 1
 weight = 150
-min = 80
+min = 70
 max = 100
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
-min = 50
-max = 79
-min_ilvl = 35
+min = 40
+max = 69
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
-min = 25
-max = 49
+min = 15
+max = 39
 min_ilvl = 1
 
 [[affixes]]
@@ -80,22 +71,22 @@ allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 [[affixes.tiers]]
 tier = 1
 weight = 150
-min = 80
+min = 70
 max = 100
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
-min = 50
-max = 79
-min_ilvl = 35
+min = 40
+max = 69
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
-min = 25
-max = 49
+min = 15
+max = 39
 min_ilvl = 1
 
 [[affixes]]
@@ -109,71 +100,25 @@ allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 [[affixes.tiers]]
 tier = 1
 weight = 150
-min = 80
+min = 70
 max = 100
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
-min = 50
-max = 79
-min_ilvl = 35
+min = 40
+max = 69
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
-min = 25
-max = 49
-min_ilvl = 1
-
-[[affixes]]
-id = "added_lords_strength"
-name = "Lord's"
-type = "prefix"
-stat = "added_strength"
-tags = ["attribute", "strength"]
-allowed_classes = ["gloves"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 10
-min = 65
-max = 100
-min_ilvl = 75
-
-# ============================================================================
-# ARMOUR SUFFIXES
-# ============================================================================
-
-[[affixes]]
-id = "life_regeneration"
-name = "of Regeneration"
-type = "suffix"
-stat = "life_regeneration"
-tags = ["life", "defense"]
-allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 200
 min = 15
-max = 20
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 500
-min = 8
-max = 14
-min_ilvl = 35
-
-[[affixes.tiers]]
-tier = 3
-weight = 1000
-min = 3
-max = 7
+max = 39
 min_ilvl = 1
+
+# SUFFIXES
 
 [[affixes]]
 id = "fire_resistance"
@@ -188,14 +133,14 @@ tier = 1
 weight = 150
 min = 36
 max = 45
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 24
 max = 35
-min_ilvl = 35
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
@@ -217,14 +162,14 @@ tier = 1
 weight = 150
 min = 36
 max = 45
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 24
 max = 35
-min_ilvl = 35
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
@@ -246,14 +191,14 @@ tier = 1
 weight = 150
 min = 36
 max = 45
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
 min = 24
 max = 35
-min_ilvl = 35
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
@@ -273,22 +218,22 @@ allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 [[affixes.tiers]]
 tier = 1
 weight = 200
-min = 40
+min = 35
 max = 50
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 500
-min = 25
-max = 39
-min_ilvl = 35
+min = 20
+max = 34
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 1000
-min = 10
-max = 24
+min = 8
+max = 19
 min_ilvl = 1
 
 [[affixes]]
@@ -302,22 +247,22 @@ allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 [[affixes.tiers]]
 tier = 1
 weight = 200
-min = 40
+min = 35
 max = 50
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 500
-min = 25
-max = 39
-min_ilvl = 35
+min = 20
+max = 34
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 1000
-min = 10
-max = 24
+min = 8
+max = 19
 min_ilvl = 1
 
 [[affixes]]
@@ -331,22 +276,22 @@ allowed_classes = ["helmet", "body_armour", "gloves", "boots", "shield"]
 [[affixes.tiers]]
 tier = 1
 weight = 200
-min = 40
+min = 35
 max = 50
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 500
-min = 25
-max = 39
-min_ilvl = 35
+min = 20
+max = 34
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 1000
-min = 10
-max = 24
+min = 8
+max = 19
 min_ilvl = 1
 
 [[affixes]]
@@ -362,18 +307,18 @@ tier = 1
 weight = 100
 min = 25
 max = 30
-min_ilvl = 60
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
-min = 18
+min = 15
 max = 24
-min_ilvl = 35
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
-min = 10
-max = 17
+min = 8
+max = 14
 min_ilvl = 1

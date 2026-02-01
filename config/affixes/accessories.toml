@@ -1,10 +1,7 @@
-# Accessory Affixes
+# Accessory Affixes - Minimal set for rings, amulets, belts
 
-# =============================================================================
 # PREFIXES
-# =============================================================================
 
-# Life
 [[affixes]]
 id = "acc_added_life"
 name = "Healthy"
@@ -16,364 +13,82 @@ allowed_classes = ["ring", "amulet", "belt"]
 [[affixes.tiers]]
 tier = 1
 weight = 100
-min = 70
-max = 79
-min_ilvl = 64
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 50
-max = 69
-min_ilvl = 44
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 30
-max = 49
-min_ilvl = 24
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 10
-max = 29
-min_ilvl = 1
-
-# Energy Shield
-[[affixes]]
-id = "acc_added_energy_shield"
-name = "Shimmering"
-type = "prefix"
-stat = "added_energy_shield"
-tags = ["ring", "amulet", "belt", "energy_shield", "defense", "caster"]
-allowed_classes = ["ring", "amulet", "belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 35
-max = 42
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 24
-max = 34
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 13
-max = 23
-min_ilvl = 20
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 3
-max = 12
-min_ilvl = 1
-
-# Mana
-[[affixes]]
-id = "acc_added_mana"
-name = "Azure"
-type = "prefix"
-stat = "added_mana"
-tags = ["ring", "amulet", "caster", "intelligence"]
-allowed_classes = ["ring", "amulet"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
 min = 60
-max = 74
-min_ilvl = 60
+max = 79
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
-weight = 200
+weight = 300
 min = 40
 max = 59
-min_ilvl = 40
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
-weight = 400
-min = 25
+weight = 600
+min = 20
 max = 39
-min_ilvl = 20
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 10
-max = 24
 min_ilvl = 1
 
-# Physical Damage to Attacks (rings)
 [[affixes]]
 id = "acc_added_physical"
 name = "Heavy"
 type = "prefix"
 stat = "added_physical_damage"
-tags = ["ring", "physical", "attack", "damage", "melee", "strength"]
+tags = ["ring", "physical", "attack", "damage"]
 allowed_classes = ["ring"]
 
 [[affixes.tiers]]
 tier = 1
 weight = 100
-min = 9
-max = 14
-min_ilvl = 58
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 5
-max = 8
-min_ilvl = 36
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 2
-max = 4
-min_ilvl = 11
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 1
-max = 2
-min_ilvl = 1
-
-# Elemental Damage to Attacks (rings)
-[[affixes]]
-id = "acc_added_fire"
-name = "Heated"
-type = "prefix"
-stat = "added_fire_damage"
-tags = ["ring", "fire", "elemental", "attack", "damage"]
-allowed_classes = ["ring"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 14
-max = 22
-min_ilvl = 62
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
 min = 8
-max = 13
-min_ilvl = 38
+max = 12
+min_ilvl = 50
 
 [[affixes.tiers]]
-tier = 3
-weight = 400
+tier = 2
+weight = 300
 min = 4
 max = 7
-min_ilvl = 14
+min_ilvl = 25
 
 [[affixes.tiers]]
-tier = 4
-weight = 800
+tier = 3
+weight = 600
 min = 1
 max = 3
 min_ilvl = 1
 
-[[affixes]]
-id = "acc_added_cold"
-name = "Frosted"
-type = "prefix"
-stat = "added_cold_damage"
-tags = ["ring", "cold", "elemental", "attack", "damage"]
-allowed_classes = ["ring"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 14
-max = 22
-min_ilvl = 62
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 8
-max = 13
-min_ilvl = 38
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 4
-max = 7
-min_ilvl = 14
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 1
-max = 3
-min_ilvl = 1
-
-[[affixes]]
-id = "acc_added_lightning"
-name = "Sparking"
-type = "prefix"
-stat = "added_lightning_damage"
-tags = ["ring", "lightning", "elemental", "attack", "damage"]
-allowed_classes = ["ring"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 4
-max = 44
-min_ilvl = 62
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 3
-max = 28
-min_ilvl = 38
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 2
-max = 14
-min_ilvl = 14
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 1
-max = 6
-min_ilvl = 1
-
-# Armour (belt)
-[[affixes]]
-id = "acc_added_armour"
-name = "Plated"
-type = "prefix"
-stat = "added_armour"
-tags = ["belt", "armour", "defense", "strength", "physical"]
-allowed_classes = ["belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 80
-max = 100
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 50
-max = 79
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 25
-max = 49
-min_ilvl = 20
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 10
-max = 24
-min_ilvl = 1
-
-# Evasion (belt)
-[[affixes]]
-id = "acc_added_evasion"
-name = "Agile"
-type = "prefix"
-stat = "added_evasion"
-tags = ["belt", "evasion", "defense", "dexterity", "physical"]
-allowed_classes = ["belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 80
-max = 100
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 50
-max = 79
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 25
-max = 49
-min_ilvl = 20
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 10
-max = 24
-min_ilvl = 1
-
-# =============================================================================
 # SUFFIXES
-# =============================================================================
 
-# Resistances
 [[affixes]]
 id = "acc_fire_resist"
 name = "of the Salamander"
 type = "suffix"
 stat = "fire_resistance"
-tags = ["ring", "amulet", "belt", "fire", "elemental", "resistance", "defense"]
+tags = ["ring", "amulet", "belt", "fire", "resistance"]
 allowed_classes = ["ring", "amulet", "belt"]
 
 [[affixes.tiers]]
 tier = 1
-weight = 100
-min = 36
-max = 42
-min_ilvl = 60
+weight = 150
+min = 30
+max = 40
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
-weight = 200
-min = 24
-max = 35
-min_ilvl = 36
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
-weight = 400
-min = 12
-max = 23
-min_ilvl = 12
-
-[[affixes.tiers]]
-tier = 4
 weight = 800
-min = 6
-max = 11
+min = 8
+max = 17
 min_ilvl = 1
 
 [[affixes]]
@@ -381,35 +96,28 @@ id = "acc_cold_resist"
 name = "of the Yeti"
 type = "suffix"
 stat = "cold_resistance"
-tags = ["ring", "amulet", "belt", "cold", "elemental", "resistance", "defense"]
+tags = ["ring", "amulet", "belt", "cold", "resistance"]
 allowed_classes = ["ring", "amulet", "belt"]
 
 [[affixes.tiers]]
 tier = 1
-weight = 100
-min = 36
-max = 42
-min_ilvl = 60
+weight = 150
+min = 30
+max = 40
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
-weight = 200
-min = 24
-max = 35
-min_ilvl = 36
+weight = 400
+min = 18
+max = 29
+min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
-weight = 400
-min = 12
-max = 23
-min_ilvl = 12
-
-[[affixes.tiers]]
-tier = 4
 weight = 800
-min = 6
-max = 11
+min = 8
+max = 17
 min_ilvl = 1
 
 [[affixes]]
@@ -417,526 +125,55 @@ id = "acc_lightning_resist"
 name = "of the Storm"
 type = "suffix"
 stat = "lightning_resistance"
-tags = ["ring", "amulet", "belt", "lightning", "elemental", "resistance", "defense"]
+tags = ["ring", "amulet", "belt", "lightning", "resistance"]
 allowed_classes = ["ring", "amulet", "belt"]
 
 [[affixes.tiers]]
 tier = 1
-weight = 100
-min = 36
-max = 42
-min_ilvl = 60
+weight = 150
+min = 30
+max = 40
+min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
-weight = 200
-min = 24
-max = 35
-min_ilvl = 36
-
-[[affixes.tiers]]
-tier = 3
 weight = 400
-min = 12
-max = 23
-min_ilvl = 12
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 6
-max = 11
-min_ilvl = 1
-
-[[affixes]]
-id = "acc_chaos_resist"
-name = "of the Void"
-type = "suffix"
-stat = "chaos_resistance"
-tags = ["ring", "amulet", "belt", "chaos", "resistance", "defense"]
-allowed_classes = ["ring", "amulet", "belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 26
-max = 30
-min_ilvl = 65
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
 min = 18
-max = 25
-min_ilvl = 45
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 10
-max = 17
+max = 29
 min_ilvl = 25
 
 [[affixes.tiers]]
-tier = 4
+tier = 3
 weight = 800
-min = 5
-max = 9
+min = 8
+max = 17
 min_ilvl = 1
 
-[[affixes]]
-id = "acc_all_resist"
-name = "of Resistance"
-type = "suffix"
-stat = "all_resistances"
-tags = ["ring", "amulet", "belt", "elemental", "resistance", "defense", "fire", "cold", "lightning"]
-allowed_classes = ["ring", "amulet", "belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 50
-min = 13
-max = 16
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 100
-min = 8
-max = 12
-min_ilvl = 36
-
-[[affixes.tiers]]
-tier = 3
-weight = 200
-min = 4
-max = 7
-min_ilvl = 12
-
-# Attributes
 [[affixes]]
 id = "acc_strength"
 name = "of the Giant"
 type = "suffix"
 stat = "added_strength"
-tags = ["ring", "amulet", "belt", "strength", "melee", "physical"]
+tags = ["ring", "amulet", "belt", "strength"]
 allowed_classes = ["ring", "amulet", "belt"]
 
 [[affixes.tiers]]
 tier = 1
-weight = 100
-min = 43
-max = 50
-min_ilvl = 74
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 28
-max = 42
-min_ilvl = 44
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 13
-max = 27
-min_ilvl = 22
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 8
-max = 12
-min_ilvl = 1
-
-[[affixes]]
-id = "acc_dexterity"
-name = "of the Lynx"
-type = "suffix"
-stat = "added_dexterity"
-tags = ["ring", "amulet", "belt", "dexterity", "attack", "evasion", "speed"]
-allowed_classes = ["ring", "amulet", "belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 43
-max = 50
-min_ilvl = 74
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 28
-max = 42
-min_ilvl = 44
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 13
-max = 27
-min_ilvl = 22
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 8
-max = 12
-min_ilvl = 1
-
-[[affixes]]
-id = "acc_intelligence"
-name = "of the Sage"
-type = "suffix"
-stat = "added_intelligence"
-tags = ["ring", "amulet", "belt", "intelligence", "caster", "energy_shield", "elemental"]
-allowed_classes = ["ring", "amulet", "belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 43
-max = 50
-min_ilvl = 74
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 28
-max = 42
-min_ilvl = 44
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 13
-max = 27
-min_ilvl = 22
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 8
-max = 12
-min_ilvl = 1
-
-[[affixes]]
-id = "acc_all_attributes"
-name = "of the Titan"
-type = "suffix"
-stat = "added_all_attributes"
-tags = ["ring", "amulet", "strength", "dexterity", "intelligence"]
-allowed_classes = ["ring", "amulet"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 50
-min = 13
-max = 16
-min_ilvl = 74
-
-[[affixes.tiers]]
-tier = 2
-weight = 100
-min = 9
-max = 12
-min_ilvl = 44
-
-[[affixes.tiers]]
-tier = 3
-weight = 200
-min = 5
-max = 8
-min_ilvl = 22
-
-# Accuracy
-[[affixes]]
-id = "acc_added_accuracy"
-name = "of Precision"
-type = "suffix"
-stat = "added_accuracy"
-tags = ["ring", "amulet", "attack", "physical", "dexterity"]
-allowed_classes = ["ring", "amulet"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 200
-max = 280
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 120
-max = 199
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 60
-max = 119
-min_ilvl = 20
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 20
-max = 59
-min_ilvl = 1
-
-# Critical Strike
-[[affixes]]
-id = "acc_crit_chance"
-name = "of Criticals"
-type = "suffix"
-stat = "increased_critical_chance"
-tags = ["ring", "amulet", "attack", "damage"]
-allowed_classes = ["ring", "amulet"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 25
-max = 30
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 18
-max = 24
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 10
-max = 17
-min_ilvl = 20
-
-[[affixes]]
-id = "acc_crit_multi"
-name = "of Devastation"
-type = "suffix"
-stat = "increased_critical_damage"
-tags = ["amulet", "attack", "damage"]
-allowed_classes = ["amulet"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 30
-max = 38
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 20
-max = 29
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 10
-max = 19
-min_ilvl = 20
-
-# Life Regen
-[[affixes]]
-id = "acc_life_regen"
-name = "of Regeneration"
-type = "suffix"
-stat = "life_regeneration"
-tags = ["ring", "amulet", "belt", "life", "defense"]
-allowed_classes = ["ring", "amulet", "belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 8
-max = 10
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 5
-max = 7
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 2
-max = 4
-min_ilvl = 20
-
-[[affixes.tiers]]
-tier = 4
-weight = 800
-min = 1
-max = 2
-min_ilvl = 1
-
-# Mana Regen
-[[affixes]]
-id = "acc_mana_regen"
-name = "of Meditation"
-type = "suffix"
-stat = "mana_regeneration"
-tags = ["ring", "amulet", "caster", "intelligence"]
-allowed_classes = ["ring", "amulet"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 50
-max = 60
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
 weight = 200
 min = 35
-max = 49
-min_ilvl = 40
+max = 50
+min_ilvl = 50
 
 [[affixes.tiers]]
-tier = 3
-weight = 400
+tier = 2
+weight = 500
 min = 20
 max = 34
-min_ilvl = 20
+min_ilvl = 25
 
 [[affixes.tiers]]
-tier = 4
-weight = 800
-min = 10
+tier = 3
+weight = 1000
+min = 8
 max = 19
 min_ilvl = 1
-
-# Life Leech (rings)
-[[affixes]]
-id = "acc_life_leech"
-name = "of Leeching"
-type = "suffix"
-stat = "life_leech"
-tags = ["ring", "attack", "life", "damage", "physical"]
-allowed_classes = ["ring"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 4
-max = 5
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 2
-max = 3
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 1
-max = 2
-min_ilvl = 20
-
-# Mana Leech (rings)
-[[affixes]]
-id = "acc_mana_leech"
-name = "of Thirst"
-type = "suffix"
-stat = "mana_leech"
-tags = ["ring", "attack", "damage"]
-allowed_classes = ["ring"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 4
-max = 5
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 2
-max = 3
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 1
-max = 2
-min_ilvl = 20
-
-# Item Rarity (rings, amulets)
-[[affixes]]
-id = "acc_item_rarity"
-name = "of Treasure"
-type = "suffix"
-stat = "increased_item_rarity"
-tags = ["ring", "amulet", "magic_find"]
-allowed_classes = ["ring", "amulet"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 22
-max = 28
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 14
-max = 21
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 7
-max = 13
-min_ilvl = 20
-
-# Increased Life (belts)
-[[affixes]]
-id = "belt_increased_life"
-name = "of Vitality"
-type = "suffix"
-stat = "increased_life"
-tags = ["belt", "life", "defense"]
-allowed_classes = ["belt"]
-
-[[affixes.tiers]]
-tier = 1
-weight = 100
-min = 12
-max = 15
-min_ilvl = 60
-
-[[affixes.tiers]]
-tier = 2
-weight = 200
-min = 8
-max = 11
-min_ilvl = 40
-
-[[affixes.tiers]]
-tier = 3
-weight = 400
-min = 4
-max = 7
-min_ilvl = 20
