@@ -432,6 +432,7 @@ impl App {
                 name: String::new(),
                 affix_type: loot_core::types::AffixType::Prefix,
                 stat: loot_core::types::StatType::AddedPhysicalDamage,
+                scope: loot_core::types::AffixScope::Local,
                 tags: Vec::new(),
                 allowed_classes: Vec::new(),
                 tiers: vec![AffixTierConfig {
@@ -439,6 +440,7 @@ impl App {
                     weight: 100,
                     min: 1,
                     max: 10,
+                    max_value: None,
                     min_ilvl: 1,
                 }],
             }),
@@ -809,8 +811,9 @@ impl App {
                 1 => affix.name.clone(),
                 2 => format!("{:?}", affix.affix_type),
                 3 => format!("{:?}", affix.stat),
-                4 => String::new(), // List field - start empty for adding
-                5 => String::new(), // List field - start empty for adding
+                4 => format!("{:?}", affix.scope),
+                5 => String::new(), // List field - start empty for adding (tags)
+                6 => String::new(), // List field - start empty for adding (allowed_classes)
                 _ => String::new(),
             },
             Some(EditingEntry::Currency(curr)) => match field_idx {
@@ -861,7 +864,7 @@ impl App {
             Some(EditingEntry::Affix(affix)) => match field_idx {
                 0 => affix.id = value,
                 1 => affix.name = value,
-                4 => {
+                5 => {
                     affix.tags = value
                         .split(',')
                         .map(|s| s.trim().to_string())
@@ -948,7 +951,7 @@ impl App {
         let field_idx = self.current_view_state().field_index;
         match &self.editing {
             // Note: BaseType class uses text input, not enum picker
-            Some(EditingEntry::Affix(_)) => field_idx == 2 || field_idx == 3, // type, stat
+            Some(EditingEntry::Affix(_)) => field_idx == 2 || field_idx == 3 || field_idx == 4, // type, stat, scope
             _ => false,
         }
     }
@@ -958,7 +961,7 @@ impl App {
         match &self.editing {
             Some(EditingEntry::AffixPool(_)) => field_idx == 3, // affixes
             Some(EditingEntry::BaseType(_)) => field_idx == 2 || field_idx == 3, // class (single), tags (list)
-            Some(EditingEntry::Affix(_)) => field_idx == 4 || field_idx == 5, // tags, allowed_classes
+            Some(EditingEntry::Affix(_)) => field_idx == 5 || field_idx == 6, // tags, allowed_classes
             _ => false,
         }
     }
@@ -967,7 +970,7 @@ impl App {
         let field_idx = self.current_view_state().field_index;
         match &self.editing {
             Some(EditingEntry::BaseType(_)) => field_idx >= 4, // implicit, defenses, damage, requirements
-            Some(EditingEntry::Affix(_)) => field_idx == 6,    // tiers
+            Some(EditingEntry::Affix(_)) => field_idx == 7,    // tiers
             Some(EditingEntry::Currency(_)) => field_idx >= 4, // requires, effects
             Some(EditingEntry::Unique(_)) => field_idx >= 4,   // mods, recipe
             _ => false,
@@ -1032,6 +1035,16 @@ impl App {
                     Err(_) => Err(format!("Unknown stat: {}", value)),
                 }
             }
+            Some(EditingEntry::Affix(affix)) if field_idx == 4 => {
+                // Parse AffixScope
+                match Self::parse_affix_scope(value) {
+                    Ok(scope) => {
+                        affix.scope = scope;
+                        Ok(format!("Scope set to {:?}", scope))
+                    }
+                    Err(_) => Err(format!("Unknown scope: {} (use Local or Global)", value)),
+                }
+            }
             _ => Ok(String::new()),
         };
 
@@ -1076,6 +1089,15 @@ impl App {
         match s {
             "Prefix" => Ok(AffixType::Prefix),
             "Suffix" => Ok(AffixType::Suffix),
+            _ => Err(()),
+        }
+    }
+
+    fn parse_affix_scope(s: &str) -> Result<loot_core::types::AffixScope, ()> {
+        use loot_core::types::AffixScope;
+        match s {
+            "Local" => Ok(AffixScope::Local),
+            "Global" => Ok(AffixScope::Global),
             _ => Err(()),
         }
     }
@@ -1405,6 +1427,10 @@ impl App {
                 .into_iter()
                 .map(String::from)
                 .collect(),
+            Some(EditingEntry::Affix(_)) if field_idx == 4 => vec!["Local", "Global"]
+                .into_iter()
+                .map(String::from)
+                .collect(),
             Some(EditingEntry::Affix(_)) if field_idx == 3 => vec![
                 "AddedPhysicalDamage",
                 "AddedFireDamage",
@@ -1504,8 +1530,8 @@ impl App {
         match &self.editing {
             Some(EditingEntry::AffixPool(pool)) if field_idx == 3 => pool.affixes.len(),
             Some(EditingEntry::BaseType(bt)) if field_idx == 3 => bt.tags.len(),
-            Some(EditingEntry::Affix(affix)) if field_idx == 4 => affix.tags.len(),
-            Some(EditingEntry::Affix(affix)) if field_idx == 5 => affix.allowed_classes.len(),
+            Some(EditingEntry::Affix(affix)) if field_idx == 5 => affix.tags.len(),
+            Some(EditingEntry::Affix(affix)) if field_idx == 6 => affix.allowed_classes.len(),
             _ => 0,
         }
     }
@@ -1519,7 +1545,7 @@ impl App {
 
         // Pre-validate tags before mutable borrow
         let tag_valid = match &self.editing {
-            Some(EditingEntry::Affix(_)) if field_idx == 4 => self.is_valid_tag(&value),
+            Some(EditingEntry::Affix(_)) if field_idx == 5 => self.is_valid_tag(&value),
             Some(EditingEntry::BaseType(_)) if field_idx == 3 => self.is_valid_tag(&value),
             _ => true,
         };
@@ -1570,7 +1596,7 @@ impl App {
                     self.message = Some(format!("Unknown tag: {}", value));
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 4 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 5 => {
                 // Validate tag (already checked above)
                 if tag_valid {
                     if !affix.tags.contains(&value) {
@@ -1581,7 +1607,7 @@ impl App {
                     self.message = Some(format!("Unknown tag: {}", value));
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 5 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 7 => {
                 // Parse ItemClass from string
                 if let Ok(class) = Self::parse_item_class(&value) {
                     if !affix.allowed_classes.contains(&class) {
@@ -1618,7 +1644,7 @@ impl App {
                     None
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 4 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 5 => {
                 if nested_idx < affix.tags.len() {
                     affix.tags.remove(nested_idx);
                     Some(affix.tags.len())
@@ -1626,7 +1652,7 @@ impl App {
                     None
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 5 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 7 => {
                 if nested_idx < affix.allowed_classes.len() {
                     affix.allowed_classes.remove(nested_idx);
                     Some(affix.allowed_classes.len())
@@ -1868,7 +1894,7 @@ impl App {
         match &self.editing {
             Some(EditingEntry::Unique(uniq)) if field_idx == 4 => uniq.mods.len(),
             Some(EditingEntry::Unique(_)) if field_idx == 5 => 3, // recipe: weight, required_affixes, mappings
-            Some(EditingEntry::Affix(affix)) if field_idx == 6 => affix.tiers.len(),
+            Some(EditingEntry::Affix(affix)) if field_idx == 7 => affix.tiers.len(),
             Some(EditingEntry::BaseType(_)) if field_idx == 4 => 1, // implicit is single item
             Some(EditingEntry::BaseType(_)) if field_idx == 5 => 3, // defenses: armour, evasion, es
             Some(EditingEntry::BaseType(bt)) if field_idx == 6 => {
@@ -1901,7 +1927,7 @@ impl App {
                 self.text_input = TextInputState::new(text);
                 self.current_view_state_mut().nested_depth = 2;
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 6 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 7 => {
                 // Add a new tier
                 let next_tier = affix.tiers.iter().map(|t| t.tier).max().unwrap_or(0) + 1;
                 affix.tiers.push(AffixTierConfig {
@@ -1909,6 +1935,7 @@ impl App {
                     weight: 100,
                     min: 1,
                     max: 10,
+                    max_value: None,
                     min_ilvl: 1,
                 });
                 let new_idx = affix.tiers.len() - 1;
@@ -2150,7 +2177,7 @@ impl App {
                     None
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 6 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 7 => {
                 if nested_idx < affix.tiers.len() && affix.tiers.len() > 1 {
                     affix.tiers.remove(nested_idx);
                     Some(affix.tiers.len())
@@ -2207,14 +2234,21 @@ impl App {
                     self.current_view_state_mut().nested_depth = 1;
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 6 => {
+            Some(EditingEntry::Affix(affix)) if field_idx == 7 => {
                 if nested_depth == 1 {
                     // Enter editing mode - populate with current values
                     if let Some(tier) = affix.tiers.get(nested_idx) {
-                        let text = format!(
-                            "{} {} {} {} {}",
-                            tier.tier, tier.weight, tier.min, tier.max, tier.min_ilvl
-                        );
+                        let text = if let Some(ref max_val) = tier.max_value {
+                            format!(
+                                "{} {} {} {} {} {} {}",
+                                tier.tier, tier.weight, tier.min, tier.max, max_val.min, max_val.max, tier.min_ilvl
+                            )
+                        } else {
+                            format!(
+                                "{} {} {} {} {}",
+                                tier.tier, tier.weight, tier.min, tier.max, tier.min_ilvl
+                            )
+                        };
                         self.text_input = TextInputState::new(text);
                         self.current_view_state_mut().nested_depth = 2;
                     }
@@ -2476,8 +2510,10 @@ impl App {
                     }
                 }
             }
-            Some(EditingEntry::Affix(affix)) if field_idx == 6 => {
-                // Parse format: "tier weight min max min_ilvl"
+            Some(EditingEntry::Affix(affix)) if field_idx == 7 => {
+                // Parse format: "tier weight min max [max_min max_max] min_ilvl"
+                // 5 parts: tier weight min max min_ilvl (no damage range)
+                // 7 parts: tier weight min max max_min max_max min_ilvl (with damage range)
                 let parts: Vec<&str> = value.split_whitespace().collect();
                 if parts.len() >= 4 {
                     if let Some(tier) = affix.tiers.get_mut(nested_idx) {
@@ -2493,9 +2529,24 @@ impl App {
                         if let Ok(max) = parts[3].parse::<i32>() {
                             tier.max = max;
                         }
-                        // Parse min_ilvl if provided (5th field)
-                        if let Some(ilvl_str) = parts.get(4) {
-                            if let Ok(min_ilvl) = ilvl_str.parse::<u32>() {
+
+                        // Check if we have 7 parts (with max_value range)
+                        if parts.len() >= 7 {
+                            if let (Ok(max_min), Ok(max_max), Ok(min_ilvl)) = (
+                                parts[4].parse::<i32>(),
+                                parts[5].parse::<i32>(),
+                                parts[6].parse::<u32>(),
+                            ) {
+                                tier.max_value = Some(loot_core::config::RollRange {
+                                    min: max_min,
+                                    max: max_max,
+                                });
+                                tier.min_ilvl = min_ilvl;
+                            }
+                        } else if parts.len() >= 5 {
+                            // 5 parts: no max_value, clear it if present
+                            tier.max_value = None;
+                            if let Ok(min_ilvl) = parts[4].parse::<u32>() {
                                 tier.min_ilvl = min_ilvl;
                             }
                         }

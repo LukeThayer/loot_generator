@@ -84,7 +84,7 @@ struct AddAffixState {
     /// Available affixes for the current item
     affixes: Vec<(String, String, loot_core::AffixType)>, // (id, name, type)
     /// Available tiers for the selected affix
-    tiers: Vec<(u32, i32, i32)>, // (tier, min, max)
+    tiers: Vec<(u32, i32, i32, Option<(i32, i32)>)>, // (tier, min, max, max_value range)
     /// Current selection in the affix list
     affix_state: ListState,
     /// Current selection in the tier list
@@ -406,10 +406,10 @@ impl App {
             return;
         };
 
-        let tiers: Vec<(u32, i32, i32)> = affix
+        let tiers: Vec<(u32, i32, i32, Option<(i32, i32)>)> = affix
             .tiers
             .iter()
-            .map(|t| (t.tier, t.min, t.max))
+            .map(|t| (t.tier, t.min, t.max, t.max_value.map(|r| (r.min, r.max))))
             .collect();
 
         self.add_affix_state.tiers = tiers;
@@ -440,10 +440,12 @@ impl App {
         };
 
         // Roll a value within the tier's range
-        let value = {
+        let (value, value_max) = {
             use rand::Rng;
             let mut rng = rand::thread_rng();
-            rng.gen_range(tier.min..=tier.max)
+            let v = rng.gen_range(tier.min..=tier.max);
+            let v_max = tier.max_value.map(|range| rng.gen_range(range.min..=range.max));
+            (v, v_max)
         };
 
         let modifier = loot_core::item::Modifier {
@@ -452,8 +454,10 @@ impl App {
             stat: affix.stat,
             tier: tier.tier,
             value,
+            value_max,
             tier_min: tier.min,
             tier_max: tier.max,
+            tier_max_value: tier.max_value.map(|r| (r.min, r.max)),
         };
 
         let affix_type = affix.affix_type;
@@ -1520,6 +1524,11 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
             } else {
                 Span::raw("   ")
             };
+            let tier_range = if let Some((max_min, max_max)) = prefix.tier_max_value {
+                format!("({}-{} to {}-{}) ", prefix.tier_min, prefix.tier_max, max_min, max_max)
+            } else {
+                format!("({}-{}) ", prefix.tier_min, prefix.tier_max)
+            };
             lines.push(Line::from(vec![
                 marker,
                 Span::styled(
@@ -1531,20 +1540,26 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                     Style::default().fg(Color::Yellow),
                 ),
                 Span::styled(
-                    format!("({}-{}) ", prefix.tier_min, prefix.tier_max),
+                    tier_range,
                     Style::default().fg(Color::DarkGray),
                 ),
                 Span::styled("P".to_string(), Style::default().fg(Color::DarkGray)),
             ]));
-            // Show affix tags
+            // Show affix scope and tags
             if let Some(affix_config) = generator.config().affixes.get(&prefix.affix_id) {
+                let scope_color = match affix_config.scope {
+                    loot_core::types::AffixScope::Local => Color::Blue,
+                    loot_core::types::AffixScope::Global => Color::Magenta,
+                };
+                let mut info_parts = vec![
+                    Span::raw("      "),
+                    Span::styled(format!("{:?}", affix_config.scope), Style::default().fg(scope_color)),
+                ];
                 if !affix_config.tags.is_empty() {
                     let tags_str = affix_config.tags.join(", ");
-                    lines.push(Line::from(vec![
-                        Span::raw("      "),
-                        Span::styled(format!("tags: {}", tags_str), Style::default().fg(Color::DarkGray)),
-                    ]));
+                    info_parts.push(Span::styled(format!(" | tags: {}", tags_str), Style::default().fg(Color::DarkGray)));
                 }
+                lines.push(Line::from(info_parts));
             }
         }
         for (i, suffix) in item.suffixes.iter().enumerate() {
@@ -1552,6 +1567,11 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                 Span::styled(">> ", Style::default().fg(Color::LightRed))
             } else {
                 Span::raw("   ")
+            };
+            let tier_range = if let Some((max_min, max_max)) = suffix.tier_max_value {
+                format!("({}-{} to {}-{}) ", suffix.tier_min, suffix.tier_max, max_min, max_max)
+            } else {
+                format!("({}-{}) ", suffix.tier_min, suffix.tier_max)
             };
             lines.push(Line::from(vec![
                 marker,
@@ -1564,20 +1584,26 @@ fn render_item_stats(item: &Item, changed: &ChangedAffixes, generator: &Generato
                     Style::default().fg(Color::Yellow),
                 ),
                 Span::styled(
-                    format!("({}-{}) ", suffix.tier_min, suffix.tier_max),
+                    tier_range,
                     Style::default().fg(Color::DarkGray),
                 ),
                 Span::styled("S".to_string(), Style::default().fg(Color::DarkGray)),
             ]));
-            // Show affix tags
+            // Show affix scope and tags
             if let Some(affix_config) = generator.config().affixes.get(&suffix.affix_id) {
+                let scope_color = match affix_config.scope {
+                    loot_core::types::AffixScope::Local => Color::Blue,
+                    loot_core::types::AffixScope::Global => Color::Magenta,
+                };
+                let mut info_parts = vec![
+                    Span::raw("      "),
+                    Span::styled(format!("{:?}", affix_config.scope), Style::default().fg(scope_color)),
+                ];
                 if !affix_config.tags.is_empty() {
                     let tags_str = affix_config.tags.join(", ");
-                    lines.push(Line::from(vec![
-                        Span::raw("      "),
-                        Span::styled(format!("tags: {}", tags_str), Style::default().fg(Color::DarkGray)),
-                    ]));
+                    info_parts.push(Span::styled(format!(" | tags: {}", tags_str), Style::default().fg(Color::DarkGray)));
                 }
+                lines.push(Line::from(info_parts));
             }
         }
         lines.push(Line::from(""));
@@ -2009,10 +2035,15 @@ fn render_add_affix_popup(f: &mut Frame, app: &mut App) {
         .add_affix_state
         .tiers
         .iter()
-        .map(|(tier, min, max)| {
+        .map(|(tier, min, max, max_value)| {
+            let range_str = if let Some((max_min, max_max)) = max_value {
+                format!(" ({}-{} to {}-{})", min, max, max_min, max_max)
+            } else {
+                format!(" ({}-{})", min, max)
+            };
             ListItem::new(Line::from(vec![
                 Span::styled(format!("T{}", tier), Style::default().fg(Color::Yellow)),
-                Span::styled(format!(" ({}-{})", min, max), Style::default().fg(Color::DarkGray)),
+                Span::styled(range_str, Style::default().fg(Color::DarkGray)),
             ]))
         })
         .collect();

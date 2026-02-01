@@ -412,6 +412,11 @@ fn add_affix_by_id(
     // Roll value within tier range
     let value = rng.gen_range(selected_tier.min..=selected_tier.max);
 
+    // Roll max value if this is a damage range stat
+    let value_max = selected_tier
+        .max_value
+        .map(|range| rng.gen_range(range.min..=range.max));
+
     // Create the modifier
     let modifier = Modifier {
         affix_id: affix.id.clone(),
@@ -419,8 +424,10 @@ fn add_affix_by_id(
         stat: affix.stat,
         tier: selected_tier.tier,
         value,
+        value_max,
         tier_min: selected_tier.min,
         tier_max: selected_tier.max,
+        tier_max_value: selected_tier.max_value.map(|r| (r.min, r.max)),
     };
 
     // Add to appropriate list
@@ -630,8 +637,10 @@ fn try_unique_transformation(
             stat: mod_cfg.stat,
             tier: 0,
             value,
+            value_max: None,
             tier_min: mod_cfg.min,
             tier_max: mod_cfg.max,
+            tier_max_value: None,
         };
         item.prefixes.push(modifier);
     }

@@ -37,8 +37,10 @@ impl Generator {
                 stat: implicit_cfg.stat,
                 tier: 0,
                 value,
+                value_max: None,
                 tier_min: implicit_cfg.min,
                 tier_max: implicit_cfg.max,
+                tier_max_value: None,
             });
         }
 
@@ -219,7 +221,12 @@ impl Generator {
         // Roll value within tier range
         let value = rng.gen_range(tier.min..=tier.max);
 
-        Some(Modifier::from_affix(affix, tier, value))
+        // Roll max value if this is a damage range stat
+        let value_max = tier
+            .max_value
+            .map(|range| rng.gen_range(range.min..=range.max));
+
+        Some(Modifier::from_affix(affix, tier, value, value_max))
     }
 
     /// Add affixes to make an item magic (1-2 affixes)
@@ -372,8 +379,10 @@ impl Generator {
                 stat: implicit_cfg.stat,
                 tier: 0,
                 value,
+                value_max: None,
                 tier_min: implicit_cfg.min,
                 tier_max: implicit_cfg.max,
+                tier_max_value: None,
             });
         }
 
@@ -399,8 +408,10 @@ impl Generator {
                 stat: mod_cfg.stat,
                 tier: 0,
                 value,
+                value_max: None,
                 tier_min: mod_cfg.min,
                 tier_max: mod_cfg.max,
+                tier_max_value: None,
             };
             item.prefixes.push(modifier);
         }

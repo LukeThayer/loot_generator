@@ -19,6 +19,11 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
         loot_core::types::AffixType::Suffix => Color::Green,
     };
 
+    let scope_color = match affix.scope {
+        loot_core::types::AffixScope::Local => Color::Blue,
+        loot_core::types::AffixScope::Global => Color::Magenta,
+    };
+
     let mut lines = vec![
         Line::from(Span::styled(
             affix.name.clone(),
@@ -27,6 +32,7 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
         preview_line("ID", &affix.id),
         preview_line_colored("Type", &format!("{:?}", affix.affix_type), type_color),
         preview_line_colored("Stat", &format!("{:?}", affix.stat), Color::Yellow),
+        preview_line_colored("Scope", &format!("{:?}", affix.scope), scope_color),
         Line::from(""),
     ];
 
@@ -55,13 +61,18 @@ pub fn render_preview(config: &Config, id: &str) -> Vec<Line<'static>> {
     // Tiers
     lines.push(render_section_header("Tiers"));
     for tier in &affix.tiers {
+        let range_str = if let Some(ref max_val) = tier.max_value {
+            format!("({}-{} to {}-{}) ", tier.min, tier.max, max_val.min, max_val.max)
+        } else {
+            format!("({}-{}) ", tier.min, tier.max)
+        };
         lines.push(Line::from(vec![
             Span::styled(
                 format!("  T{} ", tier.tier),
                 Style::default().fg(Color::Yellow),
             ),
             Span::styled(
-                format!("({}-{}) ", tier.min, tier.max),
+                range_str,
                 Style::default().fg(Color::White),
             ),
             Span::styled(
@@ -91,6 +102,7 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
     let name = affix.name.clone();
     let type_str = format!("{:?}", affix.affix_type);
     let stat_str = format!("{:?}", affix.stat);
+    let scope_str = format!("{:?}", affix.scope);
     let tags_str = affix.tags.join(", ");
     let classes_str = affix
         .allowed_classes
@@ -199,8 +211,42 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
         ]));
     }
 
+    // Scope field (enum)
+    let is_scope_focused = state.field_index == 4;
+    let scope_marker = if is_scope_focused { "> " } else { "  " };
+    let scope_style = if is_scope_focused {
+        Style::default()
+            .fg(Color::Cyan)
+            .add_modifier(Modifier::BOLD)
+    } else {
+        Style::default()
+    };
+
+    if is_scope_focused {
+        let input_display = format!("{}|", app.text_input.value());
+        lines.push(Line::from(vec![
+            Span::styled(scope_marker.to_string(), Style::default().fg(Color::Cyan)),
+            Span::styled("Scope: ", Style::default().fg(Color::Gray)),
+            Span::styled(input_display, scope_style),
+        ]));
+        lines.push(Line::from(Span::styled(
+            format!("     Current: {}", scope_str),
+            Style::default().fg(Color::DarkGray),
+        )));
+        lines.push(Line::from(Span::styled(
+            "     [Enter: set] Valid: Local, Global",
+            Style::default().fg(Color::DarkGray),
+        )));
+    } else {
+        lines.push(Line::from(vec![
+            Span::styled(scope_marker.to_string(), Style::default().fg(Color::Cyan)),
+            Span::styled("Scope: ", Style::default().fg(Color::Gray)),
+            Span::styled(scope_str, scope_style),
+        ]));
+    }
+
     // Tags as list field
-    let is_tags_focused = state.field_index == 4;
+    let is_tags_focused = state.field_index == 5;
     let tags_marker = if is_tags_focused { "> " } else { "  " };
     let tags_style = if is_tags_focused {
         Style::default()
@@ -265,7 +311,7 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
     lines.push(Line::from(""));
 
     // Allowed classes as list field
-    let is_classes_focused = state.field_index == 5;
+    let is_classes_focused = state.field_index == 6;
     let classes_marker = if is_classes_focused { "> " } else { "  " };
     let classes_style = if is_classes_focused {
         Style::default()
@@ -329,10 +375,10 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
     lines.push(Line::from(""));
 
     // Tiers as nested
-    lines.push(render_nested_field("Tiers", &tiers_summary, 6, app));
+    lines.push(render_nested_field("Tiers", &tiers_summary, 7, app));
 
     // If in tiers, show them
-    if state.field_index == 6 && state.nested_depth > 0 {
+    if state.field_index == 7 && state.nested_depth > 0 {
         lines.push(Line::from(""));
 
         // Show input for new/edit tier
@@ -347,7 +393,7 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
                         .add_modifier(Modifier::BOLD),
                 ),
                 Span::styled(
-                    " (format: tier weight min max min_ilvl)",
+                    " (format: tier weight min max [max_min max_max] min_ilvl)",
                     Style::default().fg(Color::DarkGray),
                 ),
             ]));
@@ -362,6 +408,12 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
                 Style::default()
             };
 
+            let range_str = if let Some(ref max_val) = tier.max_value {
+                format!("{}-{} to {}-{} ", tier.min, tier.max, max_val.min, max_val.max)
+            } else {
+                format!("{}-{} ", tier.min, tier.max)
+            };
+
             lines.push(Line::from(vec![
                 Span::styled(marker.to_string(), Style::default().fg(Color::Green)),
                 Span::styled(
@@ -369,7 +421,7 @@ pub fn render_edit_form(affix: &AffixConfig, app: &App) -> Vec<Line<'static>> {
                     Style::default().fg(Color::Yellow),
                 ),
                 Span::styled(
-                    format!("{}-{} ", tier.min, tier.max),
+                    range_str,
                     style,
                 ),
                 Span::styled(

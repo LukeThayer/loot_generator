@@ -395,6 +395,9 @@ pub struct AffixConfig {
     #[serde(rename = "type")]
     pub affix_type: AffixType,
     pub stat: StatType,
+    /// Whether this modifier applies locally to the item or globally to the character
+    #[serde(default)]
+    pub scope: AffixScope,
     #[serde(default)]
     pub tags: Vec<Tag>,
     #[serde(default)]
@@ -406,8 +409,14 @@ pub struct AffixConfig {
 pub struct AffixTierConfig {
     pub tier: u32,
     pub weight: u32,
+    /// Minimum value (or minimum of the low range for damage stats)
     pub min: i32,
+    /// Maximum value (or maximum of the low range for damage stats)
     pub max: i32,
+    /// For damage range stats: the range for the high end of damage
+    /// When present, this stat becomes a range (e.g., "Adds 5-10 Fire Damage")
+    #[serde(default)]
+    pub max_value: Option<RollRange>,
     /// Minimum item level required for this tier to roll
     #[serde(default)]
     pub min_ilvl: u32,

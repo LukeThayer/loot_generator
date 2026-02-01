@@ -155,6 +155,17 @@ pub enum AffixType {
     Suffix,
 }
 
+/// Affix scope: whether the modifier applies locally to the item or globally to the character
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum AffixScope {
+    /// Modifier applies to the item's base stats (e.g., added damage on a weapon)
+    #[default]
+    Local,
+    /// Modifier applies to the character's stats (e.g., added damage to all attacks)
+    Global,
+}
+
 /// Stat modifier types that affixes can grant
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

@@ -7,28 +7,32 @@ id = "added_physical_damage"
 name = "Heavy"
 type = "prefix"
 stat = "added_physical_damage"
+scope = "local"
 tags = ["physical", "damage", "attack"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "bow", "dagger", "claw"]
 
 [[affixes.tiers]]
 tier = 1
 weight = 100
-min = 20
-max = 30
+min = 15
+max = 22
+max_value = { min = 28, max = 38 }
 min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 300
-min = 12
-max = 19
+min = 8
+max = 14
+max_value = { min = 16, max = 24 }
 min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 600
-min = 5
-max = 11
+min = 3
+max = 7
+max_value = { min = 8, max = 14 }
 min_ilvl = 1
 
 [[affixes]]
@@ -36,28 +40,32 @@ id = "added_fire_damage"
 name = "Flaming"
 type = "prefix"
 stat = "added_fire_damage"
+scope = "local"
 tags = ["elemental", "fire", "damage"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "wand", "staff"]
 
 [[affixes.tiers]]
 tier = 1
 weight = 150
-min = 25
-max = 40
+min = 18
+max = 28
+max_value = { min = 32, max = 48 }
 min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
-min = 12
-max = 24
+min = 9
+max = 16
+max_value = { min = 18, max = 30 }
 min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
-min = 5
-max = 11
+min = 3
+max = 7
+max_value = { min = 8, max = 14 }
 min_ilvl = 1
 
 [[affixes]]
@@ -71,22 +79,25 @@ allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "wand", "staff"]
 [[affixes.tiers]]
 tier = 1
 weight = 150
-min = 25
-max = 40
+min = 18
+max = 28
+max_value = { min = 32, max = 48 }
 min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
-min = 12
-max = 24
+min = 9
+max = 16
+max_value = { min = 18, max = 30 }
 min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
-min = 5
-max = 11
+min = 3
+max = 7
+max_value = { min = 8, max = 14 }
 min_ilvl = 1
 
 [[affixes]]
@@ -100,22 +111,25 @@ allowed_classes = ["one_hand_sword", "two_hand_sword", "bow", "wand", "staff"]
 [[affixes.tiers]]
 tier = 1
 weight = 150
-min = 5
-max = 50
+min = 3
+max = 8
+max_value = { min = 42, max = 62 }
 min_ilvl = 50
 
 [[affixes.tiers]]
 tier = 2
 weight = 400
-min = 3
-max = 30
+min = 2
+max = 5
+max_value = { min = 26, max = 40 }
 min_ilvl = 25
 
 [[affixes.tiers]]
 tier = 3
 weight = 800
 min = 1
-max = 15
+max = 3
+max_value = { min = 12, max = 20 }
 min_ilvl = 1
 
 # SUFFIXES
@@ -125,6 +139,7 @@ id = "increased_attack_speed"
 name = "of Speed"
 type = "suffix"
 stat = "increased_attack_speed"
+scope = "local"
 tags = ["attack", "speed"]
 allowed_classes = ["one_hand_sword", "two_hand_sword", "one_hand_axe", "two_hand_axe", "bow", "dagger", "claw"]
 

@@ -213,30 +213,59 @@ pub struct Modifier {
     pub stat: StatType,
     /// The rolled tier
     pub tier: u32,
-    /// The rolled value within the tier's range
+    /// The rolled value within the tier's range (or min value for damage ranges)
     pub value: i32,
+    /// For damage range stats: the rolled max value (e.g., the "10" in "Adds 5-10 Fire Damage")
+    #[serde(default)]
+    pub value_max: Option<i32>,
     /// Minimum value for this tier
     pub tier_min: i32,
     /// Maximum value for this tier
     pub tier_max: i32,
+    /// For damage range stats: the tier range for the max value
+    #[serde(default)]
+    pub tier_max_value: Option<(i32, i32)>,
 }
 
 impl Modifier {
     /// Create a modifier from an affix config and rolled values
-    pub fn from_affix(affix: &AffixConfig, tier: &AffixTierConfig, value: i32) -> Self {
+    pub fn from_affix(
+        affix: &AffixConfig,
+        tier: &AffixTierConfig,
+        value: i32,
+        value_max: Option<i32>,
+    ) -> Self {
         Modifier {
             affix_id: affix.id.clone(),
             name: affix.name.clone(),
             stat: affix.stat,
             tier: tier.tier,
             value,
+            value_max,
             tier_min: tier.min,
             tier_max: tier.max,
+            tier_max_value: tier.max_value.map(|r| (r.min, r.max)),
         }
     }
 
     /// Display the modifier as a human-readable string
     pub fn display(&self) -> String {
+        // Check if this is a flat damage stat with a range
+        if let Some(max_val) = self.value_max {
+            let damage_type = match self.stat {
+                StatType::AddedPhysicalDamage => Some("Physical"),
+                StatType::AddedFireDamage => Some("Fire"),
+                StatType::AddedColdDamage => Some("Cold"),
+                StatType::AddedLightningDamage => Some("Lightning"),
+                StatType::AddedChaosDamage => Some("Chaos"),
+                _ => None,
+            };
+
+            if let Some(dmg_type) = damage_type {
+                return format!("Adds {} to {} {} Damage", self.value, max_val, dmg_type);
+            }
+        }
+
         let stat_name = format!("{:?}", self.stat)
             .chars()
             .fold(String::new(), |mut acc, c| {
