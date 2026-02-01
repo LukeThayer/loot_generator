@@ -263,7 +263,7 @@ impl App {
             return;
         };
 
-        let Some(item) = self.inventory.get_mut(idx) else {
+        let Some(item) = self.inventory.get(idx) else {
             self.message = Some("No item selected".to_string());
             return;
         };
@@ -280,32 +280,32 @@ impl App {
             .map(|m| format!("{}:{}", m.affix_id, m.value))
             .collect();
 
-        // Get generator reference - safe because we're not borrowing inventory anymore here
+        // Apply currency - returns a new item
         let generator = self.generator.as_ref().unwrap();
 
         match generator.apply_currency(item, currency_id) {
-            Some(Ok(())) => {
-                self.message = Some(format!("Applied {} -> {}", currency_name, item.name));
+            Ok(new_item) => {
+                self.message = Some(format!("Applied {} -> {}", currency_name, new_item.name));
 
                 // Find which affixes changed
-                for (i, prefix) in item.prefixes.iter().enumerate() {
+                for (i, prefix) in new_item.prefixes.iter().enumerate() {
                     let key = format!("{}:{}", prefix.affix_id, prefix.value);
                     if !before_prefix_ids.contains(&key) {
                         self.changed_affixes.prefixes.push(i);
                     }
                 }
-                for (i, suffix) in item.suffixes.iter().enumerate() {
+                for (i, suffix) in new_item.suffixes.iter().enumerate() {
                     let key = format!("{}:{}", suffix.affix_id, suffix.value);
                     if !before_suffix_ids.contains(&key) {
                         self.changed_affixes.suffixes.push(i);
                     }
                 }
+
+                // Replace the item in inventory
+                self.inventory[idx] = new_item;
             }
-            Some(Err(e)) => {
+            Err(e) => {
                 self.message = Some(format!("Error: {}", e));
-            }
-            None => {
-                self.message = Some(format!("Unknown currency: {}", currency_id));
             }
         }
     }

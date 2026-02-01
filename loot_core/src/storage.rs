@@ -469,9 +469,9 @@ mod tests {
         let generator = make_generator();
 
         // Generate item and apply currencies
-        let mut item = generator.generate("iron_sword", 12345).unwrap();
-        generator.apply_currency(&mut item, "transmute");
-        generator.apply_currency(&mut item, "augment");
+        let item = generator.generate("iron_sword", 12345).unwrap();
+        let item = generator.apply_currency(&item, "transmute").unwrap();
+        let item = generator.apply_currency(&item, "augment").unwrap();
 
         // Encode and decode
         let encoded = item.encode_to_vec();
@@ -503,13 +503,13 @@ mod tests {
 
         let mut collection = ItemCollection::new();
 
-        let mut item1 = generator.generate("iron_sword", 111).unwrap();
-        generator.apply_currency(&mut item1, "transmute");
+        let item1 = generator.generate("iron_sword", 111).unwrap();
+        let item1 = generator.apply_currency(&item1, "transmute").unwrap();
         collection.add(item1);
 
-        let mut item2 = generator.generate("iron_sword", 222).unwrap();
-        generator.apply_currency(&mut item2, "transmute");
-        generator.apply_currency(&mut item2, "augment");
+        let item2 = generator.generate("iron_sword", 222).unwrap();
+        let item2 = generator.apply_currency(&item2, "transmute").unwrap();
+        let item2 = generator.apply_currency(&item2, "augment").unwrap();
         collection.add(item2);
 
         let item3 = generator.generate("leather_boots", 333).unwrap();
@@ -540,8 +540,8 @@ mod tests {
     fn test_item_binary_size() {
         let generator = make_generator();
 
-        let mut item = generator.generate("iron_sword", u64::MAX).unwrap();
-        generator.apply_currency(&mut item, "transmute");
+        let item = generator.generate("iron_sword", u64::MAX).unwrap();
+        let item = generator.apply_currency(&item, "transmute").unwrap();
 
         let binary = item.encode_to_vec();
 
@@ -554,9 +554,9 @@ mod tests {
         let generator = make_generator();
 
         // Create and craft an item
-        let mut item1 = generator.generate("iron_sword", 12345).unwrap();
-        generator.apply_currency(&mut item1, "transmute");
-        generator.apply_currency(&mut item1, "augment");
+        let item1 = generator.generate("iron_sword", 12345).unwrap();
+        let item1 = generator.apply_currency(&item1, "transmute").unwrap();
+        let item1 = generator.apply_currency(&item1, "augment").unwrap();
 
         // Encode/decode
         let bytes = item1.encode_to_vec();

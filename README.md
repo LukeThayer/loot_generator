@@ -5,7 +5,7 @@ A configurable loot generation system for games, inspired by Path of Exile's ite
 ## Quick Start
 
 ```rust
-use loot_core::{Config, Generator, BinaryEncode, BinaryDecode};
+use loot_core::{Config, Generator, BinaryEncode, BinaryDecode, Item};
 use std::path::Path;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -14,13 +14,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let generator = Generator::new(config);
 
     // Generate an item with a seed (same seed = same item)
-    let seed: u64 = 12345;
-    let mut item = generator.generate("iron_sword", seed).unwrap();
+    let item = generator.generate("iron_sword", 12345).unwrap();
 
-    // Apply currencies to craft the item
-    // The item stores its seed internally and tracks operations
-    generator.apply_currency(&mut item, "transmute");  // Normal -> Magic
-    generator.apply_currency(&mut item, "augment");    // Add another affix
+    // Apply currencies - returns a new item each time (immutable)
+    let item = generator.apply_currency(&item, "transmute")?;  // Normal -> Magic
+    let item = generator.apply_currency(&item, "augment")?;    // Add another affix
 
     // Encode to compact binary (item stores seed + operations)
     let bytes = item.encode_to_vec();
@@ -35,6 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 ## Core Concepts
 
 - **Seed-based determinism** - Items store a seed + operation history internally. Reconstruction is deterministic.
+- **Immutable operations** - `apply_currency` returns a new item rather than mutating.
 - **Data-driven currencies** - All crafting operations defined in TOML, not code.
 - **Tag-based affix weighting** - Items and affixes have tags; matching tags increase spawn probability.
 - **Compact binary storage** - Items encode to ~30 bytes vs hundreds for JSON.
@@ -55,29 +54,37 @@ let generator = Generator::new(config);
 
 ```rust
 // Generate a normal (white) item with a seed
-let seed: u64 = 12345;
-let item = generator.generate("iron_sword", seed).unwrap();
+let item = generator.generate("iron_sword", 12345).unwrap();
 
 // Generate a unique item directly
-let unique = generator.generate_unique("starforge", seed).unwrap();
+let unique = generator.generate_unique("starforge", 12345).unwrap();
 ```
 
 ### Applying Currencies
 
+Currencies return a new item with the effect applied. The original item is unchanged.
+
 ```rust
 use loot_core::CurrencyError;
 
-// Apply by currency ID - uses the item's internal seed for RNG
-match generator.apply_currency(&mut item, "transmute") {
-    Some(Ok(())) => println!("Success!"),
-    Some(Err(CurrencyError::InvalidRarity { .. })) => println!("Wrong rarity"),
-    Some(Err(e)) => println!("Error: {}", e),
-    None => println!("Currency not found"),
+// Apply currency - returns Result<Item, CurrencyError>
+let item = generator.generate("iron_sword", 12345).unwrap();
+
+match generator.apply_currency(&item, "transmute") {
+    Ok(new_item) => println!("Success! New item: {}", new_item.name),
+    Err(CurrencyError::InvalidRarity { .. }) => println!("Wrong rarity"),
+    Err(CurrencyError::UnknownCurrency(id)) => println!("Unknown currency: {}", id),
+    Err(e) => println!("Error: {}", e),
 }
 
-// Check if currency can be applied
-if generator.can_apply_currency(&item, "augment") {
-    generator.apply_currency(&mut item, "augment");
+// Chain multiple applications
+let item = generator.generate("iron_sword", 12345).unwrap();
+let item = generator.apply_currency(&item, "transmute")?;
+let item = generator.apply_currency(&item, "augment")?;
+
+// Check if currency can be applied before applying
+if generator.can_apply_currency(&item, "chaos") {
+    let item = generator.apply_currency(&item, "chaos")?;
 }
 ```
 
@@ -167,19 +174,21 @@ for id in generator.unique_ids() {
 ```rust
 use loot_core::CurrencyError;
 
-match generator.apply_currency(&mut item, "chaos") {
-    Some(Ok(())) => { /* Success */ }
-    Some(Err(CurrencyError::InvalidRarity { expected, got })) => {
+match generator.apply_currency(&item, "chaos") {
+    Ok(new_item) => { /* Success - use new_item */ }
+    Err(CurrencyError::InvalidRarity { expected, got }) => {
         println!("Need {:?}, have {:?}", expected, got);
     }
-    Some(Err(CurrencyError::NoAffixSlots)) => {
+    Err(CurrencyError::NoAffixSlots) => {
         println!("Item is full");
     }
-    Some(Err(CurrencyError::NoValidAffixes)) => {
+    Err(CurrencyError::NoValidAffixes) => {
         println!("No affixes available for this item");
     }
-    Some(Err(e)) => println!("Error: {}", e),
-    None => println!("Currency '{}' not found", "chaos"),
+    Err(CurrencyError::UnknownCurrency(id)) => {
+        println!("Currency '{}' not found", id);
+    }
+    Err(e) => println!("Error: {}", e),
 }
 ```
 

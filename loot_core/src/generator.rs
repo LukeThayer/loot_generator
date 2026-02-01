@@ -66,27 +66,26 @@ impl Generator {
 
     /// Apply a currency to an item by currency ID.
     ///
+    /// Returns a new item with the currency applied. The original item is not modified.
     /// Uses the item's seed and operation history to maintain deterministic RNG state.
-    /// Records the operation on success.
-    pub fn apply_currency(
-        &self,
-        item: &mut Item,
-        currency_id: &str,
-    ) -> Option<Result<(), CurrencyError>> {
-        let currency = self.config.currencies.get(currency_id)?;
+    pub fn apply_currency(&self, item: &Item, currency_id: &str) -> Result<Item, CurrencyError> {
+        let currency = self
+            .config
+            .currencies
+            .get(currency_id)
+            .ok_or_else(|| CurrencyError::UnknownCurrency(currency_id.to_string()))?;
 
-        // Replay to get correct RNG state
-        let mut rng = self.replay_rng(item);
+        // Clone the item and replay to get correct RNG state
+        let mut new_item = item.clone();
+        let mut rng = self.replay_rng(&new_item);
 
         // Apply the currency
-        let result = apply_currency(self, item, currency, &mut rng);
+        apply_currency(self, &mut new_item, currency, &mut rng)?;
 
-        // Record operation on success
-        if result.is_ok() {
-            item.record_currency(currency_id);
-        }
+        // Record operation
+        new_item.record_currency(currency_id);
 
-        Some(result)
+        Ok(new_item)
     }
 
     /// Check if a currency can be applied to an item

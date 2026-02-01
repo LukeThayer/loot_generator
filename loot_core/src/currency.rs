@@ -220,6 +220,7 @@ pub enum CurrencyError {
     AffixNotAllowed(String),
     TierNotFound { affix_id: String, tier: u32 },
     NoAffixPoolsSpecified,
+    UnknownCurrency(String),
 }
 
 impl std::fmt::Display for CurrencyError {
@@ -242,6 +243,9 @@ impl std::fmt::Display for CurrencyError {
             }
             CurrencyError::NoAffixPoolsSpecified => {
                 write!(f, "No affix pools specified for currency")
+            }
+            CurrencyError::UnknownCurrency(id) => {
+                write!(f, "Unknown currency: {}", id)
             }
         }
     }
