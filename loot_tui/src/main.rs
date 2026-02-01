@@ -6,9 +6,8 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use loot_core::config::{Config, ConfigError, MappingMode};
-use loot_core::currency::apply_currency;
 use loot_core::generator::Generator;
-use loot_core::storage::{Operation, StoredItem};
+use loot_core::storage::Operation;
 use loot_core::Item;
 use ratatui::{
     backend::CrosstermBackend,
@@ -110,7 +109,7 @@ struct CurrencyPopupState {
 
 struct App {
     generator: Option<Generator>,
-    inventory: Vec<(Item, StoredItem)>,
+    inventory: Vec<Item>,
     inventory_state: ListState,
     base_type_state: ListState,
     unique_state: ListState,
@@ -224,7 +223,7 @@ impl App {
             .expect("Generator not available - config error")
     }
 
-    fn selected_item(&self) -> Option<&(Item, StoredItem)> {
+    fn selected_item(&self) -> Option<&Item> {
         self.inventory_state
             .selected()
             .and_then(|i| self.inventory.get(i))
@@ -232,25 +231,18 @@ impl App {
 
     fn generate_item(&mut self, base_type_id: &str) {
         let seed: u64 = rand::random();
-        let mut rng = Generator::make_rng(seed);
-
-        if let Some(item) = self.generator().generate_normal(base_type_id, &mut rng) {
-            let stored = StoredItem::new(base_type_id.to_string(), seed);
+        if let Some(item) = self.generator().generate(base_type_id, seed) {
             self.message = Some(format!("Generated: {}", item.name));
-            self.inventory.push((item, stored));
+            self.inventory.push(item);
             self.inventory_state.select(Some(self.inventory.len() - 1));
         }
     }
 
     fn generate_unique_item(&mut self, unique_id: &str) {
         let seed: u64 = rand::random();
-        let mut rng = Generator::make_rng(seed);
-
-        if let Some(item) = self.generator().generate_unique(unique_id, &mut rng) {
-            // Store with unique_ prefix to distinguish from normal items
-            let stored = StoredItem::new(format!("unique:{}", unique_id), seed);
+        if let Some(item) = self.generator().generate_unique(unique_id, seed) {
             self.message = Some(format!("Generated unique: {}", item.name));
-            self.inventory.push((item, stored));
+            self.inventory.push(item);
             self.inventory_state.select(Some(self.inventory.len() - 1));
         }
     }
@@ -271,16 +263,7 @@ impl App {
             return;
         };
 
-        // Clone currency config before getting mutable reference to inventory
-        let currency = self
-            .generator()
-            .config()
-            .currencies
-            .get(currency_id)
-            .unwrap()
-            .clone();
-
-        let Some((item, stored)) = self.inventory.get_mut(idx) else {
+        let Some(item) = self.inventory.get_mut(idx) else {
             self.message = Some("No item selected".to_string());
             return;
         };
@@ -297,15 +280,11 @@ impl App {
             .map(|m| format!("{}:{}", m.affix_id, m.value))
             .collect();
 
-        let op_seed: u64 = rand::random();
-        let mut rng = Generator::make_rng(op_seed);
-
         // Get generator reference - safe because we're not borrowing inventory anymore here
         let generator = self.generator.as_ref().unwrap();
 
-        match apply_currency(generator, item, &currency, &mut rng) {
-            Ok(()) => {
-                stored.push_operation(Operation::Currency(currency_id.to_string()));
+        match generator.apply_currency(item, currency_id) {
+            Some(Ok(())) => {
                 self.message = Some(format!("Applied {} -> {}", currency_name, item.name));
 
                 // Find which affixes changed
@@ -322,8 +301,11 @@ impl App {
                     }
                 }
             }
-            Err(e) => {
+            Some(Err(e)) => {
                 self.message = Some(format!("Error: {}", e));
+            }
+            None => {
+                self.message = Some(format!("Unknown currency: {}", currency_id));
             }
         }
     }
@@ -348,7 +330,7 @@ impl App {
             return;
         };
 
-        let Some((item, _)) = self.inventory.get(idx) else {
+        let Some(item) = self.inventory.get(idx) else {
             return;
         };
 
@@ -483,7 +465,7 @@ impl App {
         let affix_name = affix.name.clone();
         let tier_num = tier.tier;
 
-        let Some((item, _)) = self.inventory.get_mut(inv_idx) else {
+        let Some(item) = self.inventory.get_mut(inv_idx) else {
             return;
         };
 
@@ -1012,7 +994,7 @@ fn render_inventory(f: &mut Frame, app: &mut App, area: Rect) {
     let items: Vec<ListItem> = app
         .inventory
         .iter()
-        .map(|(item, _)| {
+        .map(|item| {
             let rarity_color = match item.rarity {
                 loot_core::Rarity::Normal => Color::White,
                 loot_core::Rarity::Magic => Color::Blue,
@@ -1146,7 +1128,7 @@ fn build_currency_preview(app: &App) -> Text<'static> {
     let mut lines: Vec<Line> = Vec::new();
 
     // Get selected item
-    let item = app.selected_item().map(|(item, _)| item);
+    let item = app.selected_item();
 
     // Get selected currency
     let currency = app
@@ -1483,15 +1465,15 @@ fn render_detail(f: &mut Frame, app: &App, area: Rect) {
 
     let content = match app.detail_tab {
         DetailTab::Stats => {
-            if let Some((item, _)) = app.selected_item() {
+            if let Some(item) = app.selected_item() {
                 render_item_stats(item, &app.changed_affixes, app.generator())
             } else {
                 Text::from("No item selected\n\nPress 'n' to create a new item")
             }
         }
         DetailTab::Seed => {
-            if let Some((_, stored)) = app.selected_item() {
-                render_item_seed(stored)
+            if let Some(item) = app.selected_item() {
+                render_item_seed(item)
             } else {
                 Text::from("No item selected\n\nPress 'n' to create a new item")
             }
@@ -1767,7 +1749,7 @@ fn render_item_stats(
     Text::from(lines)
 }
 
-fn render_item_seed(stored: &StoredItem) -> Text<'static> {
+fn render_item_seed(item: &Item) -> Text<'static> {
     let mut lines: Vec<Line> = Vec::new();
 
     lines.push(Line::from(Span::styled(
@@ -1778,13 +1760,13 @@ fn render_item_seed(stored: &StoredItem) -> Text<'static> {
 
     lines.push(Line::from(vec![
         Span::styled("Base Type: ".to_string(), Style::default().fg(Color::Gray)),
-        Span::raw(stored.base_type_id.clone()),
+        Span::raw(item.base_type_id.clone()),
     ]));
 
     lines.push(Line::from(vec![
         Span::styled("Seed: ".to_string(), Style::default().fg(Color::Gray)),
         Span::styled(
-            format!("0x{:016X}", stored.seed),
+            format!("0x{:016X}", item.seed),
             Style::default().fg(Color::Yellow),
         ),
     ]));
@@ -1795,15 +1777,15 @@ fn render_item_seed(stored: &StoredItem) -> Text<'static> {
         Style::default().add_modifier(Modifier::BOLD),
     )));
 
-    if stored.operations.is_empty() {
+    if item.operations.is_empty() {
         lines.push(Line::from(Span::styled(
             "  (none)".to_string(),
             Style::default().fg(Color::DarkGray),
         )));
     } else {
-        for (i, op) in stored.operations.iter().enumerate() {
+        for (i, op) in item.operations.iter().enumerate() {
             let op_str = match op {
-                Operation::Currency(action) => format!("{:?}", action),
+                Operation::Currency(action) => action.clone(),
             };
             lines.push(Line::from(vec![
                 Span::styled(
@@ -1817,19 +1799,21 @@ fn render_item_seed(stored: &StoredItem) -> Text<'static> {
 
     lines.push(Line::from(""));
     lines.push(Line::from(Span::styled(
-        "JSON Export".to_string(),
+        "Binary Size".to_string(),
         Style::default().add_modifier(Modifier::BOLD),
     )));
     lines.push(Line::from(""));
 
-    if let Ok(json) = stored.to_json() {
-        for line in json.lines() {
-            lines.push(Line::from(Span::styled(
-                line.to_string(),
-                Style::default().fg(Color::Green),
-            )));
-        }
-    }
+    // Show encoded size
+    use loot_core::BinaryEncode;
+    let encoded = item.encode_to_vec();
+    lines.push(Line::from(vec![
+        Span::styled("Encoded: ".to_string(), Style::default().fg(Color::Gray)),
+        Span::styled(
+            format!("{} bytes", encoded.len()),
+            Style::default().fg(Color::Green),
+        ),
+    ]));
 
     Text::from(lines)
 }

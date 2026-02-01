@@ -5,7 +5,7 @@ A configurable loot generation system for games, inspired by Path of Exile's ite
 ## Quick Start
 
 ```rust
-use loot_core::{Config, Generator, StoredItem};
+use loot_core::{Config, Generator, BinaryEncode, BinaryDecode};
 use std::path::Path;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -13,21 +13,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = Config::load_from_dir(Path::new("config"))?;
     let generator = Generator::new(config);
 
-    // Generate an item with a seed
-    let mut rng = Generator::make_rng(12345);
-    let mut item = generator.generate_normal("iron_sword", &mut rng).unwrap();
+    // Generate an item with a seed (same seed = same item)
+    let seed: u64 = 12345;
+    let mut item = generator.generate("iron_sword", seed).unwrap();
 
     // Apply currencies to craft the item
-    generator.apply_currency(&mut item, "transmute", &mut rng);  // Normal -> Magic
-    generator.apply_currency(&mut item, "augment", &mut rng);    // Add another affix
+    // The item stores its seed internally and tracks operations
+    generator.apply_currency(&mut item, "transmute");  // Normal -> Magic
+    generator.apply_currency(&mut item, "augment");    // Add another affix
 
-    // Store compactly as seed + operations
-    let stored = StoredItem::new("iron_sword", 12345)
-        .with_currency("transmute")
-        .with_currency("augment");
+    // Encode to compact binary (item stores seed + operations)
+    let bytes = item.encode_to_vec();
 
-    // Reconstruct identically from stored form
-    let reconstructed = stored.reconstruct(&generator).unwrap();
+    // Decode back to full item (deterministically reconstructed)
+    let reconstructed = Item::decode_from_slice(&bytes, &generator)?;
 
     Ok(())
 }
@@ -35,7 +34,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Core Concepts
 
-- **Seed-based determinism** - Items store a seed + operation history, not full stats. Reconstruction is deterministic.
+- **Seed-based determinism** - Items store a seed + operation history internally. Reconstruction is deterministic.
 - **Data-driven currencies** - All crafting operations defined in TOML, not code.
 - **Tag-based affix weighting** - Items and affixes have tags; matching tags increase spawn probability.
 - **Compact binary storage** - Items encode to ~30 bytes vs hundreds for JSON.
@@ -55,14 +54,12 @@ let generator = Generator::new(config);
 ### Generating Items
 
 ```rust
-// Create a seeded RNG (same seed = same results)
-let mut rng = Generator::make_rng(12345);
-
-// Generate a normal (white) item
-let item = generator.generate_normal("iron_sword", &mut rng).unwrap();
+// Generate a normal (white) item with a seed
+let seed: u64 = 12345;
+let item = generator.generate("iron_sword", seed).unwrap();
 
 // Generate a unique item directly
-let unique = generator.generate_unique("starforge", &mut rng).unwrap();
+let unique = generator.generate_unique("starforge", seed).unwrap();
 ```
 
 ### Applying Currencies
@@ -70,8 +67,8 @@ let unique = generator.generate_unique("starforge", &mut rng).unwrap();
 ```rust
 use loot_core::CurrencyError;
 
-// Apply by currency ID (preferred)
-match generator.apply_currency(&mut item, "transmute", &mut rng) {
+// Apply by currency ID - uses the item's internal seed for RNG
+match generator.apply_currency(&mut item, "transmute") {
     Some(Ok(())) => println!("Success!"),
     Some(Err(CurrencyError::InvalidRarity { .. })) => println!("Wrong rarity"),
     Some(Err(e)) => println!("Error: {}", e),
@@ -80,7 +77,7 @@ match generator.apply_currency(&mut item, "transmute", &mut rng) {
 
 // Check if currency can be applied
 if generator.can_apply_currency(&item, "augment") {
-    generator.apply_currency(&mut item, "augment", &mut rng);
+    generator.apply_currency(&mut item, "augment");
 }
 ```
 
@@ -91,6 +88,10 @@ println!("Name: {}", item.name);
 println!("Base: {}", item.base_name);
 println!("Rarity: {:?}", item.rarity);
 println!("Class: {:?}", item.class);
+
+// Seed and operations (for storage/debugging)
+println!("Seed: 0x{:016X}", item.seed);
+println!("Operations: {:?}", item.operations);
 
 // Modifiers
 if let Some(implicit) = &item.implicit {
@@ -110,53 +111,34 @@ println!("Can add prefix: {}", item.can_add_prefix());
 println!("Can add suffix: {}", item.can_add_suffix());
 ```
 
-### Storing Items
+### Binary Serialization
 
-Items are stored as seed + operation history for compact, deterministic reconstruction.
+Items encode to a compact binary format storing only seed + operations. Full stats are reconstructed deterministically.
 
 ```rust
-use loot_core::{StoredItem, Operation, ItemCollection};
+use loot_core::{Item, BinaryEncode, BinaryDecode};
 
-// Build with fluent API
-let stored = StoredItem::new("iron_sword", 12345)
-    .with_currency("transmute")
-    .with_currency("augment");
+// Encode item to binary (~30 bytes vs hundreds for JSON)
+let bytes = item.encode_to_vec();
 
-// Or build incrementally
-let mut stored = StoredItem::new("iron_sword", 12345);
-stored.push_currency("transmute");
-stored.push_currency("augment");
-
-// Reconstruct the full item
-let item = stored.reconstruct(&generator).unwrap();
+// Decode back to full item (requires generator for reconstruction)
+let loaded = Item::decode_from_slice(&bytes, &generator)?;
 ```
 
-### Serialization
+### Item Collections
 
-Both JSON and compact binary formats are supported.
+For storing multiple items with string interning for even more compact storage:
 
 ```rust
-use loot_core::{StoredItem, ItemCollection, BinaryEncode, BinaryDecode};
+use loot_core::ItemCollection;
+use std::path::Path;
 
-// Single item - JSON
-let json = stored.to_json()?;
-let loaded = StoredItem::from_json(&json)?;
-
-// Single item - Binary (~33 bytes vs ~150 for JSON)
-let bytes = stored.encode_to_vec();
-let loaded = StoredItem::decode_from_slice(&bytes)?;
-
-// Collections with string interning (even more compact)
 let mut collection = ItemCollection::new();
-collection.add(stored);
+collection.add(item);
 
-// JSON
-collection.save_to_file(Path::new("items.json"))?;
-let loaded = ItemCollection::load_from_file(Path::new("items.json"))?;
-
-// Binary (3-4x smaller than JSON)
+// Binary format (3-4x smaller than JSON)
 collection.save_binary(Path::new("items.bin"))?;
-let loaded = ItemCollection::load_binary(Path::new("items.bin"))?;
+let loaded = ItemCollection::load_binary(Path::new("items.bin"), &generator)?;
 ```
 
 ### Querying Configuration
@@ -185,7 +167,7 @@ for id in generator.unique_ids() {
 ```rust
 use loot_core::CurrencyError;
 
-match generator.apply_currency(&mut item, "chaos", &mut rng) {
+match generator.apply_currency(&mut item, "chaos") {
     Some(Ok(())) => { /* Success */ }
     Some(Err(CurrencyError::InvalidRarity { expected, got })) => {
         println!("Need {:?}, have {:?}", expected, got);
