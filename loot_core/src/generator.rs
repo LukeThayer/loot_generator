@@ -130,8 +130,19 @@ impl Generator {
         self.roll_affix_from_pools(class, item_tags, affix_type, existing_affix_ids, &[], item_level, rng)
     }
 
+    /// Check if an affix has at least one tag matching the item's tags
+    fn has_matching_tag(affix: &AffixConfig, item_tags: &[Tag]) -> bool {
+        // If affix has no tags, it can roll on anything
+        if affix.tags.is_empty() {
+            return true;
+        }
+        // Otherwise, require at least one matching tag
+        affix.tags.iter().any(|tag| item_tags.contains(tag))
+    }
+
     /// Roll a random affix for an item, filtered by affix pools
     /// If pools is empty, uses all valid affixes
+    /// Affixes must have at least one matching tag with the item
     pub fn roll_affix_from_pools(
         &self,
         class: ItemClass,
@@ -146,6 +157,8 @@ impl Generator {
             .get_valid_affixes_from_pools(class, affix_type, pools)
             .into_iter()
             .filter(|a| !existing_affix_ids.contains(&a.id))
+            // Require at least one matching tag between affix and item
+            .filter(|a| Self::has_matching_tag(a, item_tags))
             .collect();
 
         if valid_affixes.is_empty() {

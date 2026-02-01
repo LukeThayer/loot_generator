@@ -560,19 +560,38 @@ When rolling an affix, only tiers where `min_ilvl <= item.requirements.level` ar
 
 ### Tags and Spawn Weighting
 
-Tags are strings that describe item and affix characteristics. They create synergies that influence affix spawn rates.
+Tags are strings that describe item and affix characteristics. They serve two purposes:
 
-**How it works:**
-1. Base types have tags: `["melee", "physical", "attack"]`
-2. Affixes have tags: `["physical", "damage"]`
-3. When rolling affixes, each matching tag increases spawn weight by **50%**
+1. **Filtering** - Affixes must have at least one tag matching the item to be eligible
+2. **Weighting** - Matching tags increase spawn weight
 
+**Tag matching rules:**
+- An affix with tags `["physical", "damage"]` can only roll on items that have at least one of those tags
+- An affix with no tags can roll on any item (no filtering)
+- Each matching tag increases spawn weight by **50%**
+
+**Example:**
 ```
-Base affix weight: 1000
 Item tags: ["melee", "physical", "attack"]
 Affix tags: ["physical", "damage"]
-Matching tags: 1 ("physical")
-Final weight: 1000 × 1.5 = 1500
+
+Step 1 - Eligibility check:
+  Matching tags: "physical" ✓
+  Affix is eligible (at least one match)
+
+Step 2 - Weight calculation:
+  Base weight: 1000
+  Matching tags: 1 ("physical")
+  Final weight: 1000 × 1.5 = 1500
+```
+
+**Non-matching example:**
+```
+Item tags: ["caster", "intelligence", "elemental"]
+Affix tags: ["physical", "melee"]
+
+Matching tags: 0
+Affix is NOT eligible (no matching tags)
 ```
 
 **Common tag categories:**
